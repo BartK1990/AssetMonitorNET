@@ -1,0 +1,76 @@
+﻿@model IEnumerable<AspMVC_Monitor.Models.Asset>
+@{
+    ViewData["Title"] = "Asset Monitor";
+}
+<h1>@ViewData["Title"]</h1>
+
+<label>Server time now: </label>
+<span id="sessionValue" class="font-weight-bold"></span>
+
+<p>Let's monitor some assets!</p>
+<form asp-controller="HomeController" method="post">
+    Enter IP address : <input name="NameText" type="text" />
+    Enter IP address : <input name="IpAddressText" type="text" />
+    <input type="submit" value="Add" formaction="AddElement" /> &nbsp;&nbsp;&nbsp;
+</form>
+
+<h3>Assets: </h3>
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>Name </th>
+        <th>IP Address </th>
+        <th>PING </th>
+    @foreach (var a in Model)
+    {
+        <tr>
+            <td>@a.Name</td>
+            <td>@a.IpAddress</td>
+            <td>
+                <div class="d-flex justify-content-center align-items-center">
+                    @if (a.pingState)
+                    {
+                        <span class="greenDot"></span>
+                    }
+                    else
+                    {
+                        <span class="redDot"></span>
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(init());
+        function init() {
+            $("#sessionValue").text("00.00.0000 00:00:00");
+            timeNowCall();
+            timeNowTimer();
+        }
+        function timeNowTimer() {
+            var interval = setInterval(function () {
+                // call backend to update the value in session
+                $.ajax({
+                    type: 'post',
+                    url: 'UpdateSession',
+                    success: function (result) {
+                        $("#sessionValue").text(result.data);
+                    }
+                })
+            }, 1000); // Run for each second
+        }
+        function timeNowCall() {
+            $.ajax({
+                type: 'post',
+                url: 'UpdateSession',
+                success: function (result) {
+                    $("#sessionValue").text(result.data);
+                }
+            })
+        }
+    </script>
+}
