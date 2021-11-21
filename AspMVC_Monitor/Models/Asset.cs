@@ -4,6 +4,7 @@
     {
         public string Name { get; set; }
         public string IpAddress { get; set; }
-        public bool pingState { get; set; }
+        public bool PingState { get; set; }
+        public long PingResponseTime { get; set; }
     }
 }

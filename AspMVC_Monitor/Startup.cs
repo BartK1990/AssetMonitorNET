@@ -1,4 +1,8 @@
 using AspMVC_Monitor.Models;
+using AspMVC_Monitor.Services;
+using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,13 +30,24 @@ namespace AspMVC_Monitor
         {
             services.AddControllersWithViews();
             services.AddSession();
+
             services.AddSingleton<IAssetHolder, AssetHolder>();
 
+            services.AddHangfire((serviceProvider, config) =>
+            {
+                config.UseActivator(new ServiceProviderActivator(serviceProvider));
+                config.UseMemoryStorage();
+            });
 
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app, 
+            IWebHostEnvironment env,
+            IBackgroundJobClient backgroundJobClient,
+            IRecurringJobManager recurringJobManager)
         {
             if (env.IsDevelopment())
             {
@@ -58,8 +73,24 @@ namespace AspMVC_Monitor
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}",
-                    defaults: new { controller = "Home", action = "Index"});
+                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapHangfireDashboard();
             });
+
+            app.UseHangfireDashboard();
+            HangfireJobs(backgroundJobClient, recurringJobManager);
+        }
+
+        private void HangfireJobs(IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
+        {
+            backgroundJobClient.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            recurringJobManager.AddOrUpdate("Rune every minute",
+                () => Console.WriteLine("Test recurring job"),
+                "*/5 * * * * *");
+            recurringJobManager.AddOrUpdate<IAssetHolder>("Ping Assets",
+                ah => ah.UpdateAssetPingAsync(),
+                "*/5 * * * * *");
+
         }
     }
 }

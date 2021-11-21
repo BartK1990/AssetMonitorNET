@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Models
 {
@@ -7,5 +8,8 @@ namespace AspMVC_Monitor.Models
         List<Asset> AssetList { get; set; }
 
         void AddAsset(string name, string ipAddress);
+
+        void UpdateAssetPing();
+        Task UpdateAssetPingAsync();
     }
 }
