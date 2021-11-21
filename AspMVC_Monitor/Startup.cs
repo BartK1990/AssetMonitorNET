@@ -84,9 +84,8 @@ namespace AspMVC_Monitor
         private void HangfireJobs(IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
         {
             backgroundJobClient.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
-            recurringJobManager.AddOrUpdate("Rune every minute",
-                () => Console.WriteLine("Test recurring job"),
-                "*/5 * * * * *");
+
+            // Ping assets every 5 seconds (CRON notation)
             recurringJobManager.AddOrUpdate<IAssetHolder>("Ping Assets",
                 ah => ah.UpdateAssetPingAsync(),
                 "*/5 * * * * *");

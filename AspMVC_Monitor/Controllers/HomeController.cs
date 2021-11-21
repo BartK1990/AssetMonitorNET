@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace AspMVC_Monitor.Controllers
 {
@@ -35,10 +36,22 @@ namespace AspMVC_Monitor.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateSession()
+        public IActionResult GetServerTime()
         {
             HttpContext.Session.SetString("Time", DateTime.Now.ToString());
             return Json(new { data = HttpContext.Session.GetString("Time") });
+        }
+
+        [HttpPost]
+        public IActionResult GetAssetList()
+        {
+            var itemList = _assetHolder.AssetList.Select((a => new { 
+                name = a.Name, 
+                ipAddress = a.IpAddress,
+                pingState = a.PingState,
+                pingResponseTime = a.PingResponseTime
+            })).ToList(); 
+            return Json(itemList);
         }
 
         [HttpPost]

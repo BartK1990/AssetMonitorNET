@@ -44,7 +44,7 @@ namespace AspMVC_Monitor.Models
         {
             foreach (var a in AssetList)
             {
-                a.PingState = PingHelper.PingHostWithTimeLimit(a.IpAddress, out var pingResponseTime, TimeSpan.FromMilliseconds(3000));
+                a.PingState = PingHelper.PingHostWithTimeLimit(a.IpAddress, out var pingResponseTime, TimeSpan.FromMilliseconds(4000));
                 a.PingResponseTime = pingResponseTime;
             }
         }

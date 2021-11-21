@@ -9,13 +9,13 @@
 
 <p>Let's monitor some assets!</p>
 <form asp-controller="HomeController" method="post">
-    Enter IP address : <input name="NameText" type="text" />
+    Enter name : <input name="NameText" type="text" />
     Enter IP address : <input name="IpAddressText" type="text" />
     <input type="submit" value="Add" formaction="AddElement" /> &nbsp;&nbsp;&nbsp;
 </form>
 
 <h3>Assets: </h3>
-<table class="table table-bordered table-responsive table-hover">
+<table id="tableAssets" class="table table-bordered table-responsive table-hover">
     <tr>
         <th>Name </th>
         <th>IP Address </th>
@@ -24,26 +24,26 @@
     </tr>
     @foreach (var a in Model)
     {
-<tr>
-    <td class="align-middle">@a.Name</td>
-    <td class="align-middle">@a.IpAddress</td>
-    <td class="align-middle">
-        <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
-            @if (a.PingState)
-            {
-                <span class="dot dotBackgroundGreen"></span>
-            }
-            else
-            {
-                <span class="dot dotBackgroundRed"></span>
-            }
-        </div>
-    </td>
-    <td class="align-middle">@(a.PingResponseTime)ms</td>
-</tr>
+        <tr>
+            <td class="align-middle">@a.Name</td>
+            <td class="align-middle">@a.IpAddress</td>
+            <td class="align-middle">
+                <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
+                    @if (a.PingState)
+                    {
+                        <span class="dot dotBackgroundGreen"></span>
+                    }
+                    else
+                    {
+                        <span class="dot dotBackgroundRed"></span>
+                    }
+                </div>
+            </td>
+            <td id="@(a.Name)_PingResponseTime" class="align-middle">@(a.PingResponseTime)ms</td>
+        </tr>
     }
 </table>
-
+<br />
 
 
 @section scripts{
