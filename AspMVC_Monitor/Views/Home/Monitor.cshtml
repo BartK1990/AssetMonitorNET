@@ -1,50 +1,65 @@
 ﻿@model IEnumerable<AspMVC_Monitor.Models.Asset>
 @{
-    ViewData["Title"] = "Asset Monitor";
+    ViewData["Title"] = "Monitor";
 }
-<h1>@ViewData["Title"]</h1>
 
-<label>Server time now: </label>
-<span id="sessionValue" class="font-weight-bold"></span>
+<div class="content-overlay">
+    <div class="top-content">
+        <div class="top-content-relative">
+            <div class="top-content-foreground">
+                <h4>@ViewData["Title"]</h4>
+                <br />
+                <br />
+            </div>
+            <div class="top-content-background">
+                <i class="fas fa-network-wired"></i>
+            </div>
+        </div>
+    </div>
+    <div class="main-content bg-site-dark rounded">
+        <label>Server time now: </label>
+        <span id="sessionValue" class="font-italic"></span>
 
-<p>Let's monitor some assets!</p>
-<form asp-controller="HomeController" method="post">
-    Enter name : <input name="NameText" type="text" />
-    Enter IP address : <input name="IpAddressText" type="text" />
-    <input type="submit" value="Add" formaction="AddElement" /> &nbsp;&nbsp;&nbsp;
-</form>
-
-<h3>Assets: </h3>
-<table id="tableAssets" class="table table-bordered table-responsive table-hover">
-    <tr>
-        <th>Name </th>
-        <th>IP Address </th>
-        <th>Ping </th>
-        <th>Time </th>
-    </tr>
-    @foreach (var a in Model)
-    {
-        <tr>
-            <td class="align-middle">@a.Name</td>
-            <td class="align-middle">@a.IpAddress</td>
-            <td class="align-middle">
-                <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
-                    @if (a.PingState)
-                    {
-                        <span class="dot dotBackgroundGreen"></span>
-                    }
-                    else
-                    {
-                        <span class="dot dotBackgroundRed"></span>
-                    }
-                </div>
-            </td>
-            <td id="@(a.Name)_PingResponseTime" class="align-middle">@(a.PingResponseTime)ms</td>
-        </tr>
-    }
-</table>
-<br />
-
+        <p>Let's monitor some assets!</p>
+        <br />
+        <form asp-controller="HomeController" method="post">
+            Enter name : <input name="NameText" type="text" />
+            Enter IP address : <input name="IpAddressText" type="text" />
+            <input type="submit" value="Add" formaction="AddElement" /> &nbsp;&nbsp;&nbsp;
+        </form>
+        <br />
+        <h4>Assets:</h4>
+        <br />
+        <table id="tableAssets" class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
+            <tr class="bg-nav-dark">
+                <th>Name </th>
+                <th>IP Address </th>
+                <th>Ping </th>
+                <th>Time </th>
+            </tr>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td class="align-middle">@a.Name</td>
+                    <td class="align-middle">@a.IpAddress</td>
+                    <td class="align-middle">
+                        <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
+                            @if (a.PingState)
+                            {
+                                <span class="dot dotBackgroundGreen"></span>
+                            }
+                            else
+                            {
+                                <span class="dot dotBackgroundRed"></span>
+                            }
+                        </div>
+                    </td>
+                    <td id="@(a.Name)_PingResponseTime" class="align-middle">@(a.PingResponseTime)ms</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
 
 @section scripts{
     <script type="text/javascript" src="~/js/monitor.js"></script>
