@@ -49,8 +49,10 @@ function GetAssetList() {
                         ps.appendChild(span);
                     }
                     document.getElementById(item.name + "_PingResponseTime").innerHTML = item.pingResponseTime + "ms";
+                    document.getElementById(item.name + "_CpuUsage").innerHTML = item.cpuUsage + "%";
+                    document.getElementById(item.name + "_MemoryAvailable").innerHTML = item.memoryAvailable;
                 });
             },
         });
-    }, 5000); // Run for each second
+    }, 5000); 
 }

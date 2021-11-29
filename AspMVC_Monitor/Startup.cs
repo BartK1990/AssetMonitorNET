@@ -90,6 +90,10 @@ namespace AspMVC_Monitor
                 ah => ah.UpdateAssetPingAsync(),
                 "*/5 * * * * *");
 
+            recurringJobManager.AddOrUpdate<IAssetHolder>("Get performance data",
+                ah => ah.UpdateAssetPerformanceAsync(),
+                "*/10 * * * * *");
+
         }
     }
 }

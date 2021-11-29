@@ -49,7 +49,9 @@ namespace AspMVC_Monitor.Controllers
                 name = a.Name, 
                 ipAddress = a.IpAddress,
                 pingState = a.PingState,
-                pingResponseTime = a.PingResponseTime
+                pingResponseTime = a.PingResponseTime,
+                cpuUsage = a.CpuUsage.ToString("#.##"), // 2 decimal places
+                memoryAvailable = a.MemoryAvailable
             })).ToList(); 
             return Json(itemList);
         }

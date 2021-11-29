@@ -13,6 +13,15 @@ namespace AspMVC_Monitor.Model
             _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
         }
 
+        public AssetPerformanceData GetPerformanceData()
+        {
+            var apd = new AssetPerformanceData() {
+                CpuUsage = _cpuCounter.NextValue(),
+                MemoryAvailable = _ramCounter.NextValue()
+            };
+            return apd;
+        }
+
         public string getCurrentCpuUsage()
         {
             return _cpuCounter.NextValue() + "%";

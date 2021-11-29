@@ -11,5 +11,8 @@ namespace AspMVC_Monitor.Models
 
         void UpdateAssetPing();
         Task UpdateAssetPingAsync();
+
+        void UpdateAssetPerformance();
+        Task UpdateAssetPerformanceAsync();
     }
 }

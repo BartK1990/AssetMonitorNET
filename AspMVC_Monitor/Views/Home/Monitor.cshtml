@@ -36,26 +36,30 @@
                 <th>IP Address </th>
                 <th>Ping </th>
                 <th>Time </th>
+                <th>CPU Usage </th>
+                <th>Avalible Memory[MB] </th>
             </tr>
             @foreach (var a in Model)
             {
-                <tr>
-                    <td class="align-middle">@a.Name</td>
-                    <td class="align-middle">@a.IpAddress</td>
-                    <td class="align-middle">
-                        <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
-                            @if (a.PingState)
-                            {
-                                <span class="dot dotBackgroundGreen"></span>
-                            }
-                            else
-                            {
-                                <span class="dot dotBackgroundRed"></span>
-                            }
-                        </div>
-                    </td>
-                    <td id="@(a.Name)_PingResponseTime" class="align-middle">@(a.PingResponseTime)ms</td>
-                </tr>
+        <tr>
+            <td class="align-middle">@a.Name</td>
+            <td class="align-middle">@a.IpAddress</td>
+            <td class="align-middle">
+                <div id="@(a.Name)_PingState" class="d-flex justify-content-center align-items-center">
+                    @if (a.PingState)
+                    {
+                        <span class="dot dotBackgroundGreen"></span>
+                    }
+                    else
+                    {
+                        <span class="dot dotBackgroundRed"></span>
+                    }
+                </div>
+            </td>
+            <td id="@(a.Name)_PingResponseTime" class="align-middle">@(a.PingResponseTime)ms</td>
+            <td id="@(a.Name)_CpuUsage" class="align-middle">@(a.CpuUsage)%</td>
+            <td id="@(a.Name)_MemoryAvailable" class="align-middle">@a.MemoryAvailable</td>
+        </tr>
             }
         </table>
     </div>

@@ -1,20 +1,21 @@
 ﻿using AspMVC_Monitor.Model;
-using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Timers;
 
 namespace TcpAgent
 {
     class Program
     {
-        public static AssetPerformanceData AssetPerformanceData;
-        private static AssetPerformance _assetPerformance;
-
-        private const int byteSize = 1024 * 1024;
+        private static AssetPerformanceData AssetPerformanceData = new AssetPerformanceData();
+        private static AssetPerformance _assetPerformance = new AssetPerformance();
+        private static Timer _timer;
 
         static void Main(string[] args)
         {
+            SetTimer(10000); // 10s
+
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, TcpExchangeInit.TcpPort);
             TcpListener listener = new TcpListener(ep);
             listener.Start();
@@ -28,55 +29,22 @@ namespace TcpAgent
             // Run the loop continuously; this is the server.  
             while (true)
             {
-                string message = null;
-                byte[] buffer = new byte[byteSize];
-
-                var sender = listener.AcceptTcpClient();
-                Console.WriteLine($"Connection accepted from {sender.Client.RemoteEndPoint}");
-                sender.GetStream().Read(buffer, 0, byteSize);
-
-                // Read the message and perform different actions  
-                message = cleanMessage(buffer);
-
-                try // Check if message is valid
-                {
-                    // Incoming message
-                    TcpExchangeInit tcpExchange = JsonConvert.DeserializeObject<TcpExchangeInit>(message); // Deserialize  
-                    if (tcpExchange.Init)
-                    {
-                        byte[] bytes = System.Text.Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(AssetPerformanceData));
-                        sendMessage(bytes, sender);
-                        Console.WriteLine($"Respond sent to {sender.Client.RemoteEndPoint}");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                TcpHelper.ListenAndResponse(listener, TcpExchangeInit.TcpMessagebByteSize, AssetPerformanceData);
+                Console.WriteLine(AssetPerformanceData.ToString());
             }
         }
 
-        private static string cleanMessage(byte[] bytes)
+        private static void SetTimer(int time)
         {
-            string message = System.Text.Encoding.Unicode.GetString(bytes);
-
-            string messageToPrint = null;
-            foreach (var nullChar in message)
-            {
-                if (nullChar != '\0')
-                {
-                    messageToPrint += nullChar;
-                }
-            }
-            return messageToPrint;
+            _timer = new Timer(time);
+            _timer.Elapsed += OnTimer;
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
         }
 
-        // Sends the message string using the bytes provided.  
-        private static void sendMessage(byte[] bytes, TcpClient client)
+        public static void OnTimer(object sender, ElapsedEventArgs args)
         {
-            client.GetStream()
-                .Write(bytes, 0,
-                bytes.Length); // Send the stream  
+            AssetPerformanceData = _assetPerformance.GetPerformanceData();
         }
     }
 }
