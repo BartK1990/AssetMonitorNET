@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31019.35
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMVC_Monitor", "AspMVC_Monitor\AspMVC_Monitor.csproj", "{39221ABF-15E3-43D9-B642-3B2748936503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspMVC_Monitor", "AspMVC_Monitor\AspMVC_Monitor.csproj", "{39221ABF-15E3-43D9-B642-3B2748936503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspMVC_Monitor.Model", "AspMVC_Monitor.Model\AspMVC_Monitor.Model.csproj", "{F4DCAE9C-253D-4DCB-9060-36BC42A7702D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpAgent", "TcpAgent\TcpAgent.csproj", "{AF620F34-ECF0-45AB-AE3E-79217BD697F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{39221ABF-15E3-43D9-B642-3B2748936503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39221ABF-15E3-43D9-B642-3B2748936503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39221ABF-15E3-43D9-B642-3B2748936503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4DCAE9C-253D-4DCB-9060-36BC42A7702D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4DCAE9C-253D-4DCB-9060-36BC42A7702D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4DCAE9C-253D-4DCB-9060-36BC42A7702D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4DCAE9C-253D-4DCB-9060-36BC42A7702D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF620F34-ECF0-45AB-AE3E-79217BD697F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF620F34-ECF0-45AB-AE3E-79217BD697F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF620F34-ECF0-45AB-AE3E-79217BD697F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF620F34-ECF0-45AB-AE3E-79217BD697F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
