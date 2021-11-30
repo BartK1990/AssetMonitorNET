@@ -68,7 +68,7 @@ namespace AspMVC_Monitor.Models
         {
             foreach (var a in AssetList)
             {
-                if(a.IpAddress == IPAddress.Loopback.ToString())
+                if (a.IpAddress == IPAddress.Loopback.ToString())
                 {
                     a.AssignPerformanceData(_assetPerformance.GetPerformanceData());
                 }
