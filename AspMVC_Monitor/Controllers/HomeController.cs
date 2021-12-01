@@ -46,12 +46,12 @@ namespace AspMVC_Monitor.Controllers
         public IActionResult GetAssetList()
         {
             var itemList = _assetHolder.AssetList.Select((a => new { 
-                name = a.Name, 
-                ipAddress = a.IpAddress,
-                pingState = a.PingState,
-                pingResponseTime = a.PingResponseTime,
-                cpuUsage = a.CpuUsage.ToString("#.##"), // 2 decimal places
-                memoryAvailable = a.MemoryAvailable
+                name = a.NameUI, 
+                ipAddress = a.IpAddressUI,
+                pingState = a.PingStateUI,
+                pingResponseTime = a.PingResponseTimeUI,
+                cpuUsage = a.CpuUsageUI,
+                memoryAvailable = a.MemoryAvailableUI
             })).ToList(); 
             return Json(itemList);
         }

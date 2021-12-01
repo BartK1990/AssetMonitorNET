@@ -11,6 +11,14 @@ namespace AspMVC_Monitor.Models
         public float CpuUsage { get; set; }
         public float MemoryAvailable { get; set; }
 
+        // Read only UI properties
+        public string NameUI { get { return Name; } }
+        public string IpAddressUI { get { return IpAddress; } }
+        public string PingStateUI { get { return PingState.ToString(); } }
+        public string PingResponseTimeUI { get { return PingResponseTime.ToString(); } }
+        public string CpuUsageUI { get { return CpuUsage.ToString("0.##"); } }
+        public string MemoryAvailableUI { get { return MemoryAvailable.ToString("0"); } }
+
         public void AssignPerformanceData(AssetPerformanceData apd)
         {
             this.CpuUsage = apd.CpuUsage;
