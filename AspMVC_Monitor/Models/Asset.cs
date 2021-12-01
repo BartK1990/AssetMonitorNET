@@ -16,8 +16,8 @@ namespace AspMVC_Monitor.Models
         public string IpAddressUI { get { return IpAddress; } }
         public string PingStateUI { get { return PingState.ToString(); } }
         public string PingResponseTimeUI { get { return PingResponseTime.ToString(); } }
-        public string CpuUsageUI { get { return CpuUsage.ToString("0.##"); } }
-        public string MemoryAvailableUI { get { return MemoryAvailable.ToString("0"); } }
+        public string CpuUsageUI { get { return CpuUsage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture); } }
+        public string MemoryAvailableUI { get { return MemoryAvailable.ToString("0", System.Globalization.CultureInfo.InvariantCulture); } }
 
         public void AssignPerformanceData(AssetPerformanceData apd)
         {
