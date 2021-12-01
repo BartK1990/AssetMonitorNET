@@ -57,7 +57,16 @@
                 </div>
             </td>
             <td id="@(a.NameUI)_PingResponseTime" class="align-middle">@(a.PingResponseTimeUI)ms</td>
-            <td id="@(a.NameUI)_CpuUsage" class="align-middle">@(a.CpuUsageUI)%</td>
+            <td class="align-middle">
+                <div id="@(a.NameUI)_CpuUsage" class="valuebar">
+                    <div class="valuebar-value-wrapper">
+                        <div class="valuebar-value">@(a.CpuUsageUI)%</div>
+                    </div>
+                    <div class="valuebar-progress progress">
+                        <div class="progress-bar bg-site-green" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </td>
             <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">@a.MemoryAvailableUI</td>
         </tr>
             }

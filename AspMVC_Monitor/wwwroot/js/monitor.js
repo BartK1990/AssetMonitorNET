@@ -49,7 +49,11 @@ function GetAssetList() {
                         ps.appendChild(span);
                     }
                     document.getElementById(item.name + "_PingResponseTime").innerHTML = item.pingResponseTime + "ms";
-                    document.getElementById(item.name + "_CpuUsage").innerHTML = item.cpuUsage + "%";
+
+                    const cpu = document.getElementById(item.name + "_CpuUsage");
+                    cpu.getElementsByClassName('valuebar-value-wrapper')[0].getElementsByClassName('valuebar-value')[0].innerHTML = item.cpuUsage + "%";
+                    cpu.getElementsByClassName('progress')[0].getElementsByClassName('progress-bar')[0].style.width = item.cpuUsage + "%";
+
                     document.getElementById(item.name + "_MemoryAvailable").innerHTML = item.memoryAvailable;
                 });
             },
