@@ -14,7 +14,7 @@ namespace TcpAgent
 
         static void Main(string[] args)
         {
-            SetTimer(10000); // 10s
+            SetTimer(1000); // 1s
 
             IPEndPoint ep = new IPEndPoint(IPAddress.Any, TcpExchangeInit.TcpPort);
             TcpListener listener = new TcpListener(ep);

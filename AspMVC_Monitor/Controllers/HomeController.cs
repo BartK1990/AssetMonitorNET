@@ -51,7 +51,9 @@ namespace AspMVC_Monitor.Controllers
                 pingState = a.PingStateUI,
                 pingResponseTime = a.PingResponseTimeUI,
                 cpuUsage = a.CpuUsageUI,
-                memoryAvailable = a.MemoryAvailableUI
+                memoryAvailable = a.MemoryAvailableUI,
+                memoryTotal = a.MemoryTotalUI,
+                memoryUsage = a.MemoryUsageUI
             })).ToList(); 
             return Json(itemList);
         }

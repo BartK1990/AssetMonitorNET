@@ -67,7 +67,16 @@
                     </div>
                 </div>
             </td>
-            <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">@a.MemoryAvailableUI</td>
+            <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">
+                <div id="@(a.NameUI)_MemoryAvailable" class="valuebar">
+                    <div class="valuebar-value-wrapper">
+                        <div class="valuebar-value">@(a.MemoryAvailableUI)/@(a.MemoryTotalUI)</div>
+                    </div>
+                    <div class="valuebar-progress progress">
+                        <div class="progress-bar bg-site-green" style="width: @(a.MemoryUsageUI)%;"></div>
+                    </div>
+                </div>
+            </td>
         </tr>
             }
         </table>
