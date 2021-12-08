@@ -1,4 +1,5 @@
 ﻿using AspMVC_Monitor.Models;
+using AssetMonitorDataAccess.DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,11 +13,13 @@ namespace AspMVC_Monitor.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAssetHolder _assetHolder;
+        private readonly AssetMonitorContext _context;
 
-        public HomeController(ILogger<HomeController> logger, IAssetHolder assetHolder)
+        public HomeController(ILogger<HomeController> logger, IAssetHolder assetHolder, AssetMonitorContext context)
         {
             this._logger = logger;
             this._assetHolder = assetHolder;
+            this._context = context;
         }
 
         public IActionResult Index()
