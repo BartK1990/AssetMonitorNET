@@ -1,3 +1,4 @@
+using AspMVC_Monitor.Data.Repositories;
 using AspMVC_Monitor.Models;
 using AspMVC_Monitor.Services;
 using AssetMonitorDataAccess.DataAccess;
@@ -36,12 +37,14 @@ namespace AspMVC_Monitor
 
             services.AddSingleton<IAssetHolder, AssetHolder>();
 
+            services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
+
+            // Hangfire
             services.AddHangfire((serviceProvider, config) =>
             {
                 config.UseActivator(new ServiceProviderActivator(serviceProvider));
                 config.UseMemoryStorage();
             });
-
             services.AddHangfireServer();
         }
 

@@ -4,6 +4,7 @@ namespace AspMVC_Monitor.Models
 {
     public class Asset
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string IpAddress { get; set; }
         public bool PingState { get; set; }

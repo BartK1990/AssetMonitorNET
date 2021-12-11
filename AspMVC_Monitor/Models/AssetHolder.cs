@@ -1,5 +1,7 @@
 ﻿using AspMVC_Monitor.Model;
 using AspMVC_Monitor.Models.Helpers;
+using AssetMonitorDataAccess.DataAccess;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,19 +13,40 @@ namespace AspMVC_Monitor.Models
 {
     public class AssetHolder : IAssetHolder
     {
+        private readonly IServiceScopeFactory _scopeFactory;  
         private AssetPerformance _assetPerformance;
+
         public List<Asset> AssetList { get; set; }
 
-        public AssetHolder()
+        public AssetHolder(IServiceScopeFactory scopeFactory)
         {
+            this._scopeFactory = scopeFactory;
             AssetList = new List<Asset>();
-            AssetList.Add(new Asset()
-            {
-                Name = "Asset Monitor",
-                IpAddress = IPAddress.Loopback.ToString()
-            });
 
+            UpdateAssetsList();
             _assetPerformance = new AssetPerformance();
+        }
+
+        public void UpdateAssetsList()
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbCtx = scope.ServiceProvider.GetRequiredService<AssetMonitorContext>();
+                var assets = dbCtx.Assets.ToList();
+                foreach (var a in assets)
+                {
+                    if (AssetList.Select(a => a.Id).Contains(a.Id))
+                    {
+                        continue;
+                    }
+                    AssetList.Add(new Asset()
+                    {
+                        Id = a.Id,
+                        Name = a.Name,
+                        IpAddress = a.IpAddress
+                    });
+                }
+            }
         }
 
         public void AddAsset(string name, string ipAddress)
