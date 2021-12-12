@@ -2,8 +2,9 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 :root {
-    --blue: #007bff;
+    --blue-light2: #C9E3FF;
     --blue-light: #A6CCF4;
+    --blue: #007bff;
     --indigo: #6610f2;
     --purple: #6f42c1;
     --pink: #e83e8c;
@@ -51,6 +52,10 @@ a.navbar-brand {
 a {
     color: var(--blue-light);
 }
+
+    a:hover {
+        color: var(--blue-light2);
+    }
 
 input {
     border: 1px solid var(--input-border);
