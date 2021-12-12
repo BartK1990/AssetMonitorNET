@@ -60,15 +60,6 @@ namespace AspMVC_Monitor.Controllers
             return Json(itemList);
         }
 
-        [HttpPost]
-        public IActionResult AddElement()
-        {
-            _assetHolder.AddAsset(HttpContext.Request.Form["NameText"].ToString(),
-                HttpContext.Request.Form["IpAddressText"].ToString());
-
-            return View("Monitor", _assetHolder.AssetList);
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

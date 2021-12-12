@@ -40,7 +40,8 @@ function GetAssetList() {
                     ps.innerHTML = '';
                     const span = document.createElement('span');
                     span.classList.add('dot');
-                    if (item.pingState) {
+                    var pingState = String(item.pingState).toLowerCase() === "true" ? true : false;
+                    if (pingState) {
                         span.classList.add('dotBackgroundGreen');
                         ps.appendChild(span);
                     }
