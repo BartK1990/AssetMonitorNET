@@ -1,6 +1,6 @@
 ﻿using AssetMonitorDataAccess.DataAccess;
 using AssetMonitorDataAccess.Models;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,14 +16,22 @@ namespace AspMVC_Monitor.Data.Repositories
             _context = context;
         }
 
-        public IEnumerable<Asset> GetAllAssets()
+        public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
-            return _context.Assets.ToList();
+            var assetMonitorContext = _context.Assets.Include(a => a.AssetType);
+            return await assetMonitorContext.ToListAsync();
         }
 
-        public bool SaveAll()
+        public async Task<Asset> GetAssetByIdAsync(int? id)
         {
-            return _context.SaveChanges() > 0;
+            return await _context.Assets
+                .Include(a => a.AssetType)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

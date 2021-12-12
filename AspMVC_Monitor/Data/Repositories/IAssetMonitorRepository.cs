@@ -1,11 +1,13 @@
 ﻿using AssetMonitorDataAccess.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Data.Repositories
 {
     public interface IAssetMonitorRepository
     {
-        IEnumerable<Asset> GetAllAssets();
-        bool SaveAll();
+        Task<IEnumerable<Asset>> GetAllAssetsAsync();
+        Task<Asset> GetAssetByIdAsync(int? id);
+        Task<bool> SaveAllAsync();
     }
 }

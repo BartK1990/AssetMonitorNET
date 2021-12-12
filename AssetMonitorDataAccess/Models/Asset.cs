@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetMonitorDataAccess.Models
 {
@@ -10,12 +11,13 @@ namespace AssetMonitorDataAccess.Models
         [MaxLength(100)] 
         public string Name { get; set; }
 
+        // 255.255.255.255
+        [RegularExpression(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")]
         [Required]
-        [MaxLength(15)] // 255.255.255.255
+        [MaxLength(15)] 
         public string IpAddress { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Type { get; set; }
+        public int AssetTypeId { get; set; }
+        public AssetType AssetType { get; set; }
     }
 }

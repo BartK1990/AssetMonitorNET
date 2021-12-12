@@ -15,13 +15,19 @@ namespace AssetMonitorDataAccess.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<AssetType>()
+                .HasData(new AssetType()
+                {
+                    Id = 1,
+                    Type = "Windows"
+                });
             modelBuilder.Entity<Asset>()
                 .HasData(new Asset()
                 {
                     Id = 1,
                     Name = "AssetMonitorNET Server",
                     IpAddress = "127.0.0.1",
-                    Type = "Windows"
+                    AssetTypeId = 1
                 });
         }
     }

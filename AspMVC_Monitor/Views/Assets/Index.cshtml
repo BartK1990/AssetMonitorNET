@@ -1,0 +1,61 @@
+﻿@model IEnumerable<AssetMonitorDataAccess.Models.Asset>
+
+@{
+    ViewData["Title"] = "Assets";
+}
+
+<div class="top-content">
+    <div class="top-content-relative">
+        <div class="top-content-foreground">
+            <h4>@ViewData["Title"]</h4>
+            <br />
+            <br />
+        </div>
+        <div class="top-content-background">
+            <i class="fas fa-cog"></i>
+        </div>
+    </div>
+</div>
+
+<div class="main-content bg-site-dark rounded">
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
+        <thead>
+            <tr class="bg-nav-dark">
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IpAddress)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.AssetType)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IpAddress)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AssetType.Type)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

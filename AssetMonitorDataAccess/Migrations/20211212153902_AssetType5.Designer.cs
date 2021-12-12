@@ -3,14 +3,16 @@ using AssetMonitorDataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    partial class AssetMonitorContextModelSnapshot : ModelSnapshot
+    [Migration("20211212153902_AssetType5")]
+    partial class AssetType5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,15 +45,6 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasIndex("AssetTypeId");
 
                     b.ToTable("Assets");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AssetTypeId = 1,
-                            IpAddress = "127.0.0.1",
-                            Name = "AssetMonitorNET Server"
-                        });
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.AssetType", b =>
@@ -69,13 +62,6 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AssetType");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Type = "Windows"
-                        });
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.Asset", b =>

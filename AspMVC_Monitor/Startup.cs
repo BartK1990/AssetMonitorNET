@@ -80,6 +80,10 @@ namespace AspMVC_Monitor
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute(
+                    name: "assets",
+                    pattern: "{controller=Assets}/{action=Index}/{id?}",
+                    defaults: new { controller = "Assets", action = "Index" });
                 endpoints.MapHangfireDashboard();
             });
 

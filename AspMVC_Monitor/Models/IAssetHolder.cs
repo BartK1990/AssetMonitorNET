@@ -5,7 +5,7 @@ namespace AspMVC_Monitor.Models
 {
     public interface IAssetHolder
     {
-        List<Asset> AssetList { get; set; }
+        List<AssetMonitor> AssetList { get; set; }
 
         void AddAsset(string name, string ipAddress);
 
@@ -14,5 +14,8 @@ namespace AspMVC_Monitor.Models
 
         void UpdateAssetPerformance();
         Task UpdateAssetPerformanceAsync();
+
+        void UpdateAssetsList();
+        Task UpdateAssetsListAsync();
     }
 }

@@ -16,12 +16,12 @@ namespace AspMVC_Monitor.Models
         private readonly IServiceScopeFactory _scopeFactory;  
         private AssetPerformance _assetPerformance;
 
-        public List<Asset> AssetList { get; set; }
+        public List<AssetMonitor> AssetList { get; set; }
 
         public AssetHolder(IServiceScopeFactory scopeFactory)
         {
             this._scopeFactory = scopeFactory;
-            AssetList = new List<Asset>();
+            AssetList = new List<AssetMonitor>();
 
             UpdateAssetsList();
             _assetPerformance = new AssetPerformance();
@@ -39,7 +39,7 @@ namespace AspMVC_Monitor.Models
                     {
                         continue;
                     }
-                    AssetList.Add(new Asset()
+                    AssetList.Add(new AssetMonitor()
                     {
                         Id = a.Id,
                         Name = a.Name,
@@ -47,6 +47,10 @@ namespace AspMVC_Monitor.Models
                     });
                 }
             }
+        }
+        public async Task UpdateAssetsListAsync()
+        {
+            await Task.Run(() => UpdateAssetsList());
         }
 
         public void AddAsset(string name, string ipAddress)
@@ -64,7 +68,7 @@ namespace AspMVC_Monitor.Models
                 return;
 
             AssetList.Add(
-                new Asset()
+                new AssetMonitor()
                 {
                     Name = name,
                     IpAddress = ipAddress,
@@ -107,7 +111,10 @@ namespace AspMVC_Monitor.Models
                     try
                     {
                         AssetPerformanceData assetPData = JsonConvert.DeserializeObject<AssetPerformanceData>(System.Text.Encoding.Unicode.GetString(bytes));
-                        a.AssignPerformanceData(assetPData);
+                        if(assetPData != null)
+                        {
+                            a.AssignPerformanceData(assetPData);
+                        }
                     }
                     catch
                     {
