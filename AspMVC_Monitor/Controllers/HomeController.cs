@@ -1,6 +1,4 @@
-﻿using AspMVC_Monitor.Data.Repositories;
-using AspMVC_Monitor.Models;
-using AssetMonitorDataAccess.DataAccess;
+﻿using AspMVC_Monitor.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
