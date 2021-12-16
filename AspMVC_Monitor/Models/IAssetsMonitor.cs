@@ -3,11 +3,9 @@ using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Models
 {
-    public interface IAssetHolder
+    public interface IAssetsMonitor
     {
-        List<AssetMonitor> AssetList { get; set; }
-
-        void AddAsset(string name, string ipAddress);
+        List<AssetLiveData> AssetList { get; set; }
 
         void UpdateAssetPing();
         Task UpdateAssetPingAsync();

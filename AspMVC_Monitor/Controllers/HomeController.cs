@@ -11,12 +11,12 @@ namespace AspMVC_Monitor.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAssetHolder _assetHolder;
+        private readonly IAssetsMonitor _assetsMonitor;
 
-        public HomeController(ILogger<HomeController> logger, IAssetHolder assetHolder)
+        public HomeController(ILogger<HomeController> logger, IAssetsMonitor assetsMonitor)
         {
             this._logger = logger;
-            this._assetHolder = assetHolder;
+            this._assetsMonitor = assetsMonitor;
         }
 
         public IActionResult Index()
@@ -32,7 +32,7 @@ namespace AspMVC_Monitor.Controllers
         public IActionResult Monitor()
         {
             HttpContext.Session.SetString("Time", DateTime.Now.ToString());
-            return View(_assetHolder.AssetList);
+            return View(_assetsMonitor.AssetList);
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace AspMVC_Monitor.Controllers
         [HttpPost]
         public IActionResult GetAssetList()
         {
-            var itemList = _assetHolder.AssetList.Select((a => new { 
+            var itemList = _assetsMonitor.AssetList.Select((a => new { 
                 name = a.NameUI, 
                 ipAddress = a.IpAddressUI,
                 pingState = a.PingStateUI,

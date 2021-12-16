@@ -35,7 +35,7 @@ namespace AspMVC_Monitor
             services.AddControllersWithViews();
             services.AddSession();
 
-            services.AddSingleton<IAssetHolder, AssetHolder>();
+            services.AddSingleton<IAssetsMonitor, AssetsMonitor>();
 
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
 
@@ -96,11 +96,11 @@ namespace AspMVC_Monitor
             backgroundJobClient.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
 
             // Ping assets every 5 seconds (CRON notation)
-            recurringJobManager.AddOrUpdate<IAssetHolder>("Ping Assets",
+            recurringJobManager.AddOrUpdate<IAssetsMonitor>("Ping Assets",
                 ah => ah.UpdateAssetPingAsync(),
                 "*/5 * * * * *");
 
-            recurringJobManager.AddOrUpdate<IAssetHolder>("Get performance data",
+            recurringJobManager.AddOrUpdate<IAssetsMonitor>("Get performance data",
                 ah => ah.UpdateAssetPerformanceAsync(),
                 "*/10 * * * * *");
 

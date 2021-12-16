@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "AssetMonitorAgent": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:9560",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

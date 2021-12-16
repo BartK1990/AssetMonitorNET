@@ -1,7 +1,6 @@
-﻿using System.Linq;
+﻿using System;
 using System.Diagnostics;
 using System.Management;
-using System;
 
 namespace AspMVC_Monitor.Model
 {

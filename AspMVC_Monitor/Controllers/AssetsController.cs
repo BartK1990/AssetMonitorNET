@@ -15,13 +15,13 @@ namespace AspMVC_Monitor.Controllers
     {
         private readonly AssetMonitorContext _context;
         private readonly IAssetMonitorRepository _repository;
-        private readonly IAssetHolder _assetHolder;
+        private readonly IAssetsMonitor _assetsMonitor;
 
-        public AssetsController(ILogger<HomeController> logger, IAssetHolder assetHolder, AssetMonitorContext context, IAssetMonitorRepository repository)
+        public AssetsController(ILogger<HomeController> logger, IAssetsMonitor assetsMonitor, AssetMonitorContext context, IAssetMonitorRepository repository)
         {
             _context = context;
             this._repository = repository;
-            this._assetHolder = assetHolder;
+            this._assetsMonitor = assetsMonitor;
         }
 
         // GET: Assets
@@ -65,7 +65,7 @@ namespace AspMVC_Monitor.Controllers
             {
                 _context.Add(asset);
                 await _context.SaveChangesAsync();
-                await _assetHolder.UpdateAssetsListAsync();
+                await _assetsMonitor.UpdateAssetsListAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["AssetTypeId"] = new SelectList(_context.Set<AssetType>(), "Id", "Type", asset.AssetTypeId);
@@ -107,7 +107,7 @@ namespace AspMVC_Monitor.Controllers
                 {
                     _context.Update(asset);
                     await _context.SaveChangesAsync();
-                    await _assetHolder.UpdateAssetsListAsync();
+                    await _assetsMonitor.UpdateAssetsListAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -153,7 +153,7 @@ namespace AspMVC_Monitor.Controllers
             var asset = await _context.Assets.FindAsync(id);
             _context.Assets.Remove(asset);
             await _context.SaveChangesAsync();
-            await _assetHolder.UpdateAssetsListAsync();
+            await _assetsMonitor.UpdateAssetsListAsync();
             return RedirectToAction(nameof(Index));
         }
 

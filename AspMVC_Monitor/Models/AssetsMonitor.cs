@@ -11,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Models
 {
-    public class AssetHolder : IAssetHolder
+    public class AssetsMonitor : IAssetsMonitor
     {
         private readonly IServiceScopeFactory _scopeFactory;  
         private AssetPerformance _assetPerformance;
 
-        public List<AssetMonitor> AssetList { get; set; }
+        public List<AssetLiveData> AssetList { get; set; }
 
-        public AssetHolder(IServiceScopeFactory scopeFactory)
+        public AssetsMonitor(IServiceScopeFactory scopeFactory)
         {
             this._scopeFactory = scopeFactory;
-            AssetList = new List<AssetMonitor>();
+            AssetList = new List<AssetLiveData>();
 
             UpdateAssetsList();
             _assetPerformance = new AssetPerformance();
@@ -39,7 +39,7 @@ namespace AspMVC_Monitor.Models
                     {
                         continue;
                     }
-                    AssetList.Add(new AssetMonitor()
+                    AssetList.Add(new AssetLiveData()
                     {
                         Id = a.Id,
                         Name = a.Name,
@@ -51,28 +51,6 @@ namespace AspMVC_Monitor.Models
         public async Task UpdateAssetsListAsync()
         {
             await Task.Run(() => UpdateAssetsList());
-        }
-
-        public void AddAsset(string name, string ipAddress)
-        {
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(ipAddress))
-                return;
-
-            if (!IPAddress.TryParse(ipAddress, out _))
-                return;
-
-            if (AssetList.Select(n => n.Name).ToList().Contains(name))
-                return;
-
-            if (AssetList.Select(n => n.IpAddress).ToList().Contains(ipAddress))
-                return;
-
-            AssetList.Add(
-                new AssetMonitor()
-                {
-                    Name = name,
-                    IpAddress = ipAddress,
-                });
         }
 
         public void UpdateAssetPing()
