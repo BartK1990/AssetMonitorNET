@@ -1,28 +1,44 @@
-﻿using AssetMonitorService.Monitor.HostedServices;
+﻿using AssetMonitorDataAccess.DataAccess;
+using AssetMonitorService.Data.Repositories;
+using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProtoBuf.Grpc.Server;
-using System.Net;
 
 namespace AssetMonitorService
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // EF Core
+            services.AddDbContext<AssetMonitorContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
+            });
+            services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
+
             //services.AddCodeFirstGrpc();
 
-            services.AddHostedService<AssetsTimedPollService>();
+            services.AddHostedService<AssetsTimedPerformanceDataService>();
 
-            //services.AddScoped<IAssetGetDataService, AssetGetDataService>();
-            services.AddScoped<IAssetGetDataService>(a =>
-                new AssetGetDataService(ipAddress: IPAddress.Parse("127.0.0.1"), 9560));
+            services.AddScoped<IAssetGetPerformanceDataService, AssetGetPerformanceDataService>();
+            //services.AddScoped<IAssetGetDataService>(a =>
+            //    new AssetGetDataService(ipAddress: IPAddress.Parse("127.0.0.1"), 9560));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

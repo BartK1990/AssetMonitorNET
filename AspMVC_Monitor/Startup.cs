@@ -31,13 +31,12 @@ namespace AspMVC_Monitor
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
             });
+            services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
 
             services.AddControllersWithViews();
             services.AddSession();
 
             services.AddSingleton<IAssetsMonitor, AssetsMonitor>();
-
-            services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
 
             // Hangfire
             services.AddHangfire((serviceProvider, config) =>

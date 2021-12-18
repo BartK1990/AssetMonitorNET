@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProtoBuf.Grpc.Server;
 using AssetMonitorAgent.SingletonServices;
+using System;
+using Microsoft.Extensions.Logging;
 
 namespace AssetMonitorAgent
 {
@@ -19,7 +21,12 @@ namespace AssetMonitorAgent
         {
             services.AddCodeFirstGrpc();
 
-            services.AddHostedService<AssetTimedService>();
+            services.AddHostedService(a => new AssetTimedService(
+                logger: a.GetService<ILogger<AssetTimedService>>(),
+                scopeFactory: a.GetService<IServiceScopeFactory>(),
+                assetDataSharedService: a.GetService<IAssetDataSharedService>(),
+                scanTime: TimeSpan.FromSeconds(10)));
+
             services.AddSingleton<IAssetDataSharedService, AssetDataSharedService>();
 
             services.AddScoped<IAssetPerformanceService, AssetPerformanceService>();

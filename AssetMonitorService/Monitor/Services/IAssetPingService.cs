@@ -2,8 +2,8 @@
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public interface IAssetGetDataService
+    public interface IAssetPingService
     {
-        Task<string> GetAssetsDataAsync();
+        Task PingHost(string hostname);
     }
 }

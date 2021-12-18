@@ -15,12 +15,24 @@ namespace AssetMonitorAgent.BackgroundServices
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetDataSharedService _assetDataSharedService;
         private Timer _timer;
+        public readonly TimeSpan ScanTime;
 
-        public AssetTimedService(ILogger<AssetTimedService> logger, IServiceScopeFactory scopeFactory, IAssetDataSharedService assetDataSharedService)
+        public AssetTimedService(ILogger<AssetTimedService> logger, IServiceScopeFactory scopeFactory, IAssetDataSharedService assetDataSharedService,
+            TimeSpan? scanTime = null)
         {
+            if (scanTime != null)
+            {
+                this.ScanTime = (TimeSpan)scanTime;
+            }
+            else
+            { // Default value
+                this.ScanTime = TimeSpan.FromSeconds(10);
+            }
+
             this._logger = logger;
             this._scopeFactory = scopeFactory;
             this._assetDataSharedService = assetDataSharedService;
+
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -31,7 +43,7 @@ namespace AssetMonitorAgent.BackgroundServices
                 GetAssetsData,
                 null,
                 TimeSpan.Zero,
-                TimeSpan.FromSeconds(10)
+                ScanTime
             );
 
             return Task.CompletedTask;
