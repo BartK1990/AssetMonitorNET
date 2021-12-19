@@ -12,17 +12,16 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public class AssetsTimedPerformanceDataService : IHostedService, IDisposable
+    public class AssetsTimedPingService : IHostedService, IDisposable
     {
-        private readonly ILogger<AssetsTimedPerformanceDataService> _logger;
+        private readonly ILogger<AssetsTimedPingService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private Timer _timer;
         public readonly TimeSpan ScanTime;
         private List<Task> _taskList = new List<Task>();
         private readonly object taskLock = new object();
-        public const int AgentTcpPort = 9560;
 
-        public AssetsTimedPerformanceDataService(ILogger<AssetsTimedPerformanceDataService> logger, IServiceScopeFactory scopeFactory,
+        public AssetsTimedPingService(ILogger<AssetsTimedPingService> logger, IServiceScopeFactory scopeFactory,
             TimeSpan? scanTime = null)
         {
             if (scanTime != null)
@@ -63,10 +62,10 @@ namespace AssetMonitorService.Monitor.HostedServices
         private void GetAssetsData(object state)
         {
             using var scope = _scopeFactory.CreateScope();
-            var assetService = scope.ServiceProvider.GetRequiredService<IAssetGetPerformanceDataService>();
+            var assetService = scope.ServiceProvider.GetRequiredService<IAssetPingService>();
             var assetRepository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
 
-            var assets = assetRepository.GetWindowsAssetsAsync().Result.ToList();
+            var assets = assetRepository.GetAllAssetsAsync().Result.ToList();
 
             if (_taskList == null)
                 return;
@@ -78,8 +77,8 @@ namespace AssetMonitorService.Monitor.HostedServices
                     _taskList = new List<Task>();
                     foreach (var a in assets)
                     {
-                        _taskList.Add(assetService.GetAssetsDataAsync(a.IpAddress, AgentTcpPort));
-                        _logger.LogInformation($"Service {this.GetType().Name} request to: {a.IpAddress}:{AgentTcpPort}");
+                        _taskList.Add(assetService.PingHostAsync(a.IpAddress));
+                        _logger.LogInformation($"Service {this.GetType().Name} ping to: {a.IpAddress}");
                     }
                 }
                 else
@@ -91,8 +90,8 @@ namespace AssetMonitorService.Monitor.HostedServices
                             && (_taskList[i].Status != TaskStatus.WaitingForActivation)
                             )
                         {
-                            _taskList[i] = assetService.GetAssetsDataAsync(assets[i].IpAddress, AgentTcpPort);
-                            _logger.LogInformation($"Service {this.GetType().Name} request to: {assets[i].IpAddress}:{AgentTcpPort}");
+                            _taskList[i] = assetService.PingHostAsync(assets[i].IpAddress);
+                            _logger.LogInformation($"Service {this.GetType().Name} ping to: {assets[i].IpAddress}");
                         }
                     }
                 }

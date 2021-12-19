@@ -1,5 +1,4 @@
-﻿using AspMVC_Monitor.Model;
-using AspMVC_Monitor.Models.Helpers;
+﻿using AspMVC_Monitor.Models.Helpers;
 using AssetMonitorDataAccess.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;

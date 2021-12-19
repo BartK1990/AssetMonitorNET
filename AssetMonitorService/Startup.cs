@@ -2,6 +2,7 @@
 using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,13 +33,21 @@ namespace AssetMonitorService
             });
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
 
+            // gRPC
             //services.AddCodeFirstGrpc();
 
+            // Hosted services
+            services.AddHostedService<AssetsTimedPingService>();
             services.AddHostedService<AssetsTimedPerformanceDataService>();
 
+            // Shared (Singleton) services
+            services.AddSingleton<IAssetsPingSharedService, AssetsPingSharedService>();
+            services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
+
+            // Scoped services
+            services.AddScoped<IAssetPingService, AssetPingService>();
             services.AddScoped<IAssetGetPerformanceDataService, AssetGetPerformanceDataService>();
-            //services.AddScoped<IAssetGetDataService>(a =>
-            //    new AssetGetDataService(ipAddress: IPAddress.Parse("127.0.0.1"), 9560));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

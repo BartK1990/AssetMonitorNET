@@ -27,8 +27,7 @@ namespace AssetMonitorService.Monitor.Services
             }
             catch (Exception ex)
             {
-                //_logger.LogWarning($"Cannot retrieve data from Agent: {hostname}:{tcpPort}. Exception: {ex.Message}");
-                _logger.LogWarning($"Cannot retrieve data from Agent: {hostname}:{tcpPort}");
+                _logger.LogWarning($"Cannot retrieve data from Agent: {hostname}:{tcpPort}. Exception: {ex.Message}");
             }
         }
 

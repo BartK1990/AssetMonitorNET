@@ -1,7 +1,9 @@
 ﻿using AssetMonitorDataAccess.DataAccess;
 using AssetMonitorDataAccess.Models;
+using AssetMonitorDataAccess.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Data.Repositories
@@ -18,6 +20,13 @@ namespace AssetMonitorService.Data.Repositories
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
             var assetMonitorContext = _context.Assets.Include(a => a.AssetType);
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Asset>> GetWindowsAssetsAsync()
+        {
+            var assetMonitorContext = _context.Assets.Include(a => a.AssetType)
+                .Where(at => at.AssetType.Type == AssetTypeEnum.Windows.ToString());
             return await assetMonitorContext.ToListAsync();
         }
 

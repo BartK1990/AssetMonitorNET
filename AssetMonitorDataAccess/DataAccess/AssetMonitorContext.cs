@@ -1,5 +1,7 @@
 ﻿using AssetMonitorDataAccess.Models;
+using AssetMonitorDataAccess.Models.Enums;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace AssetMonitorDataAccess.DataAccess
 {
@@ -10,17 +12,28 @@ namespace AssetMonitorDataAccess.DataAccess
         }
 
         public DbSet<Asset> Assets { get; set; }
+        // ToDo: Add migration!
+        //public DbSet<AssetType> AssetTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<AssetType>()
-                .HasData(new AssetType()
+            var at = Enum.GetNames(typeof(AssetTypeEnum));
+            for (int i = 0; i < at.Length; i++)
+            {
+                modelBuilder.Entity<AssetType>().HasData(new AssetType()
                 {
-                    Id = 1,
-                    Type = "Windows"
+                    Id = i + 1,
+                    Type = at[i]
                 });
+            }
+            //modelBuilder.Entity<AssetType>()
+            //    .HasData(new AssetType()
+            //    {
+            //        Id = 1,
+            //        Type = "Windows"
+            //    });
             modelBuilder.Entity<Asset>()
                 .HasData(new Asset()
                 {

@@ -6,7 +6,7 @@ namespace AssetMonitorService.Monitor.Services
     public class AssetPingService : IAssetPingService
     {
 
-        public async Task PingHost(string hostname)
+        public async Task PingHostAsync(string hostname)
         {
             bool pingable = false;
             Ping pinger = null;
@@ -31,5 +31,6 @@ namespace AssetMonitorService.Monitor.Services
                 }
             }
         }
+
     }
 }
