@@ -1,120 +1,31 @@
-﻿using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorDataAccess.Models;
+using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public class AssetsTimedPingService : IHostedService, IDisposable
+    public class AssetsTimedPingService : AssetsTimedServiceBase<AssetsTimedPingService, IAssetPingService>
     {
-        private readonly ILogger<AssetsTimedPingService> _logger;
-        private readonly IServiceScopeFactory _scopeFactory;
-        private Timer _timer;
-        public readonly TimeSpan ScanTime;
-        private List<Task> _taskList = new List<Task>();
-        private readonly object taskLock = new object();
-
-        public AssetsTimedPingService(ILogger<AssetsTimedPingService> logger, IServiceScopeFactory scopeFactory,
-            TimeSpan? scanTime = null)
+        public AssetsTimedPingService(ILogger<AssetsTimedPingService> logger,
+                IServiceScopeFactory scopeFactory,
+                TimeSpan? scanTime = null) : base(logger, scopeFactory, scanTime)
         {
-            if (scanTime != null)
-            {
-                this.ScanTime = (TimeSpan)scanTime;
-            }
-            else
-            { // Default value
-                this.ScanTime = TimeSpan.FromSeconds(10);
-            }
-            this._logger = logger;
-            this._scopeFactory = scopeFactory;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<Asset>> GetAssets(IAssetMonitorRepository repository)
         {
-            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running.");
-
-            _timer = new Timer(
-                GetAssetsData,
-                null,
-                TimeSpan.Zero,
-                ScanTime
-            );
-
-            return Task.CompletedTask;
+            return await repository.GetAllAssetsAsync();
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        protected override async Task GetTask(IAssetPingService iAssetService, Asset asset)
         {
-            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is stopping.");
-
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        private void GetAssetsData(object state)
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var assetService = scope.ServiceProvider.GetRequiredService<IAssetPingService>();
-            var assetRepository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
-
-            var assets = assetRepository.GetAllAssetsAsync().Result.ToList();
-
-            if (_taskList == null)
-                return;
-
-            lock (taskLock)
-            {
-                if (_taskList.Count != assets.Count)
-                {
-                    _taskList = new List<Task>();
-                    foreach (var a in assets)
-                    {
-                        _taskList.Add(assetService.PingHostAsync(a.IpAddress));
-                        _logger.LogInformation($"Service {this.GetType().Name} ping to: {a.IpAddress}");
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < assets.Count; i++)
-                    {
-                        if ((_taskList[i].Status != TaskStatus.Running)
-                            && (_taskList[i].Status != TaskStatus.WaitingToRun)
-                            && (_taskList[i].Status != TaskStatus.WaitingForActivation)
-                            )
-                        {
-                            _taskList[i] = assetService.PingHostAsync(assets[i].IpAddress);
-                            _logger.LogInformation($"Service {this.GetType().Name} ping to: {assets[i].IpAddress}");
-                        }
-                    }
-                }
-            }
-            try
-            {
-                Task.WaitAll(_taskList.ToArray());
-            }
-            catch (AggregateException e)
-            {
-                var sb = new StringBuilder();
-                sb.Append("The following exceptions have been thrown by WaitAll(): ");
-                foreach (var ae in e.InnerExceptions)
-                {
-                    sb.Append($"|{ae.Message}");
-                }
-                _logger.LogWarning(sb.ToString());
-            }
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
+            _logger.LogInformation($"Service {this.GetType().Name} ping to: {asset.IpAddress}");
+            await iAssetService.PingHostAsync(asset.IpAddress);
         }
     }
 }

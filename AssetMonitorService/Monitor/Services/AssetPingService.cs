@@ -1,10 +1,17 @@
-﻿using System.Net.NetworkInformation;
+﻿using AssetMonitorService.Monitor.Model;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
     public class AssetPingService : IAssetPingService
     {
+
+        public async Task UpdateAsset(AssetPing assetPing, string hostname)
+        {
+
+            await PingHostAsync(hostname);
+        }
 
         public async Task PingHostAsync(string hostname)
         {
