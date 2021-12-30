@@ -16,7 +16,12 @@ namespace AssetMonitorService.Monitor.SingletonServices
         {
             AssetsData = new List<AssetPerformanceData>();
             var assets = repository.GetWindowsAssetsAsync().Result.ToList();
-            AssetsData.AddRange(assets.Select(a => new AssetPerformanceData()));
+            AssetsData.AddRange(assets.Select(a => new AssetPerformanceData() 
+            { 
+                IpAddress = a.IpAddress,
+                // ToDo add this do DB as parameter
+                TcpPort = 9560
+            }));
         }
     }
 }

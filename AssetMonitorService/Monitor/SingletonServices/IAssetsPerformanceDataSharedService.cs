@@ -2,7 +2,7 @@
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    interface IAssetsPerformanceDataSharedService : IAssetsSharedServiceBase<AssetPerformanceData>
+    public interface IAssetsPerformanceDataSharedService : IAssetsSharedServiceBase<AssetPerformanceData>
     {
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public abstract class AssetsTimedServiceBase<TTimed, TIAssetService> : IHostedService, IDisposable
+    public abstract class AssetsTimedServiceBase<TTimed, TIAsset, TAssetShared> : IHostedService, IDisposable
     {
         public readonly TimeSpan ScanTime;
         protected readonly ILogger<TTimed> _logger;
@@ -73,10 +73,10 @@ namespace AssetMonitorService.Monitor.HostedServices
                 if (lockTaken)
                 {
                     using var scope = _scopeFactory.CreateScope();
-                    var assetService = scope.ServiceProvider.GetRequiredService<TIAssetService>();
+                    var assetService = scope.ServiceProvider.GetRequiredService<TIAsset>();
                     var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
 
-                    var assets = GetAssets(repository).Result.ToList();
+                    var assets = GetAssets().ToList();
 
                     if (_taskList == null)
                         return;
@@ -118,7 +118,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             }
         }
 
-        protected abstract Task<IEnumerable<Asset>> GetAssets(IAssetMonitorRepository repository);
-        protected abstract Task GetTask(TIAssetService iAssetService, Asset asset);
+        protected abstract IEnumerable<TAssetShared> GetAssets();
+        protected abstract Task GetTask(TIAsset iAssetService, TAssetShared asset);
     }
 }
