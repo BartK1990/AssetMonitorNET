@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using AssetMonitorService.Monitor.Model;
+using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
     public interface IAssetGetPerformanceDataService
     {
-        Task GetAssetsDataAsync(string hostname, int tcpPort);
+        Task UpdateAsset(AssetPerformanceData assetPerformanceData);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AssetMonitorService.Monitor.Model;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
@@ -6,10 +8,17 @@ namespace AssetMonitorService.Monitor.Services
 {
     public class AssetPingService : IAssetPingService
     {
+        private readonly ILogger<AssetPingService> _logger;
+
+        public AssetPingService(ILogger<AssetPingService> logger)
+        {
+            this._logger = logger;
+        }
 
         public async Task UpdateAsset(AssetPing assetPing)
         {
             var pData = await PingHostAsync(assetPing.IpAddress);
+
             assetPing.PingState = pData.PingState;
             assetPing.PingResponseTime = pData.RoundtripTime;
         }
@@ -26,9 +35,10 @@ namespace AssetMonitorService.Monitor.Services
                 pingData.PingState = reply.Status == IPStatus.Success;
                 pingData.RoundtripTime = reply.RoundtripTime;
             }
-            catch (PingException)
+            catch (Exception ex)
             {
-                // Discard Ping Exceptions and return false;
+                _logger.LogWarning($"Cannot retrieve data from Agent: {hostname}");
+                _logger.LogDebug($"Exception: {ex.Message}");
             }
             finally
             {
@@ -45,5 +55,6 @@ namespace AssetMonitorService.Monitor.Services
             public bool PingState;
             public long RoundtripTime;
         }
+
     }
 }
