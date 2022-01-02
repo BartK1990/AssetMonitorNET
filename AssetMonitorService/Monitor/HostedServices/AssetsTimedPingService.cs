@@ -32,7 +32,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         protected override async Task GetTask(IAssetPingService iAssetService, AssetPing asset)
         {
             _logger.LogInformation($"Service {this.GetType().Name} ping to: {asset.IpAddress}");
-            await iAssetService.PingHostAsync(asset.IpAddress);
+            await iAssetService.UpdateAsset(asset);
         }
     }
 }

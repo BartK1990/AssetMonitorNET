@@ -7,24 +7,24 @@ namespace AssetMonitorService.Monitor.Services
     public class AssetPingService : IAssetPingService
     {
 
-        public async Task UpdateAsset(AssetPing assetPing, string hostname)
+        public async Task UpdateAsset(AssetPing assetPing)
         {
-
-            await PingHostAsync(hostname);
+            var pData = await PingHostAsync(assetPing.IpAddress);
+            assetPing.PingState = pData.PingState;
+            assetPing.PingResponseTime = pData.RoundtripTime;
         }
 
-        public async Task PingHostAsync(string hostname)
+        private async Task<PingHostReturnData> PingHostAsync(string hostname)
         {
-            bool pingable = false;
+            var pingData = new PingHostReturnData();
             Ping pinger = null;
-            var pingTime = 0L;
 
             try
             {
                 pinger = new Ping();
                 PingReply reply = await pinger.SendPingAsync(hostname);
-                pingable = reply.Status == IPStatus.Success;
-                pingTime = reply.RoundtripTime;
+                pingData.PingState = reply.Status == IPStatus.Success;
+                pingData.RoundtripTime = reply.RoundtripTime;
             }
             catch (PingException)
             {
@@ -37,7 +37,13 @@ namespace AssetMonitorService.Monitor.Services
                     pinger.Dispose();
                 }
             }
+            return pingData;
         }
 
+        private struct PingHostReturnData
+        {
+            public bool PingState;
+            public long RoundtripTime;
+        }
     }
 }
