@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
 using System.Threading.Tasks;
 
-namespace AssetMonitorAgent.CommServices
+namespace AssetMonitorAgent.CommunicationServices
 {
     public class AssetDataService : IAssetDataService
     {

@@ -1,15 +1,15 @@
-﻿using AssetMonitorAgent.CommServices;
-using AssetMonitorAgent.BackgroundServices;
+﻿using AssetMonitorAgent.BackgroundServices;
+using AssetMonitorAgent.CommunicationServices;
 using AssetMonitorAgent.Services;
+using AssetMonitorAgent.SingletonServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProtoBuf.Grpc.Server;
-using AssetMonitorAgent.SingletonServices;
-using System;
 using Microsoft.Extensions.Logging;
+using ProtoBuf.Grpc.Server;
+using System;
 
 namespace AssetMonitorAgent
 {
