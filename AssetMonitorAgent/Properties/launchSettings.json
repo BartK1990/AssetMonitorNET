@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "AssetMonitorAgent": {
+    "Development": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "https://localhost:9560",

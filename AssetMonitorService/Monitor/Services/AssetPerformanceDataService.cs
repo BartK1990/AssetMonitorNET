@@ -39,7 +39,7 @@ namespace AssetMonitorService.Monitor.Services
             AssetDataReply reply = new AssetDataReply();
             try
             {
-                var client = GrpcHelper<IAssetDataService>.CreateClient(hostname, tcpPort);
+                var client = GrpcHelper<IAssetDataService>.CreateUnsecureClient(hostname, tcpPort);
                 reply = await client.GetAssetDataAsync(
                     new AssetDataRequest { Init = 1 });
             }

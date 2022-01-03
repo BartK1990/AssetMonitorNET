@@ -59,7 +59,7 @@ namespace AspMVC_Monitor.Models
         {
             try
             {
-                var client = GrpcHelper<IAssetMonitorDataService>.CreateClient(IPAddress.Loopback.ToString(), TcpPort);
+                var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
                 var reply = client.GetAssetsPingData(
                     new AssetsPingDataRequest { Init = 1 }).Result;
 
@@ -85,7 +85,7 @@ namespace AspMVC_Monitor.Models
         {
             try
             {
-                var client = GrpcHelper<IAssetMonitorDataService>.CreateClient(IPAddress.Loopback.ToString(), TcpPort);
+                var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
                 var reply = client.GetAssetsPerformanceData(
                     new AssetsPerformanceDataRequest { Init = 1 }).Result;
 
