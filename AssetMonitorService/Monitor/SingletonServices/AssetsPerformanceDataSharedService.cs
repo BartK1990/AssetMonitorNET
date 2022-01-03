@@ -18,6 +18,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = repository.GetWindowsAssetsAsync().Result.ToList();
             AssetsData.AddRange(assets.Select(a => new AssetPerformanceData() 
             { 
+                Id = a.Id,
                 IpAddress = a.IpAddress,
                 // ToDo add this do DB as parameter
                 TcpPort = 9560

@@ -5,7 +5,7 @@ namespace AspMVC_Monitor.Models
 {
     public interface IAssetsMonitor
     {
-        List<AssetLiveData> AssetList { get; set; }
+        List<AssetLiveData> AssetsList { get; set; }
 
         void UpdateAssetPing();
         Task UpdateAssetPingAsync();

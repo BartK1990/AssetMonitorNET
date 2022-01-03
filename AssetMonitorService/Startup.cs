@@ -1,5 +1,6 @@
 ﻿using AssetMonitorDataAccess.DataAccess;
 using AssetMonitorService.Data.Repositories;
+using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProtoBuf.Grpc.Server;
 
 namespace AssetMonitorService
 {
@@ -34,7 +36,7 @@ namespace AssetMonitorService
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
 
             // gRPC
-            //services.AddCodeFirstGrpc();
+            services.AddCodeFirstGrpc();
 
             // Hosted services
             services.AddHostedService<AssetsTimedPingService>();
@@ -46,7 +48,7 @@ namespace AssetMonitorService
 
             // Scoped services
             services.AddScoped<IAssetPingService, AssetPingService>();
-            services.AddScoped<IAssetGetPerformanceDataService, AssetGetPerformanceDataService>();
+            services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
 
         }
 
@@ -62,7 +64,7 @@ namespace AssetMonitorService
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<AssetMonitorDataService>();
 
                 endpoints.MapGet("/", async context =>
                 {

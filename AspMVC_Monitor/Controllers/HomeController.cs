@@ -32,7 +32,7 @@ namespace AspMVC_Monitor.Controllers
         public IActionResult Monitor()
         {
             HttpContext.Session.SetString("Time", DateTime.Now.ToString());
-            return View(_assetsMonitor.AssetList);
+            return View(_assetsMonitor.AssetsList);
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace AspMVC_Monitor.Controllers
         [HttpPost]
         public IActionResult GetAssetList()
         {
-            var itemList = _assetsMonitor.AssetList.Select((a => new { 
+            var itemList = _assetsMonitor.AssetsList.Select((a => new { 
                 name = a.NameUI, 
                 ipAddress = a.IpAddressUI,
                 pingState = a.PingStateUI,

@@ -16,7 +16,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
         {
             AssetsData = new List<AssetPing>();
             var assets = repository.GetAllAssetsAsync().Result.ToList();
-            AssetsData.AddRange(assets.Select(a => new AssetPing() { IpAddress = a.IpAddress }));
+            AssetsData.AddRange(assets.Select(a => new AssetPing() { Id = a.Id, IpAddress = a.IpAddress }));
         }
     }
 }

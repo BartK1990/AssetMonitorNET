@@ -1,5 +1,4 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorService.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public interface IAssetGetPerformanceDataService
+    public interface IAssetPerformanceDataService
     {
         Task UpdateAsset(AssetPerformanceData assetPerformanceData);
     }

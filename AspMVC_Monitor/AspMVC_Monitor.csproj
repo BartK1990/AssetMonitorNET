@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" Version="2.41.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.27" />
     <PackageReference Include="Hangfire.Core" Version="1.7.27" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
@@ -17,10 +18,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AssetMonitorDataAccess\AssetMonitorDataAccess.csproj" />
+    <ProjectReference Include="..\AssetMonitorSharedGRPC\AssetMonitorSharedGRPC.csproj" />
   </ItemGroup>
 
 </Project>

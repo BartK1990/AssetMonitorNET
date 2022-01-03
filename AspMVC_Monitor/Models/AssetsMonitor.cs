@@ -1,7 +1,8 @@
-﻿using AspMVC_Monitor.Models.Helpers;
-using AssetMonitorDataAccess.DataAccess;
+﻿using AspMVC_Monitor.Data.Repositories;
+using AspMVC_Monitor.gRPC;
+using AssetMonitorSharedGRPC.Server;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,39 +13,41 @@ namespace AspMVC_Monitor.Models
 {
     public class AssetsMonitor : IAssetsMonitor
     {
-        private readonly IServiceScopeFactory _scopeFactory;  
-        private AssetPerformance _assetPerformance;
+        private readonly ILogger<AssetsMonitor> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public List<AssetLiveData> AssetList { get; set; }
+        public const int TcpPort = 9561; // ToDo make configurable in DB
 
-        public AssetsMonitor(IServiceScopeFactory scopeFactory)
+        public List<AssetLiveData> AssetsList { get; set; }
+
+        public AssetsMonitor(ILogger<AssetsMonitor> logger,
+            IServiceScopeFactory scopeFactory)
         {
+            this._logger = logger;
             this._scopeFactory = scopeFactory;
-            AssetList = new List<AssetLiveData>();
+
+            AssetsList = new List<AssetLiveData>();
 
             UpdateAssetsList();
-            _assetPerformance = new AssetPerformance();
         }
 
         public void UpdateAssetsList()
         {
-            using (var scope = _scopeFactory.CreateScope())
+            using var scope = _scopeFactory.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
+            var assets = repository.GetAllAssetsAsync().Result.ToList();
+            foreach (var a in assets)
             {
-                var dbCtx = scope.ServiceProvider.GetRequiredService<AssetMonitorContext>();
-                var assets = dbCtx.Assets.ToList();
-                foreach (var a in assets)
+                if (AssetsList.Select(a => a.Id).Contains(a.Id))
                 {
-                    if (AssetList.Select(a => a.Id).Contains(a.Id))
-                    {
-                        continue;
-                    }
-                    AssetList.Add(new AssetLiveData()
-                    {
-                        Id = a.Id,
-                        Name = a.Name,
-                        IpAddress = a.IpAddress
-                    });
+                    continue;
                 }
+                AssetsList.Add(new AssetLiveData()
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    IpAddress = a.IpAddress
+                });
             }
         }
         public async Task UpdateAssetsListAsync()
@@ -54,13 +57,23 @@ namespace AspMVC_Monitor.Models
 
         public void UpdateAssetPing()
         {
-            foreach (var a in AssetList)
+            try
             {
-                a.PingState = PingHelper.PingHostWithTimeLimit(
-                    a.IpAddress, 
-                    out var pingResponseTime, 
-                    TimeSpan.FromMilliseconds(4000));
-                a.PingResponseTime = pingResponseTime;
+                var client = GrpcHelper<IAssetMonitorDataService>.CreateClient(IPAddress.Loopback.ToString(), TcpPort);
+                var reply = client.GetAssetsPingData(
+                    new AssetsPingDataRequest { Init = 1 }).Result;
+
+                foreach (var asset in AssetsList)
+                {
+                    var assetPingData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
+                    asset.PingState = assetPingData.PingState;
+                    asset.PingResponseTime = assetPingData.PingResponseTime;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Cannot retrieve ping data from Asset Monitor service");
+                _logger.LogDebug($"Exception: {ex.Message}");
             }
         }
         public async Task UpdateAssetPingAsync()
@@ -70,33 +83,24 @@ namespace AspMVC_Monitor.Models
 
         public void UpdateAssetPerformance()
         {
-            foreach (var a in AssetList)
+            try
             {
-                if (a.IpAddress == IPAddress.Loopback.ToString())
+                var client = GrpcHelper<IAssetMonitorDataService>.CreateClient(IPAddress.Loopback.ToString(), TcpPort);
+                var reply = client.GetAssetsPerformanceData(
+                    new AssetsPerformanceDataRequest { Init = 1 }).Result;
+
+                foreach (var asset in AssetsList)
                 {
-                    a.AssignPerformanceData(_assetPerformance.GetPerformanceData());
+                    var assetPerformanceData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
+                    asset.CpuUsage = assetPerformanceData.CpuUsage;
+                    asset.MemoryAvailable = assetPerformanceData.MemoryAvailableMB;
+                    asset.MemoryTotal = assetPerformanceData.MemoryTotalMB;
                 }
-                else
-                {
-                    var tei = new TcpExchangeInit(true);
-                    byte[] bytes = TcpHelper.SendMessageWithTimeLimit(
-                        TcpExchangeInit.TcpMessagebByteSize,
-                        System.Text.Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(tei)),
-                        a.IpAddress,
-                        TcpExchangeInit.TcpPort,
-                        TimeSpan.FromMilliseconds(4000));
-                    try
-                    {
-                        AssetPerformanceData assetPData = JsonConvert.DeserializeObject<AssetPerformanceData>(System.Text.Encoding.Unicode.GetString(bytes));
-                        if(assetPData != null)
-                        {
-                            a.AssignPerformanceData(assetPData);
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Cannot retrieve performance data from Asset Monitor service");
+                _logger.LogDebug($"Exception: {ex.Message}");
             }
         }
         public async Task UpdateAssetPerformanceAsync()

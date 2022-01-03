@@ -1,6 +1,4 @@
-﻿using AspMVC_Monitor.Model;
-
-namespace AspMVC_Monitor.Models
+﻿namespace AspMVC_Monitor.Models
 {
     public class AssetLiveData
     {
@@ -30,12 +28,5 @@ namespace AspMVC_Monitor.Models
         public string MemoryAvailableUI { get { return MemoryAvailable.ToString("0", System.Globalization.CultureInfo.InvariantCulture); } }
         public string MemoryTotalUI { get { return MemoryTotal.ToString("0", System.Globalization.CultureInfo.InvariantCulture); } }
         public string MemoryUsageUI { get { return MemoryUsage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture); } }
-
-        public void AssignPerformanceData(AssetPerformanceData apd)
-        {
-            this.CpuUsage = apd.CpuUsage;
-            this.MemoryAvailable = apd.MemoryAvailableMB;
-            this.MemoryTotal = apd.MemoryTotalMB;
-        }
     }
 }

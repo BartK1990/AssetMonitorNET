@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public class AssetGetPerformanceDataService : IAssetGetPerformanceDataService
+    public class AssetPerformanceDataService : IAssetPerformanceDataService
     {
-        private readonly ILogger<AssetGetPerformanceDataService> _logger;
+        private readonly ILogger<AssetPerformanceDataService> _logger;
 
-        public AssetGetPerformanceDataService(ILogger<AssetGetPerformanceDataService> logger)
+        public AssetPerformanceDataService(ILogger<AssetPerformanceDataService> logger)
         {
             this._logger = logger;
         }
@@ -33,7 +33,6 @@ namespace AssetMonitorService.Monitor.Services
                 var client = GrpcHelper<IAssetDataService>.CreateClient(hostname, tcpPort);
                 reply = await client.GetAssetDataAsync(
                     new AssetDataRequest { Init = 1 });
-                _logger.LogInformation(reply.ToString());
             }
             catch (Exception ex)
             {

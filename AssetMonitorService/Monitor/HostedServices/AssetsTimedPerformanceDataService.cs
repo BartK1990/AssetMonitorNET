@@ -1,6 +1,4 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorService.Monitor.Model;
 using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,10 +13,9 @@ namespace AssetMonitorService.Monitor.HostedServices
     //_logger.LogInformation($"Service {this.GetType().Name} request to: {a.IpAddress}:{AgentTcpPort}");
     //var assets = assetRepository.GetWindowsAssetsAsync().Result.ToList();
     public class AssetsTimedPerformanceDataService : AssetsTimedServiceBase<AssetsTimedPerformanceDataService, 
-        IAssetGetPerformanceDataService,
+        IAssetPerformanceDataService,
         AssetPerformanceData>
     {
-        public const int AgentTcpPort = 9560;
         private IAssetsPerformanceDataSharedService _assetsPerformanceDataSharedService;
 
         public AssetsTimedPerformanceDataService(IAssetsPerformanceDataSharedService assetsPerformanceDataSharedService, 
@@ -34,10 +31,10 @@ namespace AssetMonitorService.Monitor.HostedServices
             return _assetsPerformanceDataSharedService.AssetsData;
         }
 
-        protected override async Task GetTask(IAssetGetPerformanceDataService iAssetService, AssetPerformanceData asset)
+        protected override async Task GetTask(IAssetPerformanceDataService iAssetService, AssetPerformanceData asset)
         {
-            _logger.LogInformation($"Service {this.GetType().Name} request to: {asset.IpAddress}:{AgentTcpPort}");
-            await iAssetService.GetAssetsDataAsync(asset.IpAddress, AgentTcpPort);
+            _logger.LogInformation($"Service {this.GetType().Name} request to: {asset.IpAddress}:{asset.TcpPort}");
+            await iAssetService.UpdateAsset(asset);
         }
     }
 }

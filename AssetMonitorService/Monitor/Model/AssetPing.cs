@@ -2,6 +2,8 @@
 {
     public class AssetPing
     {
+        public int Id { get; set; }
+
         public string IpAddress { get; set; }
 
         public bool PingState { get; set; }
