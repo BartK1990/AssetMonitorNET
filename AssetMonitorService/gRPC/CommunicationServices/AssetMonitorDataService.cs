@@ -30,6 +30,7 @@ namespace AssetMonitorService.gRPC.CommunicationServices
                 AssetsData = _assetsPerformanceDataShared.AssetsData
                 .Select(a => new AssetsPerformanceDataMessage()
                 {
+                    Id = a.Id,
                     IpAddress = a.IpAddress,
                     TcpPort = a.TcpPort,
                     CpuUsage = a.CpuUsage,
@@ -49,6 +50,7 @@ namespace AssetMonitorService.gRPC.CommunicationServices
                 AssetsData = _assetsPingDataShared.AssetsData
                 .Select(a => new AssetsPingDataMessage()
                 {
+                    Id = a.Id,
                     IpAddress = a.IpAddress,
                     PingState = a.PingState,
                     PingResponseTime = a.PingResponseTime

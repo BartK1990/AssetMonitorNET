@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AssetMonitorDataAccess\AssetMonitorDataAccess.csproj" />
     <ProjectReference Include="..\AssetMonitorSharedGRPC\AssetMonitorSharedGRPC.csproj" />
+    <ProjectReference Include="..\WindowsDataLib\WindowsDataLib.csproj" />
   </ItemGroup>
 
 </Project>

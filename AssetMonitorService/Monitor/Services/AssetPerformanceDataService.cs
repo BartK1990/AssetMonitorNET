@@ -3,7 +3,9 @@ using AssetMonitorService.Monitor.Model;
 using AssetMonitorSharedGRPC.Agent;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Threading.Tasks;
+using WindowsDataLib;
 
 namespace AssetMonitorService.Monitor.Services
 {
@@ -18,6 +20,13 @@ namespace AssetMonitorService.Monitor.Services
 
         public async Task UpdateAsset(AssetPerformanceData assetPerformanceData)
         {
+            if(assetPerformanceData.IpAddress == IPAddress.Loopback.ToString())
+            {
+                assetPerformanceData.CpuUsage = AssetPerformance.GetCurrentCpuUsage();
+                assetPerformanceData.MemoryAvailable = AssetPerformance.GetAvailableMemory();
+                assetPerformanceData.MemoryTotal = AssetPerformance.GetTotalMemory();
+                return;
+            }
             var reply = await GetAssetsDataAsync(assetPerformanceData.IpAddress, assetPerformanceData.TcpPort);
 
             assetPerformanceData.CpuUsage = reply.CpuUsage;
