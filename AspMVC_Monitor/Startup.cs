@@ -97,7 +97,7 @@ namespace AspMVC_Monitor
             // Ping assets every 5 seconds (CRON notation)
             recurringJobManager.AddOrUpdate<IAssetsMonitor>("Ping Assets",
                 ah => ah.UpdateAssetPingAsync(),
-                "*/5 * * * * *");
+                "*/10 * * * * *");
 
             recurringJobManager.AddOrUpdate<IAssetsMonitor>("Get performance data",
                 ah => ah.UpdateAssetPerformanceAsync(),

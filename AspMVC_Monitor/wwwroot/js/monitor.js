@@ -61,5 +61,5 @@ function GetAssetList() {
                 });
             },
         });
-    }, 5000); 
+    }, 10000); 
 }
