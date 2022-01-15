@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMonitorService", "Asse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMonitorSharedGRPC", "AssetMonitorSharedGRPC\AssetMonitorSharedGRPC.csproj", "{353BC47C-D827-4B9C-896B-E50ADFF66F09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetMonitorAgent", "AssetMonitorAgent\AssetMonitorAgent.csproj", "{78FD6208-6082-4725-B95A-BB322EAABF81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMonitorAgent", "AssetMonitorAgent\AssetMonitorAgent.csproj", "{78FD6208-6082-4725-B95A-BB322EAABF81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsDataLib", "WindowsDataLib\WindowsDataLib.csproj", "{D2B34577-C720-46C3-A774-23C6AC47131E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsDataLib", "WindowsDataLib\WindowsDataLib.csproj", "{D2B34577-C720-46C3-A774-23C6AC47131E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
