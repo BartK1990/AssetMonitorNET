@@ -10,6 +10,7 @@ namespace AssetMonitorService
     {
         public static void Main(string[] args)
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory); // For Windows service
             var dir = Directory.GetCurrentDirectory();
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
