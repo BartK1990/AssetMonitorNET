@@ -19,21 +19,50 @@ namespace AssetMonitorDataAccess.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
-            var at = Enum.GetNames(typeof(AssetTypeEnum));
-            for (int i = 0; i < at.Length; i++)
+            var ate = Enum.GetValues(typeof(AssetTypeEnum));
+            foreach (var item in ate)
             {
                 modelBuilder.Entity<AssetType>().HasData(new AssetType()
                 {
-                    Id = i + 1,
-                    Type = at[i]
+                    Id = (int)item,
+                    Type = Enum.GetName(typeof(AssetTypeEnum), item)
                 });
             }
-            //modelBuilder.Entity<AssetType>()
-            //    .HasData(new AssetType()
-            //    {
-            //        Id = 1,
-            //        Type = "Windows"
-            //    });
+
+            var ste = Enum.GetValues(typeof(SnmpOperationEnum));
+            foreach (var item in ste)
+            {
+                modelBuilder.Entity<SnmpOperation>().HasData(new SnmpOperation()
+                {
+                    Id = (int)item,
+                    Operation = Enum.GetName(typeof(SnmpOperationEnum), item)
+                });
+            }
+
+            var tvte = Enum.GetValues(typeof(TagDataTypeEnum));
+            foreach (var item in tvte)
+            {
+                modelBuilder.Entity<TagDataType>().HasData(new TagDataType()
+                {
+                    Id = (int)item,
+                    Type = Enum.GetName(typeof(TagDataTypeEnum), item)
+                });
+            }
+
+            var adte = Enum.GetValues(typeof(AgentDataTypeEnum));
+            foreach (var item in adte)
+            {
+                modelBuilder.Entity<AgentDataType>().HasData(new AgentDataType()
+                {
+                    Id = (int)item,
+                    DataType = Enum.GetName(typeof(AgentDataTypeEnum), item)
+                });
+            }
+
+            modelBuilder.Entity<AgentTag>(entity =>
+                entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", 
+                $"([{nameof(AgentTag.PerformanceCounter)}] IS NOT NULL) OR ([{nameof(AgentTag.WmiManagementObject)}] IS NOT NULL) OR ([{nameof(AgentTag.ServiceName)}] IS NOT NULL)"));
+
             modelBuilder.Entity<Asset>()
                 .HasData(new Asset()
                 {

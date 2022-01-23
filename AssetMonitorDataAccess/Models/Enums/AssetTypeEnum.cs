@@ -2,7 +2,7 @@
 {
     public enum AssetTypeEnum
     {
-        Windows = 0,
-        SNMP = 1
+        Windows = 1,
+        SNMP = 2
     }
 }
