@@ -80,7 +80,7 @@ namespace AspMVC_Monitor.Controllers
                 return NotFound();
             }
 
-            var asset = await _context.Assets.FindAsync(id);
+            var asset = await _context.Asset.FindAsync(id);
             if (asset == null)
             {
                 return NotFound();
@@ -134,7 +134,7 @@ namespace AspMVC_Monitor.Controllers
                 return NotFound();
             }
 
-            var asset = await _context.Assets
+            var asset = await _context.Asset
                 .Include(a => a.AssetType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (asset == null)
@@ -150,8 +150,8 @@ namespace AspMVC_Monitor.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var asset = await _context.Assets.FindAsync(id);
-            _context.Assets.Remove(asset);
+            var asset = await _context.Asset.FindAsync(id);
+            _context.Asset.Remove(asset);
             await _context.SaveChangesAsync();
             await _assetsMonitor.UpdateAssetsListAsync();
             return RedirectToAction(nameof(Index));
@@ -159,7 +159,7 @@ namespace AspMVC_Monitor.Controllers
 
         private bool AssetExists(int id)
         {
-            return _context.Assets.Any(e => e.Id == id);
+            return _context.Asset.Any(e => e.Id == id);
         }
     }
 }

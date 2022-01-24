@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20211212160259_FKeyAssetType.cs" />
-    <Compile Remove="Migrations\20211212160259_FKeyAssetType.Designer.cs" />
-    <Compile Remove="Migrations\20211212160528_test2.cs" />
-    <Compile Remove="Migrations\20211212160528_test2.Designer.cs" />
-    <Compile Remove="Migrations\20220123212836_MappingSetsTables.cs" />
-    <Compile Remove="Migrations\20220123212836_MappingSetsTables.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.21" />
   </ItemGroup>
 

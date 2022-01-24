@@ -11,9 +11,17 @@ namespace AssetMonitorDataAccess.DataAccess
         {
         }
 
-        public DbSet<Asset> Assets { get; set; }
-        // ToDo: Add migration!
-        //public DbSet<AssetType> AssetTypes { get; set; }
+        public DbSet<Asset> Asset { get; set; }
+        public DbSet<AssetType> AssetType { get; set; }
+        public DbSet<AgentDataType> AgentDataType { get; set; }
+        public DbSet<AgentTag> AgentTag { get; set; }
+        public DbSet<AgentTagSet> AgentTagSet { get; set; }
+        public DbSet<HttpNodeRedTag> HttpNodeRedTag { get; set; }
+        public DbSet<HttpNodeRedTagSet> HttpNodeRedTagSet { get; set; }
+        public DbSet<SnmpOperation> SnmpOperation { get; set; }
+        public DbSet<SnmpTag> SnmpTag { get; set; }
+        public DbSet<SnmpTagSet> SnmpTagSet { get; set; }
+        public DbSet<TagDataType> TagDataType { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,7 +69,7 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", 
-                $"([{nameof(AgentTag.PerformanceCounter)}] IS NOT NULL) OR ([{nameof(AgentTag.WmiManagementObject)}] IS NOT NULL) OR ([{nameof(AgentTag.ServiceName)}] IS NOT NULL)"));
+                $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
 
             modelBuilder.Entity<Asset>()
                 .HasData(new Asset()

@@ -19,20 +19,20 @@ namespace AssetMonitorService.Data.Repositories
 
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
-            var assetMonitorContext = _context.Assets.Include(a => a.AssetType);
+            var assetMonitorContext = _context.Asset.Include(a => a.AssetType);
             return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<IEnumerable<Asset>> GetWindowsAssetsAsync()
         {
-            var assetMonitorContext = _context.Assets.Include(a => a.AssetType)
+            var assetMonitorContext = _context.Asset.Include(a => a.AssetType)
                 .Where(at => at.AssetType.Type == AssetTypeEnum.Windows.ToString());
             return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<Asset> GetAssetByIdAsync(int? id)
         {
-            return await _context.Assets
+            return await _context.Asset
                 .Include(a => a.AssetType)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }

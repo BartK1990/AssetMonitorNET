@@ -155,7 +155,7 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasIndex("SnmpTagSetId");
 
-                    b.ToTable("Assets");
+                    b.ToTable("Asset");
 
                     b.HasData(
                         new
@@ -194,6 +194,37 @@ namespace AssetMonitorDataAccess.Migrations
                             Id = 2,
                             Type = "SNMP"
                         });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.HttpNodeRedTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("HttpNodeRedTagSetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HttpTag")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<string>("Tagname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
+
+                    b.Property<int>("ValueDataTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HttpNodeRedTagSetId");
+
+                    b.HasIndex("ValueDataTypeId");
+
+                    b.ToTable("HttpNodeRedTag");
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.HttpNodeRedTagSet", b =>
@@ -235,6 +266,43 @@ namespace AssetMonitorDataAccess.Migrations
                             Id = 1,
                             Operation = "Get"
                         });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("OID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("OperationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SnmpTagSetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tagname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
+
+                    b.Property<int>("ValueDataTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationId");
+
+                    b.HasIndex("SnmpTagSetId");
+
+                    b.HasIndex("ValueDataTypeId");
+
+                    b.ToTable("SnmpTag");
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpTagSet", b =>
@@ -338,6 +406,42 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpTagSet", "SnmpTagSet")
                         .WithMany()
                         .HasForeignKey("SnmpTagSetId");
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.HttpNodeRedTag", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.HttpNodeRedTagSet", "HttpNodeRedTagSet")
+                        .WithMany()
+                        .HasForeignKey("HttpNodeRedTagSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.TagDataType", "ValueDataType")
+                        .WithMany()
+                        .HasForeignKey("ValueDataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpTag", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.SnmpOperation", "Operation")
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.SnmpTagSet", "SnmpTagSet")
+                        .WithMany()
+                        .HasForeignKey("SnmpTagSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.TagDataType", "ValueDataType")
+                        .WithMany()
+                        .HasForeignKey("ValueDataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
