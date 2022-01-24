@@ -2,7 +2,7 @@
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class TagDataType
+    public class AssetPropertyDataType
     {
         public int Id { get; set; }
 

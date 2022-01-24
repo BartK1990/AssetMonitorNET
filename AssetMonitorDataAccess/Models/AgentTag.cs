@@ -11,6 +11,7 @@ namespace AssetMonitorDataAccess.Models
         public string Tagname { get; set; }
 
         [Required]
+        public int AgentDataTypeId { get; set; }
         public AgentDataType AgentDataType { get; set; }
 
         [MaxLength(200)]
@@ -23,9 +24,11 @@ namespace AssetMonitorDataAccess.Models
         public string ServiceName { get; set; }
 
         [Required]
+        public int ValueDataTypeId { get; set; }
         public TagDataType ValueDataType { get; set; }
 
         [Required]
+        public int AgentTagSetId { get; set; }
         public AgentTagSet AgentTagSet { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    [Migration("20220124081631_Initial")]
+    [Migration("20220124142358_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,9 +96,41 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasIndex("ValueDataTypeId");
 
+                    b.HasIndex("Id", "Tagname")
+                        .IsUnique();
+
                     b.ToTable("AgentTag");
 
-                    b.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", "([PerformanceCounter] IS NOT NULL) OR ([WmiManagementObject] IS NOT NULL) OR ([ServiceName] IS NOT NULL)");
+                    b.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", "[PerformanceCounter] IS NOT NULL OR [WmiManagementObject] IS NOT NULL OR [ServiceName] IS NOT NULL");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AgentDataTypeId = 1,
+                            AgentTagSetId = 1,
+                            PerformanceCounter = "Processor;% Processor Time;_Total",
+                            Tagname = "CpuUsage",
+                            ValueDataTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AgentDataTypeId = 1,
+                            AgentTagSetId = 1,
+                            PerformanceCounter = "Memory;Available MBytes",
+                            Tagname = "MemoryAvailable",
+                            ValueDataTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AgentDataTypeId = 2,
+                            AgentTagSetId = 1,
+                            Tagname = "MemoryTotal",
+                            ValueDataTypeId = 4,
+                            WmiManagementObject = "TotalPhysicalMemory"
+                        });
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.AgentTagSet", b =>
@@ -116,6 +148,13 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AgentTagSet");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Windows Default"
+                        });
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.Asset", b =>
@@ -163,6 +202,7 @@ namespace AssetMonitorDataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            AgentTagSetId = 1,
                             AssetTypeId = 1,
                             IpAddress = "127.0.0.1",
                             Name = "AssetMonitorNET Server"
@@ -225,6 +265,9 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasIndex("HttpNodeRedTagSetId");
 
                     b.HasIndex("ValueDataTypeId");
+
+                    b.HasIndex("Id", "Tagname")
+                        .IsUnique();
 
                     b.ToTable("HttpNodeRedTag");
                 });
@@ -304,6 +347,9 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasIndex("ValueDataTypeId");
 
+                    b.HasIndex("Id", "Tagname")
+                        .IsUnique();
+
                     b.ToTable("SnmpTag");
                 });
 
@@ -377,7 +423,7 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("AssetMonitorDataAccess.Models.AgentTagSet", "AgentTagSet")
-                        .WithMany()
+                        .WithMany("AgentTag")
                         .HasForeignKey("AgentTagSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -413,7 +459,7 @@ namespace AssetMonitorDataAccess.Migrations
             modelBuilder.Entity("AssetMonitorDataAccess.Models.HttpNodeRedTag", b =>
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.HttpNodeRedTagSet", "HttpNodeRedTagSet")
-                        .WithMany()
+                        .WithMany("HttpNodeRedTag")
                         .HasForeignKey("HttpNodeRedTagSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -434,7 +480,7 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpTagSet", "SnmpTagSet")
-                        .WithMany()
+                        .WithMany("SnmpTag")
                         .HasForeignKey("SnmpTagSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

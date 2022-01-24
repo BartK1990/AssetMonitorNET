@@ -1,4 +1,5 @@
 ﻿using AssetMonitorDataAccess.DataAccess;
+using AssetMonitorHistoryDataAccess.DataAccess;
 using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
@@ -34,6 +35,10 @@ namespace AssetMonitorService
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
             });
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
+            services.AddDbContext<AssetMonitorHistoryContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
+            });
 
             // gRPC
             services.AddCodeFirstGrpc();

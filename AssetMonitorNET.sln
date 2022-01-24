@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMonitorAgent", "AssetM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowsDataLib", "WindowsDataLib\WindowsDataLib.csproj", "{D2B34577-C720-46C3-A774-23C6AC47131E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetMonitorWebClient", "AssetMonitorWebClient\AssetMonitorWebClient.csproj", "{16774528-AF48-4F4D-9E92-5D804BC8D947}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetMonitorWebClient", "AssetMonitorWebClient\AssetMonitorWebClient.csproj", "{16774528-AF48-4F4D-9E92-5D804BC8D947}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetMonitorHistoryDataAccess", "AssetMonitorHistoryDataAccess\AssetMonitorHistoryDataAccess.csproj", "{50F285D4-1BF3-4A4F-9BAC-FBB06090FCAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{16774528-AF48-4F4D-9E92-5D804BC8D947}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16774528-AF48-4F4D-9E92-5D804BC8D947}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16774528-AF48-4F4D-9E92-5D804BC8D947}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50F285D4-1BF3-4A4F-9BAC-FBB06090FCAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50F285D4-1BF3-4A4F-9BAC-FBB06090FCAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50F285D4-1BF3-4A4F-9BAC-FBB06090FCAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50F285D4-1BF3-4A4F-9BAC-FBB06090FCAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

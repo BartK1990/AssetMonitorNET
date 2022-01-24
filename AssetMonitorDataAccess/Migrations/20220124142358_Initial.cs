@@ -156,7 +156,7 @@ namespace AssetMonitorDataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AgentTag", x => x.Id);
-                    table.CheckConstraint("CK_AgentTag_NotNullTagInfo", "([PerformanceCounter] IS NOT NULL) OR ([WmiManagementObject] IS NOT NULL) OR ([ServiceName] IS NOT NULL)");
+                    table.CheckConstraint("CK_AgentTag_NotNullTagInfo", "[PerformanceCounter] IS NOT NULL OR [WmiManagementObject] IS NOT NULL OR [ServiceName] IS NOT NULL");
                     table.ForeignKey(
                         name: "FK_AgentTag_AgentDataType_AgentDataTypeId",
                         column: x => x.AgentDataTypeId,
@@ -251,6 +251,11 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AgentTagSet",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { 1, "Windows Default" });
+
+            migrationBuilder.InsertData(
                 table: "AssetType",
                 columns: new[] { "Id", "Type" },
                 values: new object[,]
@@ -277,9 +282,19 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AgentTag",
+                columns: new[] { "Id", "AgentDataTypeId", "AgentTagSetId", "PerformanceCounter", "ServiceName", "Tagname", "ValueDataTypeId", "WmiManagementObject" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, "Processor;% Processor Time;_Total", null, "CpuUsage", 3, null },
+                    { 2, 1, 1, "Memory;Available MBytes", null, "MemoryAvailable", 3, null },
+                    { 3, 2, 1, null, null, "MemoryTotal", 4, "TotalPhysicalMemory" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Asset",
                 columns: new[] { "Id", "AgentTagSetId", "AssetTypeId", "HttpNodeRedTagSetId", "IpAddress", "Name", "SnmpTagSetId" },
-                values: new object[] { 1, null, 1, null, "127.0.0.1", "AssetMonitorNET Server", null });
+                values: new object[] { 1, 1, 1, null, "127.0.0.1", "AssetMonitorNET Server", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AgentTag_AgentDataTypeId",
@@ -295,6 +310,12 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "IX_AgentTag_ValueDataTypeId",
                 table: "AgentTag",
                 column: "ValueDataTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AgentTag_Id_Tagname",
+                table: "AgentTag",
+                columns: new[] { "Id", "Tagname" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Asset_AgentTagSetId",
@@ -327,6 +348,12 @@ namespace AssetMonitorDataAccess.Migrations
                 column: "ValueDataTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HttpNodeRedTag_Id_Tagname",
+                table: "HttpNodeRedTag",
+                columns: new[] { "Id", "Tagname" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SnmpTag_OperationId",
                 table: "SnmpTag",
                 column: "OperationId");
@@ -340,6 +367,12 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "IX_SnmpTag_ValueDataTypeId",
                 table: "SnmpTag",
                 column: "ValueDataTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SnmpTag_Id_Tagname",
+                table: "SnmpTag",
+                columns: new[] { "Id", "Tagname" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

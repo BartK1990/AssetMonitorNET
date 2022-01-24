@@ -7,11 +7,14 @@ namespace AssetMonitorDataAccess.DataAccess
 {
     public class AssetMonitorContext : DbContext
     {
-        public AssetMonitorContext(DbContextOptions options) : base(options)
+        public AssetMonitorContext(DbContextOptions<AssetMonitorContext> options) : base(options)
         {
         }
 
         public DbSet<Asset> Asset { get; set; }
+        public DbSet<AssetProperty> AssetProperty { get; set; }
+        public DbSet<AssetPropertyDataType> AssetPropertyDataType { get; set; }
+        public DbSet<AssetPropertyValue> AssetPropertyValue { get; set; }
         public DbSet<AssetType> AssetType { get; set; }
         public DbSet<AgentDataType> AgentDataType { get; set; }
         public DbSet<AgentTag> AgentTag { get; set; }
@@ -27,6 +30,16 @@ namespace AssetMonitorDataAccess.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<AgentTag>()
+                .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+
+            modelBuilder.Entity<SnmpTag>()
+                .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+
+            modelBuilder.Entity<HttpNodeRedTag>()
+                .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+
+            #region Enums
             var ate = Enum.GetValues(typeof(AssetTypeEnum));
             foreach (var item in ate)
             {
@@ -53,7 +66,7 @@ namespace AssetMonitorDataAccess.DataAccess
                 modelBuilder.Entity<TagDataType>().HasData(new TagDataType()
                 {
                     Id = (int)item,
-                    Type = Enum.GetName(typeof(TagDataTypeEnum), item)
+                    DataType = Enum.GetName(typeof(TagDataTypeEnum), item)
                 });
             }
 
@@ -67,9 +80,40 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
             }
 
+            var apdte = Enum.GetValues(typeof(AssetPropertyDataTypeEnum));
+            foreach (var item in apdte)
+            {
+                modelBuilder.Entity<AssetPropertyDataType>().HasData(new AssetPropertyDataType()
+                {
+                    Id = (int)item,
+                    DataType = Enum.GetName(typeof(AssetPropertyDataTypeEnum), item)
+                });
+            }
+            #endregion
+
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", 
                 $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
+
+            modelBuilder.Entity<AgentTagSet>()
+                .HasData(new AgentTagSet()
+                {
+                    Id = 1,
+                    Name = "Windows Default"
+                });
+
+            modelBuilder.Entity<AssetProperty>().HasData(
+                new AssetProperty() { Id = 1, Name = "AgentTcpPort", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer }
+                );
+
+            modelBuilder.Entity<AgentTag>().HasData(
+                new AgentTag() { Id = 1, Tagname = "CpuUsage", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() { Id = 2, Tagname = "MemoryAvailable", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() { Id = 3, Tagname = "MemoryTotal", AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
+                new AgentTag() { Id = 4, Tagname = "PhysicalDiskIdleTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() { Id = 5, Tagname = "PhysicalDiskWorkTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() { Id = 6, Tagname = "LogicalDiskFreeSpace", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
+                );
 
             modelBuilder.Entity<Asset>()
                 .HasData(new Asset()
@@ -77,7 +121,8 @@ namespace AssetMonitorDataAccess.DataAccess
                     Id = 1,
                     Name = "AssetMonitorNET Server",
                     IpAddress = "127.0.0.1",
-                    AssetTypeId = 1
+                    AssetTypeId = 1,
+                    AgentTagSetId = 1
                 });
         }
     }

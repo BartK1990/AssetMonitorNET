@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AssetMonitorDataAccess\AssetMonitorDataAccess.csproj" />
+    <ProjectReference Include="..\AssetMonitorHistoryDataAccess\AssetMonitorHistoryDataAccess.csproj" />
     <ProjectReference Include="..\AssetMonitorSharedGRPC\AssetMonitorSharedGRPC.csproj" />
   </ItemGroup>
 

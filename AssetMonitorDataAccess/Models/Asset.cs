@@ -19,10 +19,13 @@ namespace AssetMonitorDataAccess.Models
         public int AssetTypeId { get; set; }
         public AssetType AssetType { get; set; }
 
+        public int? SnmpTagSetId { get; set; }
         public SnmpTagSet SnmpTagSet { get; set; }
 
+        public int? AgentTagSetId { get; set; }
         public AgentTagSet AgentTagSet { get; set; }
 
+        public int? HttpNodeRedTagSetId { get; set; }
         public HttpNodeRedTagSet HttpNodeRedTagSet { get; set; }
 
     }

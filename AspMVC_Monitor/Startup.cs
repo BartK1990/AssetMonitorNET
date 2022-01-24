@@ -2,6 +2,7 @@ using AspMVC_Monitor.Data.Repositories;
 using AspMVC_Monitor.Models;
 using AspMVC_Monitor.Services;
 using AssetMonitorDataAccess.DataAccess;
+using AssetMonitorHistoryDataAccess.DataAccess;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +33,10 @@ namespace AspMVC_Monitor
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
             });
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
+            services.AddDbContext<AssetMonitorHistoryContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
+            });
 
             services.AddControllersWithViews();
             services.AddSession();
