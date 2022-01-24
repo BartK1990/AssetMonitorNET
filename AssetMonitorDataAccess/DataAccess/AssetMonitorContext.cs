@@ -103,7 +103,7 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
 
             modelBuilder.Entity<AssetProperty>().HasData(
-                new AssetProperty() { Id = 1, Name = "AgentTcpPort", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer }
+                new AssetProperty() { Id = 1, Name = "AgentTcpPort", Description = "Agent TCP Port", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer }
                 );
 
             modelBuilder.Entity<AgentTag>().HasData(

@@ -9,6 +9,8 @@ namespace AssetMonitorDataAccess.Models
         [Required]
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         [Required]
         public int ValueDataTypeId { get; set; }
         public AssetPropertyDataType ValueDataType { get; set; }

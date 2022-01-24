@@ -26,7 +26,7 @@ namespace AssetMonitorService.Data.Repositories
         public async Task<IEnumerable<Asset>> GetWindowsAssetsAsync()
         {
             var assetMonitorContext = _context.Asset.Include(a => a.AssetType)
-                .Where(at => at.AssetType.Type == AssetTypeEnum.Windows.ToString());
+                .Where(at => at.AgentTagSet != null);
             return await assetMonitorContext.ToListAsync();
         }
 
