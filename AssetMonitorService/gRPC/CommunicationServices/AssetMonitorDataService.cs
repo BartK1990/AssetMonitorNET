@@ -32,10 +32,10 @@ namespace AssetMonitorService.gRPC.CommunicationServices
                 {
                     Id = a.Id,
                     IpAddress = a.IpAddress,
-                    TcpPort = a.TcpPort,
-                    CpuUsage = a.CpuUsage,
-                    MemoryAvailableMB = a.MemoryAvailable,
-                    MemoryTotalMB = a.MemoryTotal
+                    //TcpPort = a.TcpPort,
+                    //CpuUsage = a.CpuUsage,
+                    //MemoryAvailableMB = a.MemoryAvailable,
+                    //MemoryTotalMB = a.MemoryTotal
                 })
             };
 

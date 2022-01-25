@@ -1,4 +1,5 @@
-﻿using AssetMonitorService.gRPC;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.gRPC;
 using AssetMonitorService.Monitor.Model;
 using AssetMonitorSharedGRPC.Agent;
 using Microsoft.Extensions.Logging;
@@ -22,16 +23,27 @@ namespace AssetMonitorService.Monitor.Services
         {
             if(assetPerformanceData.IpAddress == IPAddress.Loopback.ToString())
             {
-                assetPerformanceData.CpuUsage = AssetPerformance.GetCurrentCpuUsage();
-                assetPerformanceData.MemoryAvailable = AssetPerformance.GetAvailableMemory();
-                assetPerformanceData.MemoryTotal = AssetPerformance.GetTotalMemory();
+                foreach (var d in assetPerformanceData.Data)
+                {
+                    switch (d.Key.AgentDataTypeId)
+                    {
+                        case (int)AgentDataTypeEnum.PerformanceCounter:
+                            d.Value.Value = AssetPerformance.GetPerformanceCounterValue(d.Key.PerformanceCounter);
+                            break;
+                        case (int)AgentDataTypeEnum.WMI:
+                            d.Value.Value = AssetPerformance.GetWmiValue(d.Key.WmiManagementObject);
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 return;
             }
-            var reply = await GetAssetsDataAsync(assetPerformanceData.IpAddress, assetPerformanceData.TcpPort);
+            //var reply = await GetAssetsDataAsync(assetPerformanceData.IpAddress, assetPerformanceData.TcpPort);
 
-            assetPerformanceData.CpuUsage = reply.CpuUsage;
-            assetPerformanceData.MemoryAvailable = reply.MemoryAvailableMB;
-            assetPerformanceData.MemoryTotal = reply.MemoryTotalMB;
+            //assetPerformanceData.CpuUsage = reply.CpuUsage;
+            //assetPerformanceData.MemoryAvailable = reply.MemoryAvailableMB;
+            //assetPerformanceData.MemoryTotal = reply.MemoryTotalMB;
         }
 
         private async Task<AssetDataReply> GetAssetsDataAsync(string hostname, int tcpPort)

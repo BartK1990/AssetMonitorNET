@@ -7,8 +7,10 @@ namespace AssetMonitorService.Data.Repositories
     public interface IAssetMonitorRepository
     {
         Task<IEnumerable<Asset>> GetAllAssetsAsync();
-        Task<IEnumerable<Asset>> GetWindowsAssetsAsync();
+        Task<IEnumerable<Asset>> GetAgentAssetsAsync();
+        Task<IEnumerable<Asset>> GetAgentAssetsWithPropertiesAndTagSetAsync();
         Task<Asset> GetAssetByIdAsync(int? id);
+        Task<IEnumerable<AgentTag>> GetAgentTagsBySetIdAsync(int? setId);
         Task<bool> SaveAllAsync();
     }
 }

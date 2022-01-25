@@ -20,6 +20,8 @@ namespace AssetMonitorDataAccess.Models
         public int AssetTypeId { get; set; }
         public AssetType AssetType { get; set; }
 
+        public ICollection<AssetPropertyValue> AssetPropertyValues { get; set; }
+
         public int? SnmpTagSetId { get; set; }
         public SnmpTagSet SnmpTagSet { get; set; }
 

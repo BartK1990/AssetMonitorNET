@@ -23,10 +23,21 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<Asset>> GetWindowsAssetsAsync()
+        public async Task<IEnumerable<Asset>> GetAgentAssetsAsync()
         {
-            var assetMonitorContext = _context.Asset.Include(a => a.AssetType)
+            var assetMonitorContext = _context.Asset
                 .Where(at => at.AgentTagSet != null);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Asset>> GetAgentAssetsWithPropertiesAndTagSetAsync()
+        {
+            var assetMonitorContext = _context.Asset
+                .Include(p => p.AssetPropertyValues)
+                .Include(at=>at.AgentTagSet).ThenInclude(ats=>ats.AgentTag)
+                .Where(at => at.AgentTagSet != null);
+
             return await assetMonitorContext.ToListAsync();
         }
 
@@ -35,6 +46,14 @@ namespace AssetMonitorService.Data.Repositories
             return await _context.Asset
                 .Include(a => a.AssetType)
                 .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<IEnumerable<AgentTag>> GetAgentTagsBySetIdAsync(int? setId)
+        {
+            var assetMonitorContext = _context.AgentTag
+                .Where(at => at.AgentTagSetId == setId);
+
+            return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<bool> SaveAllAsync()
