@@ -2,6 +2,7 @@
 using AssetMonitorService.gRPC;
 using AssetMonitorService.Monitor.Model;
 using AssetMonitorSharedGRPC.Agent;
+using AssetMonitorSharedGRPC.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -52,27 +53,7 @@ namespace AssetMonitorService.Monitor.Services
 
             for (int i = 0; i < replyDataList.Count; i++)
             {
-                switch (assetPerformanceData.Data.ElementAt(i).Key.ValueDataTypeId)
-                {
-                    // ToDo - add some reflection
-                    case (int)TagDataTypeEnum.Boolean:
-                        assetPerformanceData.Data.ElementAt(i).Value.Value = BitConverter.ToBoolean(replyDataList[i].ByteArray);
-                        break;
-                    case (int)TagDataTypeEnum.Integer:
-                        assetPerformanceData.Data.ElementAt(i).Value.Value = BitConverter.ToInt32(replyDataList[i].ByteArray);
-                        break;
-                    case (int)TagDataTypeEnum.Float:
-                        assetPerformanceData.Data.ElementAt(i).Value.Value = BitConverter.ToSingle(replyDataList[i].ByteArray);
-                        break;
-                    case (int)TagDataTypeEnum.Double:
-                        assetPerformanceData.Data.ElementAt(i).Value.Value = BitConverter.ToDouble(replyDataList[i].ByteArray);
-                        break;
-                    case (int)TagDataTypeEnum.String:
-                        assetPerformanceData.Data.ElementAt(i).Value.Value = BitConverter.ToString(replyDataList[i].ByteArray);
-                        break;
-                    default:
-                        break;
-                }
+                assetPerformanceData.Data.ElementAt(i).Value.Value = ByteConverterHelper.ByteArrayToObject(replyDataList[i].ByteArray);
             }
         }
 

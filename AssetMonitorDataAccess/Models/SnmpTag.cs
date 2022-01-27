@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AssetMonitorDataAccess.Models
 {
@@ -9,6 +10,10 @@ namespace AssetMonitorDataAccess.Models
         [Required]
         [MaxLength(70)]
         public string Tagname { get; set; }
+
+        public double ScaleFactor { get; set; }
+
+        public double ScaleOffset { get; set; }
 
         [Required]
         [MaxLength(100)]

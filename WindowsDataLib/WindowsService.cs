@@ -13,7 +13,7 @@ namespace WindowsDataLib
             }
             catch (System.Exception)
             {
-                return "NA";
+                return @"N/A";
             }
         }
     }

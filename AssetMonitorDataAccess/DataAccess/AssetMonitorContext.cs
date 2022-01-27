@@ -32,12 +32,18 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<AgentTag>()
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+            modelBuilder.Entity<AgentTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
+            modelBuilder.Entity<AgentTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
 
             modelBuilder.Entity<SnmpTag>()
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+            modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
+            modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
 
             modelBuilder.Entity<HttpNodeRedTag>()
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
+            modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
+            modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
 
             #region Enums
             var ate = Enum.GetValues(typeof(AssetTypeEnum));
