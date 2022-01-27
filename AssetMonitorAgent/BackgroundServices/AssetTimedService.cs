@@ -1,5 +1,4 @@
-﻿using AssetMonitorAgent.Services;
-using AssetMonitorAgent.SingletonServices;
+﻿using AssetMonitorAgent.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -60,12 +59,10 @@ namespace AssetMonitorAgent.BackgroundServices
 
         private void GetAssetsData(object state)
         {
-            using var scope = _scopeFactory.CreateScope();
-            var assetService = scope.ServiceProvider.GetRequiredService<IAssetPerformanceService>();
+            //using var scope = _scopeFactory.CreateScope();
+            //var assetService = scope.ServiceProvider.GetRequiredService<IAssetPerformanceService>();
 
-            _assetDataSharedService.CpuUsage = assetService.CpuUsage;
-            _assetDataSharedService.MemoryAvailableMB = assetService.MemoryAvailableMB;
-            _assetDataSharedService.MemoryTotalMB = assetService.MemoryTotalMB;
+            _assetDataSharedService.UpdateData();
         }
 
         public void Dispose()

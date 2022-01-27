@@ -21,5 +21,5 @@ namespace AssetMonitorService.Monitor.Model
         public int? TcpPort { get; set; }
 
         public IDictionary<AgentTag, TagValue> Data { get; set; }
-}
+    }
 }

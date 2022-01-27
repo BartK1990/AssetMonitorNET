@@ -1,9 +1,10 @@
-﻿namespace AssetMonitorAgent.Services
+﻿using AssetMonitorAgent.SingletonServices;
+using System.Collections.Generic;
+
+namespace AssetMonitorAgent.Services
 {
     public interface IAssetPerformanceService
     {
-        float CpuUsage { get; }
-        float MemoryAvailableMB { get; }
-        float MemoryTotalMB { get; }
+        IList<object> GetData(IAssetDataSharedService assetDataSharedService);
     }
 }

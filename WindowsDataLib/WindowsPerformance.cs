@@ -6,22 +6,11 @@ using System.Management;
 
 namespace WindowsDataLib
 {
-    public static class AssetPerformance
+    public static class WindowsPerformance
     {
-        private static PerformanceCounter _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-        private static PerformanceCounter _ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-
         private static IList<PerformanceCounter> PerformanceCounters = new List<PerformanceCounter>();
 
-        public static float GetCurrentCpuUsage()
-        {
-            return _cpuCounter.NextValue();
-        }
-
-        public static float GetAvailableMemory()
-        {
-            return _ramCounter.NextValue();
-        }
+        private readonly static object _performanceCountersLock = new object();
 
         public static float GetPerformanceCounterValue(string perfCounterName)
         {
@@ -44,38 +33,27 @@ namespace WindowsDataLib
             {
                 instanceName = splitted[2];
             }
-
-            PerformanceCounter perfC;
-
-            if (PerformanceCounters.Count > 0)
+          
+            lock (_performanceCountersLock)
             {
-                perfC = PerformanceCounters
-                    .Where(pc => (pc.CategoryName == categoryName) && (pc.CounterName == counterName) && (pc.InstanceName == instanceName))
-                    .FirstOrDefault();
-                if(perfC != null)
+                PerformanceCounter perfC;
+                if (PerformanceCounters.Count > 0)
                 {
-                    return perfC.NextValue();
+                    perfC = PerformanceCounters
+                        .Where(pc => (pc.CategoryName == categoryName) && (pc.CounterName == counterName) && (pc.InstanceName == instanceName))
+                        .FirstOrDefault();
+                    if (perfC != null)
+                    {
+                        return perfC.NextValue();
+                    }
                 }
+
+                perfC = new PerformanceCounter(categoryName, counterName, instanceName);
+                PerformanceCounters.Add(perfC);
+
+
+                return perfC.NextValue();
             }
-
-            perfC = new PerformanceCounter(categoryName, counterName, instanceName);
-            PerformanceCounters.Add(perfC);
-    
-            return perfC.NextValue();
-        }
-
-        public static float GetTotalMemory()
-        {
-            ObjectQuery wql = new ObjectQuery("SELECT * FROM Win32_ComputerSystem");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
-            ManagementObjectCollection results = searcher.Get();
-
-            double totalMemory = 0.0;
-            foreach (ManagementObject result in results)
-            {
-                double.TryParse(Convert.ToString(result["TotalPhysicalMemory"]), out totalMemory);
-            }
-            return (float)(totalMemory / (1024 * 1024));
         }
 
         public static double GetWmiValue(string managementObjectName)

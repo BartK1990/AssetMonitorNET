@@ -1,31 +1,39 @@
-﻿using WindowsDataLib;
+﻿using AssetMonitorAgent.SingletonServices;
+using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorSharedGRPC.Agent;
+using System.Collections.Generic;
+using WindowsDataLib;
 
 namespace AssetMonitorAgent.Services
 {
     public class AssetPerformanceService : IAssetPerformanceService
     {
-        public float CpuUsage
+        public IList<object> GetData(AssetDataRequest request)
         {
-            get
+            var dataList = new List<object>();
+            foreach (var r in request.Tags)
             {
-                return AssetPerformance.GetCurrentCpuUsage();
+                switch (r.AgentDataTypeId)
+                {
+                    case (int)AgentDataTypeEnum.PerformanceCounter:
+                        dataList.Add(WindowsPerformance.GetPerformanceCounterValue(r.PerformanceCounter));
+                        break;
+                    case (int)AgentDataTypeEnum.WMI:
+                        dataList.Add(WindowsPerformance.GetWmiValue(r.WmiManagementObject));
+                        break;
+                    case (int)AgentDataTypeEnum.ServiceState:
+                        dataList.Add(WindowsService.GetServiceState(r.ServiceName));
+                        break;
+                    default:
+                        break;
+                }
             }
+            return dataList;
         }
 
-        public float MemoryAvailableMB
+        public IList<object> GetData(IAssetDataSharedService assetDataSharedService)
         {
-            get
-            {
-                return AssetPerformance.GetAvailableMemory();
-            }
-        }
-
-        public float MemoryTotalMB
-        {
-            get
-            {
-                return AssetPerformance.GetTotalMemory();
-            }
+            throw new System.NotImplementedException();
         }
     }
 }

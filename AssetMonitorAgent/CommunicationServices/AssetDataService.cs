@@ -1,7 +1,9 @@
 ﻿using AssetMonitorAgent.SingletonServices;
 using AssetMonitorSharedGRPC.Agent;
+using AssetMonitorSharedGRPC.Helpers;
 using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AssetMonitorAgent.CommunicationServices
@@ -19,13 +21,17 @@ namespace AssetMonitorAgent.CommunicationServices
 
         public Task<AssetDataReply> GetAssetDataAsync(AssetDataRequest request, CallContext context = default)
         {
-            _logger.LogInformation($"Replying to {context.ServerCallContext.Peer}");
-            return Task.FromResult(new AssetDataReply
+            _assetDataSharedService.UpdateConfiguration(request.Tags);
+
+            var dataList = new List<AssetDataItemReply>();
+            foreach (var r in request.Tags)
             {
-                CpuUsage = _assetDataSharedService.CpuUsage,
-                MemoryAvailableMB = _assetDataSharedService.MemoryAvailableMB,
-                MemoryTotalMB = _assetDataSharedService.MemoryTotalMB
-            });
+                dataList.Add(new AssetDataItemReply() { ByteArray = ByteConverterHelper.ObjectToByteArray(_assetDataSharedService.Data[r]) });
+            }
+            var reply = new AssetDataReply() { Data = dataList };
+
+            _logger.LogInformation($"Replying to {context.ServerCallContext.Peer}");
+            return Task.FromResult(reply);
         }
     }
 }

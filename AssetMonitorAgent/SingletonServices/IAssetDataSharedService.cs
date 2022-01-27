@@ -1,9 +1,13 @@
-﻿namespace AssetMonitorAgent.SingletonServices
+﻿using AssetMonitorSharedGRPC.Agent;
+using System.Collections.Generic;
+
+namespace AssetMonitorAgent.SingletonServices
 {
     public interface IAssetDataSharedService
     {
-        float CpuUsage { get; set; }
-        float MemoryAvailableMB { get; set; }
-        float MemoryTotalMB { get; set; }
+        IDictionary<AssetDataItemRequest, object> Data { get; set; }
+
+        void UpdateConfiguration(IEnumerable<AssetDataItemRequest> dataItems);
+        void UpdateData();
     }
 }

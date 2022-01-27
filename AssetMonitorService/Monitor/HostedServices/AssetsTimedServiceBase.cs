@@ -108,6 +108,11 @@ namespace AssetMonitorService.Monitor.HostedServices
                     _logger.LogError($"{this.GetType().Name} - Hosted Service executes too frequent");
                 }
             }
+            catch (Exception e)
+            {
+                _logger.LogError($"{this.GetType().Name} - Hosted Service exception!");
+                _logger.LogDebug(e.Message);
+            }
             finally
             {
                 if (lockTaken)

@@ -29,7 +29,7 @@ namespace AssetMonitorAgent
 
             services.AddSingleton<IAssetDataSharedService, AssetDataSharedService>();
 
-            services.AddScoped<IAssetPerformanceService, AssetPerformanceService>();
+            //services.AddScoped<IAssetPerformanceService, AssetPerformanceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
