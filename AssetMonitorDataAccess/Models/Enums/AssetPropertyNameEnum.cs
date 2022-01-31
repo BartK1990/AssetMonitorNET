@@ -7,7 +7,8 @@ namespace AssetMonitorDataAccess.Models.Enums
         AgentTcpPort = 1,
         SnmpUdpPort = 2,
         SnmpTimeout = 3,
-        SnmpRetries = 4
+        SnmpRetries = 4,
+        SnmpCommunity = 5
     }
 
     public static class AssetPropertyNameDictionary
@@ -21,6 +22,7 @@ namespace AssetMonitorDataAccess.Models.Enums
             id = AssetPropertyNameEnum.SnmpUdpPort; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP UDP Port", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer });
             id = AssetPropertyNameEnum.SnmpTimeout; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP timeout", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer });
             id = AssetPropertyNameEnum.SnmpRetries; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP number of retries", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer });
+            id = AssetPropertyNameEnum.SnmpCommunity; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP Community String", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.String });
         }
     }
 }
