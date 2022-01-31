@@ -2,12 +2,12 @@
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class SnmpOperation
+    public class SnmpVersion
     {
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(20)]
-        public string Operation { get; set; }
+        [MaxLength(10)]
+        public string Version { get; set; }
     }
 }

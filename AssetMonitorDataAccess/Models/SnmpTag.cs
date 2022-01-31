@@ -16,16 +16,18 @@ namespace AssetMonitorDataAccess.Models
         public double ScaleOffset { get; set; }
 
         [Required]
-        [MaxLength(100)]
         public string OID { get; set; }
 
         [Required]
+        public int OperationId { get; set; }
         public SnmpOperation Operation { get; set; }
 
         [Required]
+        public int ValueDataTypeId { get; set; }
         public TagDataType ValueDataType { get; set; }
 
         [Required]
+        public int SnmpTagSetId { get; set; }
         public SnmpTagSet SnmpTagSet { get; set; }
     }
 }

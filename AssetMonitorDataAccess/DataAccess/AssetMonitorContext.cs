@@ -24,6 +24,7 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<SnmpOperation> SnmpOperation { get; set; }
         public DbSet<SnmpTag> SnmpTag { get; set; }
         public DbSet<SnmpTagSet> SnmpTagSet { get; set; }
+        public DbSet<SnmpVersion> SnmpVersion { get; set; }
         public DbSet<TagDataType> TagDataType { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,6 +45,10 @@ namespace AssetMonitorDataAccess.DataAccess
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
             modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
             modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
+
+            modelBuilder.Entity<AgentTag>(entity =>
+                entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo",
+                $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
 
             #region Enums
             var ate = Enum.GetValues(typeof(AssetTypeEnum));
@@ -95,30 +100,54 @@ namespace AssetMonitorDataAccess.DataAccess
                     DataType = Enum.GetName(typeof(AssetPropertyDataTypeEnum), item)
                 });
             }
-            #endregion
 
-            modelBuilder.Entity<AgentTag>(entity =>
-                entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo", 
-                $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
+            var sve = Enum.GetValues(typeof(SnmpVersionEnum));
+            foreach (var item in sve)
+            {
+                modelBuilder.Entity<SnmpVersion>().HasData(new SnmpVersion()
+                {
+                    Id = (int)item,
+                    Version = Enum.GetName(typeof(SnmpVersionEnum), item)
+                });
+            }
+
+            var apne = Enum.GetValues(typeof(AssetPropertyNameEnum));
+            foreach (var item in apne)
+            {
+                modelBuilder.Entity<AssetProperty>().HasData(AssetPropertyNameDictionary.Dict[(AssetPropertyNameEnum)item]);
+            }
+            #endregion
 
             modelBuilder.Entity<AgentTagSet>()
                 .HasData(new AgentTagSet()
                 {
                     Id = 1,
-                    Name = "Windows Default"
+                    Name = "Default"
                 });
 
-            modelBuilder.Entity<AssetProperty>().HasData(
-                new AssetProperty() { Id = (int)AssetPropertyNameEnum.AgentTcpPort, Name = AssetPropertyNameEnum.AgentTcpPort.ToString(), Description = "Agent TCP Port", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer }
+            modelBuilder.Entity<AgentTag>().HasData(
+                new AgentTag() {Id = 1, Tagname = "CpuUsage", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 2, Tagname = "MemoryAvailable", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 3, Tagname = "MemoryTotal", AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
+                new AgentTag() {Id = 4, Tagname = "PhysicalDiskIdleTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 5, Tagname = "PhysicalDiskWorkTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 6, Tagname = "LogicalDiskFreeSpace", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
                 );
 
-            modelBuilder.Entity<AgentTag>().HasData(
-                new AgentTag() { Id = 1, Tagname = "CpuUsage", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() { Id = 2, Tagname = "MemoryAvailable", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() { Id = 3, Tagname = "MemoryTotal", AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
-                new AgentTag() { Id = 4, Tagname = "PhysicalDiskIdleTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() { Id = 5, Tagname = "PhysicalDiskWorkTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() { Id = 6, Tagname = "LogicalDiskFreeSpace", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
+            modelBuilder.Entity<SnmpTagSet>()
+                .HasData(new SnmpTagSet()
+                {
+                    Id = 1,
+                    Name = "Default",
+                    VersionId = (int)SnmpVersionEnum.V2c
+                });
+
+            modelBuilder.Entity<SnmpTag>().HasData(
+                new SnmpTag() {Id = 1, Tagname= "sysName", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
+                new SnmpTag() {Id = 2, Tagname= "sysDescr", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
+                new SnmpTag() {Id = 3, Tagname= "sysObjectID", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
+                new SnmpTag() {Id = 4, Tagname= "sysUpTime", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
+                new SnmpTag() {Id = 5, Tagname= "sysContact", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 }
                 );
 
             modelBuilder.Entity<Asset>()
@@ -128,8 +157,15 @@ namespace AssetMonitorDataAccess.DataAccess
                     Name = "AssetMonitorNET Server",
                     IpAddress = "127.0.0.1",
                     AssetTypeId = 1,
-                    AgentTagSetId = 1
+                    AgentTagSetId = 1,
+                    SnmpTagSetId = 1
                 });
+
+            modelBuilder.Entity<AssetPropertyValue>().HasData(
+                new AssetPropertyValue() { Id = -1, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpUdpPort, AssetId = 1, Value = "161" },
+                new AssetPropertyValue() { Id = -2, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpTimeout, AssetId = 1, Value = "3000" },
+                new AssetPropertyValue() { Id = -3, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpRetries, AssetId = 1, Value = "1" }
+                );
         }
     }
 }
