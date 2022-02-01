@@ -46,14 +46,17 @@ namespace AssetMonitorService
             // Hosted services
             services.AddHostedService<AssetsTimedPingService>();
             services.AddHostedService<AssetsTimedPerformanceDataService>();
+            services.AddHostedService<AssetsTimedSnmpDataService>();
 
             // Shared (Singleton) services
             services.AddSingleton<IAssetsPingSharedService, AssetsPingSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
+            services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
 
             // Scoped services
             services.AddScoped<IAssetPingService, AssetPingService>();
             services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
+            services.AddScoped<IAssetSnmpDataService, AssetSnmpDataService>();
 
         }
 

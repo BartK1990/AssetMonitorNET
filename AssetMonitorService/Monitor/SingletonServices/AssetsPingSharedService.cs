@@ -3,6 +3,7 @@ using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
@@ -10,12 +11,12 @@ namespace AssetMonitorService.Monitor.SingletonServices
     {
         public AssetsPingSharedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
+            UpdateAssetsListBase().Wait();
         }
 
-        protected override void UpdateAssetsList(IAssetMonitorRepository repository)
+        protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            AssetsData = new List<AssetPing>();
-            var assets = repository.GetAllAssetsAsync().Result.ToList();
+            var assets = (await repository.GetAllAssetsAsync()).ToList();
             AssetsData.AddRange(assets.Select(a => new AssetPing() { Id = a.Id, IpAddress = a.IpAddress }));
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
@@ -6,6 +7,6 @@ namespace AssetMonitorService.Monitor.SingletonServices
     {
         List<T> AssetsData { get; set; }
 
-        void UpdateAssetsListBase();
+        Task UpdateAssetsListBase();
     }
 }

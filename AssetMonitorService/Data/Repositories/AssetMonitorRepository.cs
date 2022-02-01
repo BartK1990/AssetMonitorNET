@@ -1,6 +1,5 @@
 ﻿using AssetMonitorDataAccess.DataAccess;
 using AssetMonitorDataAccess.Models;
-using AssetMonitorDataAccess.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace AssetMonitorService.Data.Repositories
 
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
-            var assetMonitorContext = _context.Asset.Include(a => a.AssetType);
+            var assetMonitorContext = _context.Asset;
             return await assetMonitorContext.ToListAsync();
         }
 
@@ -31,12 +30,21 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<Asset>> GetAgentAssetsWithPropertiesAndTagSetAsync()
+        public async Task<IEnumerable<Asset>> GetAgentAssetsWithTagSetAsync()
         {
             var assetMonitorContext = _context.Asset
-                .Include(p => p.AssetPropertyValues)
                 .Include(at=>at.AgentTagSet).ThenInclude(ats=>ats.AgentTag)
                 .Where(at => at.AgentTagSet != null);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Asset>> GetSnmpAssetsWithTagSetAsync()
+        {
+            var assetMonitorContext = _context.Asset
+                .Include(st => st.SnmpTagSet).ThenInclude(sts => sts.SnmpTag)
+                .Include(st => st.SnmpTagSet).ThenInclude(stv => stv.Version)
+                .Where(at => at.SnmpTagSet != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -44,7 +52,13 @@ namespace AssetMonitorService.Data.Repositories
         public async Task<Asset> GetAssetByIdAsync(int? id)
         {
             return await _context.Asset
-                .Include(a => a.AssetType)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task<Asset> GetAssetPropertiesByIdAsync(int? id)
+        {
+            return await _context.Asset
+                .Include(p=>p.AssetPropertyValues)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
@@ -60,5 +74,6 @@ namespace AssetMonitorService.Data.Repositories
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
     }
 }

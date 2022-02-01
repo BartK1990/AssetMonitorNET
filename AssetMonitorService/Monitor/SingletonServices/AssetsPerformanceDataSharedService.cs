@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
@@ -17,14 +18,16 @@ namespace AssetMonitorService.Monitor.SingletonServices
             ILogger<AssetsPerformanceDataSharedService> logger) : base(scopeFactory)
         {
             this._logger = logger;
+            UpdateAssetsListBase().Wait();
         }
 
-        protected override void UpdateAssetsList(IAssetMonitorRepository repository)
+        protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            AssetsData = new List<AssetPerformanceData>();
-            var assets = repository.GetAgentAssetsWithPropertiesAndTagSetAsync().Result.ToList();
+            var assets = (await repository.GetAgentAssetsWithTagSetAsync()).ToList();
             foreach (var a in assets)
             {
+                var assetProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+
                 // Only for localhost no TCP port is required
                 if(a.IpAddress == IPAddress.Loopback.ToString())
                 {
@@ -37,7 +40,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     continue;
                 }
 
-                if (int.TryParse(a.AssetPropertyValues
+                if (int.TryParse(assetProperties.AssetPropertyValues
                     .Where(p=>p.AssetPropertyId == (int)AssetPropertyNameEnum.AgentTcpPort)
                     .FirstOrDefault().Value
                     , out var tcpPort))
@@ -51,7 +54,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                 }
                 else
                 {
-                    _logger.LogError($"Wrong Tcp port for Asset: {a.Name} (Id: {a.Id})");
+                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.AgentTcpPort]} for Asset: {a.Name} (Id: {a.Id})");
                 }
             }
         }

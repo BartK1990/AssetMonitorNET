@@ -1,10 +1,8 @@
 ﻿using AssetMonitorService.Monitor.Model;
-using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public interface IAssetPerformanceDataService
+    public interface IAssetPerformanceDataService : IAssetService<AssetPerformanceData>
     {
-        Task UpdateAsset(AssetPerformanceData assetPerformanceData);
     }
 }

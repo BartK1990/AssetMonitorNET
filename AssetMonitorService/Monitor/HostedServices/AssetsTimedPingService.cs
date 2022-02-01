@@ -13,7 +13,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         IAssetPingService, 
         AssetPing>
     {
-        private IAssetsPingSharedService _assetsPingSharedService;
+        private readonly IAssetsPingSharedService _assetsPingSharedService;
 
         public AssetsTimedPingService(IAssetsPingSharedService assetsPingSharedService,
                 ILogger<AssetsTimedPingService> logger,

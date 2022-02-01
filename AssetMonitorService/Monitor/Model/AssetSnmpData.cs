@@ -18,6 +18,7 @@ namespace AssetMonitorService.Monitor.Model
         public int Id { get; set; }
 
         public string IpAddress { get; set; }
+        public string Community { get; set; }
         public int UdpPort { get; set; }
         public int Timeout { get; set; }
         public int Retries { get; set; }

@@ -1,6 +1,7 @@
 ﻿using AssetMonitorService.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
@@ -13,16 +14,16 @@ namespace AssetMonitorService.Monitor.SingletonServices
         public AssetsSharedServiceBase(IServiceScopeFactory scopeFactory)
         {
             this._scopeFactory = scopeFactory;
-            UpdateAssetsListBase();
+            this.AssetsData = new List<T>();
         }
 
-        public void UpdateAssetsListBase()
+        public async Task UpdateAssetsListBase()
         {
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
-            UpdateAssetsList(repository);
+            await UpdateAssetsList(repository);
         }
 
-        protected abstract void UpdateAssetsList(IAssetMonitorRepository repository);
+        protected abstract Task UpdateAssetsList(IAssetMonitorRepository repository);
     }
 }

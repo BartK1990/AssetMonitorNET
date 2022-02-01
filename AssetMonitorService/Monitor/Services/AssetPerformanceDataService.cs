@@ -45,7 +45,7 @@ namespace AssetMonitorService.Monitor.Services
                 }
                 return;
             }
-            var reply = await GetAssetsDataAsync(assetPerformanceData);
+            var reply = await GetAssetDataAsync(assetPerformanceData);
             var replyDataList = reply.Data.ToList();
 
             if (replyDataList.Count <= 0 || (replyDataList.Count != assetPerformanceData.Data.Count))
@@ -57,7 +57,7 @@ namespace AssetMonitorService.Monitor.Services
             }
         }
 
-        private async Task<AssetDataReply> GetAssetsDataAsync(AssetPerformanceData assetPerformanceData)
+        private async Task<AssetDataReply> GetAssetDataAsync(AssetPerformanceData assetPerformanceData)
         {          
             if (assetPerformanceData.TcpPort == null)
             {

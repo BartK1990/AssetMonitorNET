@@ -9,14 +9,11 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    //_taskList.Add(assetService.GetAssetsDataAsync(a.IpAddress, AgentTcpPort));
-    //_logger.LogInformation($"Service {this.GetType().Name} request to: {a.IpAddress}:{AgentTcpPort}");
-    //var assets = assetRepository.GetWindowsAssetsAsync().Result.ToList();
     public class AssetsTimedPerformanceDataService : AssetsTimedServiceBase<AssetsTimedPerformanceDataService, 
         IAssetPerformanceDataService,
         AssetPerformanceData>
     {
-        private IAssetsPerformanceDataSharedService _assetsPerformanceDataSharedService;
+        private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataSharedService;
 
         public AssetsTimedPerformanceDataService(IAssetsPerformanceDataSharedService assetsPerformanceDataSharedService, 
             ILogger<AssetsTimedPerformanceDataService> logger,
