@@ -17,9 +17,6 @@ namespace AssetMonitorDataAccess.Models
         [MaxLength(15)] 
         public string IpAddress { get; set; }
 
-        public int AssetTypeId { get; set; }
-        public AssetType AssetType { get; set; }
-
         public ICollection<AssetPropertyValue> AssetPropertyValues { get; set; }
 
         public int? SnmpTagSetId { get; set; }

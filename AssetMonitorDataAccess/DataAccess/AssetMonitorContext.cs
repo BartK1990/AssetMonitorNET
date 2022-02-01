@@ -15,7 +15,6 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AssetProperty> AssetProperty { get; set; }
         public DbSet<AssetPropertyDataType> AssetPropertyDataType { get; set; }
         public DbSet<AssetPropertyValue> AssetPropertyValue { get; set; }
-        public DbSet<AssetType> AssetType { get; set; }
         public DbSet<AgentDataType> AgentDataType { get; set; }
         public DbSet<AgentTag> AgentTag { get; set; }
         public DbSet<AgentTagSet> AgentTagSet { get; set; }
@@ -51,16 +50,6 @@ namespace AssetMonitorDataAccess.DataAccess
                 $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
 
             #region Enums
-            var ate = Enum.GetValues(typeof(AssetTypeEnum));
-            foreach (var item in ate)
-            {
-                modelBuilder.Entity<AssetType>().HasData(new AssetType()
-                {
-                    Id = (int)item,
-                    Type = Enum.GetName(typeof(AssetTypeEnum), item)
-                });
-            }
-
             var ste = Enum.GetValues(typeof(SnmpOperationEnum));
             foreach (var item in ste)
             {
@@ -156,7 +145,6 @@ namespace AssetMonitorDataAccess.DataAccess
                     Id = 1,
                     Name = "AssetMonitorNET Server",
                     IpAddress = "127.0.0.1",
-                    AssetTypeId = 1,
                     AgentTagSetId = 1,
                     SnmpTagSetId = 1
                 });
