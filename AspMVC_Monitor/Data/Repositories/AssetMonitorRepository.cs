@@ -18,14 +18,13 @@ namespace AspMVC_Monitor.Data.Repositories
 
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
-            var assetMonitorContext = _context.Asset.Include(a => a.AssetType);
+            var assetMonitorContext = _context.Asset;
             return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<Asset> GetAssetByIdAsync(int? id)
         {
             return await _context.Asset
-                .Include(a => a.AssetType)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 

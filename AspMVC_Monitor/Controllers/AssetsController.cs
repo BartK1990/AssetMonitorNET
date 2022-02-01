@@ -50,7 +50,6 @@ namespace AspMVC_Monitor.Controllers
         // GET: Assets/Create
         public IActionResult Create()
         {
-            ViewData["AssetTypeId"] = new SelectList(_context.Set<AssetType>(), "Id", "Type");
             return View();
         }
 
@@ -68,7 +67,6 @@ namespace AspMVC_Monitor.Controllers
                 await _assetsMonitor.UpdateAssetsListAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssetTypeId"] = new SelectList(_context.Set<AssetType>(), "Id", "Type", asset.AssetTypeId);
             return View(asset);
         }
 
@@ -85,7 +83,6 @@ namespace AspMVC_Monitor.Controllers
             {
                 return NotFound();
             }
-            ViewData["AssetTypeId"] = new SelectList(_context.Set<AssetType>(), "Id", "Type", asset.AssetTypeId);
             return View(asset);
         }
 
@@ -122,7 +119,6 @@ namespace AspMVC_Monitor.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssetTypeId"] = new SelectList(_context.Set<AssetType>(), "Id", "Type", asset.AssetTypeId);
             return View(asset);
         }
 
@@ -135,7 +131,6 @@ namespace AspMVC_Monitor.Controllers
             }
 
             var asset = await _context.Asset
-                .Include(a => a.AssetType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (asset == null)
             {
