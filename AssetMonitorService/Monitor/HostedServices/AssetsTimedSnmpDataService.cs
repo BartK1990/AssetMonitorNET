@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public class AssetsTimedSnmpDataService : AssetsTimedServiceBase<AssetsTimedSnmpDataService,
+    public class AssetsTimedSnmpDataService : AssetsTimedDataServiceBase<AssetsTimedSnmpDataService,
         IAssetSnmpDataService,
         AssetSnmpData>
     {
@@ -18,7 +18,8 @@ namespace AssetMonitorService.Monitor.HostedServices
         public AssetsTimedSnmpDataService(IAssetsSnmpDataSharedService assetsSnmpDataSharedService,
             ILogger<AssetsTimedSnmpDataService> logger,
             IServiceScopeFactory scopeFactory,
-            TimeSpan? scanTime = null) : base(logger, scopeFactory, scanTime)
+            TimeSpan? scanTime = null
+            ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
         {
             this._assetsSnmpDataSharedService = assetsSnmpDataSharedService;
         }

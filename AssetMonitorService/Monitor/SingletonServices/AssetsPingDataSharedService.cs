@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public class AssetsPingSharedService : AssetsSharedServiceBase<AssetPing>, IAssetsPingSharedService
+    public class AssetsPingDataSharedService : AssetsSharedServiceBase<AssetPing>, IAssetsPingSharedService
     {
-        public AssetsPingSharedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
+        public AssetsPingDataSharedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
         {
             UpdateAssetsListBase().Wait();
         }

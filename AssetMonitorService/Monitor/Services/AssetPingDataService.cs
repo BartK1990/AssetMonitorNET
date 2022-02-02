@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public class AssetPingService : IAssetPingService
+    public class AssetPingDataService : IAssetPingService
     {
-        private readonly ILogger<AssetPingService> _logger;
+        private readonly ILogger<AssetPingDataService> _logger;
 
-        public AssetPingService(ILogger<AssetPingService> logger)
+        public AssetPingDataService(ILogger<AssetPingDataService> logger)
         {
             this._logger = logger;
         }

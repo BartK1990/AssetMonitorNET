@@ -40,21 +40,26 @@ namespace AssetMonitorService
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
             });
 
+            // Singleton for Micro ORM Dapper
+            services.AddSingleton<AssetMonitorHistoryDapperContext>(new AssetMonitorHistoryDapperContext(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]));
+            services.AddScoped<IAssetMonitorHistoryDapperRepository, AssetMonitorHistoryDapperRepository>();
+
             // gRPC
             services.AddCodeFirstGrpc();
 
             // Hosted services
-            services.AddHostedService<AssetsTimedPingService>();
+            services.AddHostedService<AssetsTimedPingDataService>();
             services.AddHostedService<AssetsTimedPerformanceDataService>();
             services.AddHostedService<AssetsTimedSnmpDataService>();
+            services.AddHostedService<AssetsHistoryTimedService>();
 
             // Shared (Singleton) services
-            services.AddSingleton<IAssetsPingSharedService, AssetsPingSharedService>();
+            services.AddSingleton<IAssetsPingSharedService, AssetsPingDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
 
             // Scoped services
-            services.AddScoped<IAssetPingService, AssetPingService>();
+            services.AddScoped<IAssetPingService, AssetPingDataService>();
             services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
             services.AddScoped<IAssetSnmpDataService, AssetSnmpDataService>();
 

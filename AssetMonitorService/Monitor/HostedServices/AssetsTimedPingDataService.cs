@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public class AssetsTimedPingService : AssetsTimedServiceBase<AssetsTimedPingService, 
+    public class AssetsTimedPingDataService : AssetsTimedDataServiceBase<AssetsTimedPingDataService, 
         IAssetPingService, 
         AssetPing>
     {
         private readonly IAssetsPingSharedService _assetsPingSharedService;
 
-        public AssetsTimedPingService(IAssetsPingSharedService assetsPingSharedService,
-                ILogger<AssetsTimedPingService> logger,
-                IServiceScopeFactory scopeFactory,
-                TimeSpan? scanTime = null
-                ) : base(logger, scopeFactory, scanTime)
+        public AssetsTimedPingDataService(IAssetsPingSharedService assetsPingSharedService,
+            ILogger<AssetsTimedPingDataService> logger,
+            IServiceScopeFactory scopeFactory,
+            TimeSpan? scanTime = null
+            ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
         {
             this._assetsPingSharedService = assetsPingSharedService;
         }
