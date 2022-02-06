@@ -36,7 +36,7 @@ namespace AssetMonitorService.Monitor.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running");
+            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running. Timer scan time: {ScanTime}");
 
             _timer = new Timer(
                 TimedJob,
