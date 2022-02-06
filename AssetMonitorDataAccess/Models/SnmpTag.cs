@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AssetMonitorDataAccess.Models
@@ -15,17 +15,7 @@ namespace AssetMonitorDataAccess.Models
 
         public double ScaleOffset { get; set; }
 
-        [Required]
-        public bool IsHistorizedLast { get; set; }
-
-        [Required]
-        public bool IsHistorizedMax { get; set; }
-
-        [Required]
-        public bool IsHistorizedAvg { get; set; }
-
-        [Required]
-        public bool IsHistorizedMin { get; set; }
+        public ICollection<HistorizationTagConfig> HistorizationTagConfigs { get; set; }
 
         [Required]
         public string OID { get; set; }
