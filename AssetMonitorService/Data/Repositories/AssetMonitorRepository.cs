@@ -13,7 +13,7 @@ namespace AssetMonitorService.Data.Repositories
 
         public AssetMonitorRepository(AssetMonitorContext context)
         {
-            _context = context;
+            this._context = context;
         }
 
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()

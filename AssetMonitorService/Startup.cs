@@ -48,12 +48,14 @@ namespace AssetMonitorService
             services.AddCodeFirstGrpc();
 
             // Hosted services
+            services.AddHostedService<InitSharedServices>();
             services.AddHostedService<AssetsTimedPingDataService>();
             services.AddHostedService<AssetsTimedPerformanceDataService>();
             services.AddHostedService<AssetsTimedSnmpDataService>();
             services.AddHostedService<AssetsHistoryTimedService>();
 
             // Shared (Singleton) services
+            services.AddSingleton<IAssetsCollectionSharedService, AssetsCollectionSharedService>();
             services.AddSingleton<IAssetsPingSharedService, AssetsPingDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();

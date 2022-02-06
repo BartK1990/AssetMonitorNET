@@ -3,21 +3,17 @@ using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public class AssetsSnmpDataSharedService : AssetsSharedServiceBase<AssetSnmpData>, IAssetsSnmpDataSharedService
+    public class AssetsSnmpDataSharedService : AssetsSharedServiceBase<AssetsSnmpDataSharedService, AssetSnmpData>, 
+        IAssetsSnmpDataSharedService
     {
-        private readonly ILogger<AssetsSnmpDataSharedService> _logger;
-
         public AssetsSnmpDataSharedService(IServiceScopeFactory scopeFactory,
-            ILogger<AssetsSnmpDataSharedService> logger) : base(scopeFactory)
+            ILogger<AssetsSnmpDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
         {
-            this._logger = logger;
-            UpdateAssetsListBase().Wait();
         }
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)

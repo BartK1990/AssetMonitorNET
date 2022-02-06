@@ -1,17 +1,18 @@
 ﻿using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public class AssetsPingDataSharedService : AssetsSharedServiceBase<AssetPing>, IAssetsPingSharedService
+    public class AssetsPingDataSharedService : AssetsSharedServiceBase<AssetsPingDataSharedService, AssetPing>, 
+        IAssetsPingSharedService
     {
-        public AssetsPingDataSharedService(IServiceScopeFactory scopeFactory) : base(scopeFactory)
+        public AssetsPingDataSharedService(IServiceScopeFactory scopeFactory,
+            ILogger<AssetsPingDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
         {
-            UpdateAssetsListBase().Wait();
         }
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)

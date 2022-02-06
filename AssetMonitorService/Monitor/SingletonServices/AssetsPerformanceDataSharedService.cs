@@ -3,22 +3,18 @@ using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public class AssetsPerformanceDataSharedService : AssetsSharedServiceBase<AssetPerformanceData>, IAssetsPerformanceDataSharedService
+    public class AssetsPerformanceDataSharedService : AssetsSharedServiceBase<AssetsPerformanceDataSharedService, AssetPerformanceData>, 
+        IAssetsPerformanceDataSharedService
     {
-        private readonly ILogger<AssetsPerformanceDataSharedService> _logger;
-
         public AssetsPerformanceDataSharedService(IServiceScopeFactory scopeFactory,
-            ILogger<AssetsPerformanceDataSharedService> logger) : base(scopeFactory)
+            ILogger<AssetsPerformanceDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
         {
-            this._logger = logger;
-            UpdateAssetsListBase().Wait();
         }
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)

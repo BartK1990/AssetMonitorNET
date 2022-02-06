@@ -33,10 +33,10 @@ namespace AspMVC_Monitor
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
             });
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
-            services.AddDbContext<AssetMonitorHistoryContext>(options =>
-            {
-                options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
-            });
+            //services.AddDbContext<AssetMonitorHistoryContext>(options =>
+            //{
+            //    options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
+            //});
 
             services.AddControllersWithViews();
             services.AddSession();

@@ -1,5 +1,6 @@
 ﻿using AssetMonitorHistoryDataAccess.DataAccess;
 using Dapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,22 +10,25 @@ namespace AssetMonitorService.Data.Repositories
     public class AssetMonitorHistoryDapperRepository : IAssetMonitorHistoryDapperRepository
     {
         private readonly AssetMonitorHistoryDapperContext _context;
+        protected readonly ILogger<AssetMonitorHistoryDapperRepository> _logger;
 
-        public AssetMonitorHistoryDapperRepository(AssetMonitorHistoryDapperContext context)
+        public AssetMonitorHistoryDapperRepository(AssetMonitorHistoryDapperContext context,
+            ILogger<AssetMonitorHistoryDapperRepository> logger)
         {
-            _context = context;
+            this._context = context;
+            this._logger = logger;
         }
 
         public async Task<string> GetDbVersion()
         {
             using var connection = _context.CreateSqlConnection();
-            var version = await connection.ExecuteScalarAsync<string>("SELECT @@VERSION");
+            var version = await connection.ExecuteScalarAsync<string>(@"SELECT @@VERSION");
             return version;
         }
 
         public async Task SelectDynamicExample()
         {
-            var query = "SELECT * FROM Companies";
+            var query = @"SELECT * FROM Companies";
             using var connection = _context.CreateSqlConnection();
             var result = await connection.QueryAsync(query);
 

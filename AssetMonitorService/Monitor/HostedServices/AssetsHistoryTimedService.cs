@@ -2,9 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
@@ -13,7 +10,8 @@ namespace AssetMonitorService.Monitor.HostedServices
         protected readonly IServiceScopeFactory _scopeFactory;
 
         public AssetsHistoryTimedService(IServiceScopeFactory scopeFactory,
-            ILogger<AssetsHistoryTimedService> logger, TimeSpan? scanTime = null) : base(logger, scanTime)
+            
+            ILogger<AssetsHistoryTimedService> logger, TimeSpan? scanTime = null) : base(logger: logger,scanTime: scanTime)
         {
             this._scopeFactory = scopeFactory;
         }
