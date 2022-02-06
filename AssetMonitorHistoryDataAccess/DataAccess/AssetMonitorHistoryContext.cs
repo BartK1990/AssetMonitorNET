@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AssetMonitorHistoryDataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AssetMonitorHistoryDataAccess.DataAccess
 {
@@ -6,6 +7,13 @@ namespace AssetMonitorHistoryDataAccess.DataAccess
     {
         public AssetMonitorHistoryContext(DbContextOptions<AssetMonitorHistoryContext> options) : base(options)
         {
+        }
+
+        public DbSet<HistoricalDataTable> Asset { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
