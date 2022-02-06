@@ -18,8 +18,8 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AgentDataType> AgentDataType { get; set; }
         public DbSet<AgentTag> AgentTag { get; set; }
         public DbSet<AgentTagSet> AgentTagSet { get; set; }
-        public DbSet<HistorizationTagConfig> HistorizationTagConfig { get; set; }
-        public DbSet<HistorizationType> HistorizationType { get; set; }
+        public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
+        public DbSet<HistoricalType> HistoricalType { get; set; }
         public DbSet<HttpNodeRedTag> HttpNodeRedTag { get; set; }
         public DbSet<HttpNodeRedTagSet> HttpNodeRedTagSet { get; set; }
         public DbSet<SnmpOperation> SnmpOperation { get; set; }
@@ -47,17 +47,17 @@ namespace AssetMonitorDataAccess.DataAccess
             modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
             modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
 
-            modelBuilder.Entity<HistorizationTagConfig>()
+            modelBuilder.Entity<HistoricalTagConfig>()
                 .HasIndex(c => new { c.AgentTagId, c.SnmpTagId, c.HistorizationTypeId }).IsUnique();
 
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo",
                 $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
 
-            modelBuilder.Entity<HistorizationTagConfig>(entity =>
+            modelBuilder.Entity<HistoricalTagConfig>(entity =>
                 entity.HasCheckConstraint("CK_HistorizationTagConfig_AgentOrSnmp",
-                $"([{nameof(Models.HistorizationTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.HistorizationTagConfig.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.HistorizationTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.HistorizationTagConfig.SnmpTagId)}] IS NOT NULL)"));
+                $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NOT NULL)"));
 
             #region Enums
             Array enums = Enum.GetValues(typeof(SnmpOperationEnum));
@@ -110,13 +110,13 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
             }
 
-            enums = Enum.GetValues(typeof(HistorizationTypeEnum));
+            enums = Enum.GetValues(typeof(HistoricalTypeEnum));
             foreach (var item in enums)
             {
-                modelBuilder.Entity<HistorizationType>().HasData(new HistorizationType()
+                modelBuilder.Entity<HistoricalType>().HasData(new HistoricalType()
                 {
                     Id = (int)item,
-                    Type = Enum.GetName(typeof(HistorizationTypeEnum), item)
+                    Type = Enum.GetName(typeof(HistoricalTypeEnum), item)
                 });
             }
 
@@ -143,14 +143,14 @@ namespace AssetMonitorDataAccess.DataAccess
                 new AgentTag() {Id = 6, Tagname = "LogicalDiskFreeSpace", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
                 );
 
-            modelBuilder.Entity<HistorizationTagConfig>().HasData(
-                new HistorizationTagConfig() { Id = 1, AgentTagId = 1, HistorizationTypeId = (int)HistorizationTypeEnum.Average },
-                new HistorizationTagConfig() { Id = 2, AgentTagId = 1, HistorizationTypeId = (int)HistorizationTypeEnum.Maximum },
-                new HistorizationTagConfig() { Id = 3, AgentTagId = 2, HistorizationTypeId = (int)HistorizationTypeEnum.Average },
-                new HistorizationTagConfig() { Id = 4, AgentTagId = 3, HistorizationTypeId = (int)HistorizationTypeEnum.Average },
-                new HistorizationTagConfig() { Id = 5, AgentTagId = 4, HistorizationTypeId = (int)HistorizationTypeEnum.Average },
-                new HistorizationTagConfig() { Id = 6, AgentTagId = 5, HistorizationTypeId = (int)HistorizationTypeEnum.Average },
-                new HistorizationTagConfig() { Id = 7, AgentTagId = 6, HistorizationTypeId = (int)HistorizationTypeEnum.Average }
+            modelBuilder.Entity<HistoricalTagConfig>().HasData(
+                new HistoricalTagConfig() { Id = 1, AgentTagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 2, AgentTagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Maximum },
+                new HistoricalTagConfig() { Id = 3, AgentTagId = 2, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 4, AgentTagId = 3, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 5, AgentTagId = 4, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 6, AgentTagId = 5, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 7, AgentTagId = 6, HistorizationTypeId = (int)HistoricalTypeEnum.Average }
                 );
 
             modelBuilder.Entity<SnmpTagSet>()

@@ -15,7 +15,7 @@ namespace AssetMonitorDataAccess.Models
 
         public double ScaleOffset { get; set; }
 
-        public ICollection<HistorizationTagConfig> HistorizationTagConfigs { get; set; }
+        public ICollection<HistoricalTagConfig> HistorizationTagConfigs { get; set; }
 
         [Required]
         public string OID { get; set; }

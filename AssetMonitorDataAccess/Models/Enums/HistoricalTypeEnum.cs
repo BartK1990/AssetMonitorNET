@@ -1,6 +1,6 @@
 ﻿namespace AssetMonitorDataAccess.Models.Enums
 {
-    public enum HistorizationTypeEnum
+    public enum HistoricalTypeEnum
     {
         Last = 1,
         Maximum = 2,

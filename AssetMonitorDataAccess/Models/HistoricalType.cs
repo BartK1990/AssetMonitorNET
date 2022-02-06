@@ -2,7 +2,7 @@
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class HistorizationType
+    public class HistoricalType
     {
         public int Id { get; set; }
 

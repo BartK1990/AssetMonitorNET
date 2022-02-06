@@ -2,7 +2,7 @@
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class HistorizationTagConfig
+    public class HistoricalTagConfig
     {
         public int Id { get; set; }
 
@@ -14,6 +14,6 @@ namespace AssetMonitorDataAccess.Models
 
         [Required]
         public int HistorizationTypeId { get; set; }
-        public HistorizationType HistorizationType { get; set; }
+        public HistoricalType HistorizationType { get; set; }
     }
 }

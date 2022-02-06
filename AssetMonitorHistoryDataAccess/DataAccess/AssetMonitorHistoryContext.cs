@@ -9,7 +9,7 @@ namespace AssetMonitorHistoryDataAccess.DataAccess
         {
         }
 
-        public DbSet<HistoricalDataTable> Asset { get; set; }
+        public DbSet<HistoricalDataTable> HistoricalDataTable { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
