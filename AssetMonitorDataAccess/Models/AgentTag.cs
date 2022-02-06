@@ -15,6 +15,9 @@ namespace AssetMonitorDataAccess.Models
         public double ScaleOffset { get; set; }
 
         [Required]
+        public bool IsHistorized { get; set; }
+
+        [Required]
         public int AgentDataTypeId { get; set; }
         public AgentDataType AgentDataType { get; set; }
 
