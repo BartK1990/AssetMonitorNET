@@ -4,16 +4,16 @@ namespace WindowsDataLib
 {
     public static class WindowsService
     {
-        public static string GetServiceState(string serviceName)
+        public static int GetServiceState(string serviceName)
         {
             try
             {
                 ServiceController sc = new ServiceController(serviceName);
-                return sc.Status.ToString();
+                return (int)sc.Status;
             }
             catch (System.Exception)
             {
-                return @"N/A";
+                return -1;
             }
         }
     }
