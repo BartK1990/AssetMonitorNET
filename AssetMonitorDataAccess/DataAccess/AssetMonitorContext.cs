@@ -34,13 +34,19 @@ namespace AssetMonitorDataAccess.DataAccess
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
             modelBuilder.Entity<AgentTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
             modelBuilder.Entity<AgentTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
-            modelBuilder.Entity<AgentTag>().Property(p => p.IsHistorized).HasDefaultValue(false);
+            modelBuilder.Entity<AgentTag>().Property(p => p.IsHistorizedLast).HasDefaultValue(false);
+            modelBuilder.Entity<AgentTag>().Property(p => p.IsHistorizedMax).HasDefaultValue(false);
+            modelBuilder.Entity<AgentTag>().Property(p => p.IsHistorizedAvg).HasDefaultValue(false);
+            modelBuilder.Entity<AgentTag>().Property(p => p.IsHistorizedMin).HasDefaultValue(false);
 
             modelBuilder.Entity<SnmpTag>()
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
             modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
             modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
-            modelBuilder.Entity<SnmpTag>().Property(p => p.IsHistorized).HasDefaultValue(false);
+            modelBuilder.Entity<SnmpTag>().Property(p => p.IsHistorizedLast).HasDefaultValue(false);
+            modelBuilder.Entity<SnmpTag>().Property(p => p.IsHistorizedMax).HasDefaultValue(false);
+            modelBuilder.Entity<SnmpTag>().Property(p => p.IsHistorizedAvg).HasDefaultValue(false);
+            modelBuilder.Entity<SnmpTag>().Property(p => p.IsHistorizedMin).HasDefaultValue(false);
 
             modelBuilder.Entity<HttpNodeRedTag>()
                 .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
@@ -117,12 +123,12 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
 
             modelBuilder.Entity<AgentTag>().HasData(
-                new AgentTag() {Id = 1, Tagname = "CpuUsage", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 2, Tagname = "MemoryAvailable", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 3, Tagname = "MemoryTotal", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
-                new AgentTag() {Id = 4, Tagname = "PhysicalDiskIdleTime", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 5, Tagname = "PhysicalDiskWorkTime", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 6, Tagname = "LogicalDiskFreeSpace", IsHistorized = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
+                new AgentTag() {Id = 1, Tagname = "CpuUsage", IsHistorizedAvg = true, IsHistorizedMax = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 2, Tagname = "MemoryAvailable", IsHistorizedAvg = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 3, Tagname = "MemoryTotal", IsHistorizedAvg = true, AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
+                new AgentTag() {Id = 4, Tagname = "PhysicalDiskIdleTime", IsHistorizedAvg = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 5, Tagname = "PhysicalDiskWorkTime", IsHistorizedAvg = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
+                new AgentTag() {Id = 6, Tagname = "LogicalDiskFreeSpace", IsHistorizedAvg = true, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
                 );
 
             modelBuilder.Entity<SnmpTagSet>()

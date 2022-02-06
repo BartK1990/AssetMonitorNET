@@ -16,7 +16,16 @@ namespace AssetMonitorDataAccess.Models
         public double ScaleOffset { get; set; }
 
         [Required]
-        public bool IsHistorized { get; set; }
+        public bool IsHistorizedLast { get; set; }
+
+        [Required]
+        public bool IsHistorizedMax { get; set; }
+
+        [Required]
+        public bool IsHistorizedAvg { get; set; }
+
+        [Required]
+        public bool IsHistorizedMin { get; set; }
 
         [Required]
         public string OID { get; set; }
