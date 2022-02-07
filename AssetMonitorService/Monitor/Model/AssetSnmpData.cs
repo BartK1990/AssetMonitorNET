@@ -6,10 +6,10 @@ namespace AssetMonitorService.Monitor.Model
 {
     public class AssetSnmpData
     {
-        public AssetSnmpData(ICollection<SnmpTag> agentTags)
+        public AssetSnmpData(ICollection<SnmpTag> tags)
         {
             Data = new Dictionary<SnmpTag, TagValue>();
-            foreach (var at in agentTags)
+            foreach (var at in tags)
             {
                 Data.Add(at, new TagValue((TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
             }

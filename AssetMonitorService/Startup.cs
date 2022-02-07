@@ -5,6 +5,7 @@ using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
+using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -59,6 +60,8 @@ namespace AssetMonitorService
             services.AddSingleton<IAssetsPingSharedService, AssetsPingDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
+
+            services.AddSingleton<IHistoricalTablesSharedService, HistoricalTablesSharedService>();
 
             // Scoped services
             services.AddScoped<IAssetPingService, AssetPingDataService>();

@@ -70,10 +70,45 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
+        public async Task<IEnumerable<AgentTag>> GetAgentTagsWithHistoricalByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.AgentTag
+                .Where(at => at.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().Id))
+                .Include(h => h.HistorizationTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<SnmpTag>> GetSnmpTagsWithHistoricalByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.SnmpTag
+                .Where(at => at.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().Id))
+                .Include(h => h.HistorizationTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<SnmpTag>> GetSnmpAssetTagsByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.SnmpTag
+                .Where(st => st.SnmpTagSetId == 
+                    _context.Asset.Where(a=>a.Id == id).Select(a=>a.SnmpTagSetId).FirstOrDefault()
+                );
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<SnmpAssetValue>> GetSnmpAssetValuesByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.SnmpAssetValue
+                .Where(sa => sa.AssetId == id);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }
-
     }
 }

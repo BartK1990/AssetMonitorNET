@@ -10,5 +10,6 @@ namespace AssetMonitorSharedGRPC.Server
         [OperationContract]
         Task<AssetsPingDataReply> GetAssetsPingData(AssetsPingDataRequest request, CallContext context = default);
         Task<AssetsPerformanceDataReply> GetAssetsPerformanceData(AssetsPerformanceDataRequest request, CallContext context = default);
+        Task<AssetSnmpUpdateCommandReply> UpdateAssetSnmpValuesById(AssetSnmpUpdateCommandRequest request, CallContext context = default);
     }
 }

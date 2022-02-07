@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
@@ -12,7 +13,13 @@ namespace AssetMonitorService
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory); // For Windows service
             var dir = Directory.GetCurrentDirectory();
+
+            var configuration = new ConfigurationBuilder()
+              .AddJsonFile("appsettings.json")
+              .Build();
+
             Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.File($@"{dir}\Logs\Log_{DateTime.Now:yyyyMMdd-HHmm}.txt",

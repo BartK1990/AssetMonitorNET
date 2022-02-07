@@ -1,4 +1,5 @@
 ﻿using AssetMonitorService.Monitor.SingletonServices;
+using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading;
@@ -13,18 +14,22 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsPingSharedService _assetsPingShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
+        private readonly IHistoricalTablesSharedService _historicalTablesShared;
 
         public InitSharedServices(ILogger<InitSharedServices> _logger,
         IAssetsCollectionSharedService assetsCollectionShared,
             IAssetsPingSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
-            IAssetsSnmpDataSharedService assetsSnmpDataShared)
+            IAssetsSnmpDataSharedService assetsSnmpDataShared,
+            IHistoricalTablesSharedService historicalTablesShared
+            )
         {
             this._logger = _logger;
             this._assetsCollectionShared = assetsCollectionShared;
             this._assetsPingShared = assetsPingShared;
             this._assetsPerformanceDataShared = assetsPerformanceDataShared;
             this._assetsSnmpDataShared = assetsSnmpDataShared;
+            this._historicalTablesShared = historicalTablesShared;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -34,6 +39,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             await this._assetsPingShared.UpdateAssetsListBase();
             await this._assetsPerformanceDataShared.UpdateAssetsListBase();
             await this._assetsSnmpDataShared.UpdateAssetsListBase();
+            await this._historicalTablesShared.DatabaseUpdate();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

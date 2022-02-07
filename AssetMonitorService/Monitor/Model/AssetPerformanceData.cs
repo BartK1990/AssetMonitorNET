@@ -6,10 +6,10 @@ namespace AssetMonitorService.Monitor.Model
 {
     public class AssetPerformanceData
     {
-        public AssetPerformanceData(ICollection<AgentTag> agentTags)
+        public AssetPerformanceData(ICollection<AgentTag> tags)
         {
             Data = new Dictionary<AgentTag, TagValue>();
-            foreach (var at in agentTags)
+            foreach (var at in tags)
             {
                 Data.Add(at, new TagValue((TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
             }
