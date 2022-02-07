@@ -19,7 +19,7 @@ namespace AssetMonitorAgent.CommunicationServices
             this._assetDataSharedService = assetDataSharedService;
         }
 
-        public Task<AssetDataReply> GetAssetDataAsync(AssetDataRequest request, CallContext context = default)
+        public async Task<AssetDataReply> GetAssetDataAsync(AssetDataRequest request, CallContext context = default)
         {
             _assetDataSharedService.UpdateConfiguration(request.Tags);
 
@@ -31,7 +31,7 @@ namespace AssetMonitorAgent.CommunicationServices
             var reply = new AssetDataReply() { Data = dataList };
 
             _logger.LogInformation($"Replying to {context.ServerCallContext.Peer}");
-            return Task.FromResult(reply);
+            return await Task.FromResult(reply);
         }
     }
 }
