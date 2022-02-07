@@ -4,14 +4,16 @@ using AssetMonitorDataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    partial class AssetMonitorContextModelSnapshot : ModelSnapshot
+    [Migration("20220207194827_SnmpAssetValue")]
+    partial class SnmpAssetValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -827,11 +829,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 5,
                             DataType = "String"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            DataType = "Long"
                         });
                 });
 

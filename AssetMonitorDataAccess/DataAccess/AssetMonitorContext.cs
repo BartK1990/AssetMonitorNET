@@ -22,6 +22,7 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<HistoricalType> HistoricalType { get; set; }
         public DbSet<HttpNodeRedTag> HttpNodeRedTag { get; set; }
         public DbSet<HttpNodeRedTagSet> HttpNodeRedTagSet { get; set; }
+        public DbSet<SnmpAssetValue> SnmpAssetValue { get; set; }
         public DbSet<SnmpOperation> SnmpOperation { get; set; }
         public DbSet<SnmpTag> SnmpTag { get; set; }
         public DbSet<SnmpTagSet> SnmpTagSet { get; set; }

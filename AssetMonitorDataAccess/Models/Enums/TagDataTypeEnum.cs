@@ -6,6 +6,7 @@
         Integer = 2,
         Float = 3,
         Double = 4,
-        String = 5
+        String = 5,
+        Long = 6
     }
 }
