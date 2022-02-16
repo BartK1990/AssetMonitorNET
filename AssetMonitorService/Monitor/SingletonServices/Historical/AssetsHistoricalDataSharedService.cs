@@ -3,7 +3,6 @@ using AssetMonitorService.Monitor.Model;
 using AssetMonitorService.Monitor.Model.Historical;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
