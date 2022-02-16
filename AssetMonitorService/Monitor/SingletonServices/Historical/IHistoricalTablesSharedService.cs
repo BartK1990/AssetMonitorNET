@@ -4,6 +4,6 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
 {
     public interface IHistoricalTablesSharedService
     {
-        Task DatabaseUpdate();
+        Task DatabaseStructureUpdate();
     }
 }

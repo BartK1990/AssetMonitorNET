@@ -40,6 +40,7 @@ namespace AssetMonitorService
             {
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
             });
+            services.AddScoped<IAssetMonitorHistoryRepository, AssetMonitorHistoryRepository>();
 
             // Singleton for Micro ORM Dapper
             services.AddSingleton<AssetMonitorHistoryDapperContext>(new AssetMonitorHistoryDapperContext(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]));
@@ -60,11 +61,12 @@ namespace AssetMonitorService
             services.AddSingleton<IAssetsPingSharedService, AssetsPingDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
-
+            // Shared (Singleton) services for Historical Data
             services.AddSingleton<IHistoricalTablesSharedService, HistoricalTablesSharedService>();
+            services.AddSingleton<IAssetsHistoricalDataSharedService, AssetsHistoricalDataSharedService>();
 
             // Scoped services
-            services.AddScoped<IAssetPingService, AssetPingDataService>();
+            services.AddScoped<IAssetPingDataService, AssetPingDataService>();
             services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
             services.AddScoped<IAssetSnmpDataService, AssetSnmpDataService>();
 

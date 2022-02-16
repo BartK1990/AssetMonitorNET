@@ -73,7 +73,7 @@ namespace AssetMonitorService.Data.Repositories
         public async Task<IEnumerable<AgentTag>> GetAgentTagsWithHistoricalByAssetIdAsync(int? id)
         {
             var assetMonitorContext = _context.AgentTag
-                .Where(at => at.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().Id))
+                .Where(at => at.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().AgentTagSetId))
                 .Include(h => h.HistorizationTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
@@ -82,7 +82,7 @@ namespace AssetMonitorService.Data.Repositories
         public async Task<IEnumerable<SnmpTag>> GetSnmpTagsWithHistoricalByAssetIdAsync(int? id)
         {
             var assetMonitorContext = _context.SnmpTag
-                .Where(at => at.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().Id))
+                .Where(at => at.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().SnmpTagSetId))
                 .Include(h => h.HistorizationTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
@@ -104,6 +104,16 @@ namespace AssetMonitorService.Data.Repositories
                 .Where(sa => sa.AssetId == id);
 
             return await assetMonitorContext.ToListAsync();
+        }
+
+        public void Add(object entity)
+        {
+            _context.Add(entity);
+        }
+
+        public void Update(object entity)
+        {
+            _context.Update(entity);
         }
 
         public async Task<bool> SaveAllAsync()

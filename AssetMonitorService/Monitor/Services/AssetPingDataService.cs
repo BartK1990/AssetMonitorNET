@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public class AssetPingDataService : IAssetPingService
+    public class AssetPingDataService : IAssetPingDataService
     {
         private readonly ILogger<AssetPingDataService> _logger;
 

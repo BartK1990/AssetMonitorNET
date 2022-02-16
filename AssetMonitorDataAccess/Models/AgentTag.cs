@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class AgentTag
+    public class AgentTag : IEqualityComparer<AgentTag>
     {
         public int Id { get; set; }
 
@@ -37,5 +37,19 @@ namespace AssetMonitorDataAccess.Models
         [Required]
         public int AgentTagSetId { get; set; }
         public AgentTagSet AgentTagSet { get; set; }
+
+        public bool Equals(AgentTag x, AgentTag y)
+        {
+            if (x.Id == y.Id)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int GetHashCode(AgentTag obj)
+        {
+            return this.Id.GetHashCode();
+        }
     }
 }

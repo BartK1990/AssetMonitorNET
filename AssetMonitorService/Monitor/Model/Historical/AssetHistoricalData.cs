@@ -1,20 +1,19 @@
-﻿using AssetMonitorDataAccess.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model.Historical
 {
     public class AssetHistoricalData
     {
-        public AssetHistoricalData(ICollection<TagValue> tags)
+        public int Id { get; private set; }
+
+        public AssetHistoricalData(ICollection<TagValue> tags, int dataWindowSize, int assetId)
         {
             Data = new Dictionary<TagValue, TagHistoricalValue>();
             foreach (var tag in tags)
             {
-                Data.Add(tag, new TagHistoricalValue(tag.DataType, HistoricalTypeEnum.Last ,16));
+                Data.Add(tag, new TagHistoricalValue(tag.DataType, dataWindowSize));
             }
+            this.Id = assetId;
         }
 
         public IDictionary<TagValue, TagHistoricalValue> Data { get; set; }

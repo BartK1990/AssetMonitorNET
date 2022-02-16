@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace AssetMonitorService.Monitor.HostedServices
 {
     public class AssetsTimedPingDataService : AssetsTimedDataServiceBase<AssetsTimedPingDataService, 
-        IAssetPingService, 
+        IAssetPingDataService, 
         AssetPing>
     {
         private readonly IAssetsPingSharedService _assetsPingSharedService;
@@ -29,7 +29,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             return _assetsPingSharedService.AssetsData;
         }
 
-        protected override async Task GetTask(IAssetPingService iAssetService, AssetPing asset)
+        protected override async Task GetTask(IAssetPingDataService iAssetService, AssetPing asset)
         {
             _logger.LogInformation($"Service {this.GetType().Name} ping to: {asset.IpAddress}");
             await iAssetService.UpdateAsset(asset);

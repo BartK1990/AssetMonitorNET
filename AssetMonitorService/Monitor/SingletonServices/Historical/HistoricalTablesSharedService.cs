@@ -1,5 +1,5 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorDataAccess.Models.Enums;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorHistoryDataAccess.Models;
 using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Data.Repositories.Historical;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,11 +22,14 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             this._logger = logger;
         }
 
-        public async Task DatabaseUpdate()
+        public async Task DatabaseStructureUpdate()
         {
             using var scope = _scopeFactory.CreateScope();
             var assetRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
-            var historyRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
+            var historyDynamicRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
+            var historyRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryRepository>();
+
+            var generatedHistoricalTables = new List<string>();
 
             var assets = await assetRepo.GetAllAssetsAsync();
 
@@ -36,32 +39,15 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var tagHistInfos = new List<TagHistoricalInfo>();
 
                 // Initial columns - always present - ping state
-                tagHistInfos.Add(new TagHistoricalInfo()
-                {
-                    Tagname = "Ping.State",
-                    ValueDataTypeId = (int)TagDataTypeEnum.Boolean,
-                    HistoricalTagConfigs = new List<HistoricalTagConfig>()
-                    {
-                        new HistoricalTagConfig() { HistorizationTypeId = (int)HistoricalTypeEnum.Last }
-                    },
-                    IsNull = true
-                });
-                tagHistInfos.Add(new TagHistoricalInfo()
-                {
-                    Tagname = "Ping.ResponseTime",
-                    ValueDataTypeId = (int)TagDataTypeEnum.Long,
-                    HistoricalTagConfigs = new List<HistoricalTagConfig>()
-                    {
-                        new HistoricalTagConfig() { HistorizationTypeId = (int)HistoricalTypeEnum.Average }
-                    },
-                    IsNull = true
-                });
+                tagHistInfos.AddRange(TagHistoricalPing.Tags);
 
                 var agentTags = (await assetRepo.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                tagHistInfos.AddRange(agentTags.Select(a => new TagHistoricalInfo() { Tagname = $"Agent.{a.Tagname}", ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
+                tagHistInfos.AddRange(agentTags.Select(a => new TagHistoricalInfo() 
+                { Tagname = $"Agent.{a.Tagname}", ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
 
                 var snmpTags = (await assetRepo.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                tagHistInfos.AddRange(snmpTags.Select(a => new TagHistoricalInfo() { Tagname = $"Snmp.{a.Tagname}", ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
+                tagHistInfos.AddRange(snmpTags.Select(a => new TagHistoricalInfo() 
+                { Tagname = $"Snmp.{a.Tagname}", ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
 
                 foreach (var tagHistInfo in tagHistInfos)
                 {
@@ -103,16 +89,20 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                         }
                     }
                 }
-                await historyRepo.CreateOrUpdateTimeSeriesTable(@$"TenMinData_{asset.Id}", columnsConfigs);
+                var newTableName = @$"TenMinData_{asset.Id}";
+                await historyDynamicRepo.CreateOrUpdateTimeSeriesTable(newTableName, columnsConfigs);
+                generatedHistoricalTables.Add(newTableName);
             }
-        }
-
-        private class TagHistoricalInfo
-        {
-            public string Tagname;
-            public int ValueDataTypeId;
-            public ICollection<HistoricalTagConfig> HistoricalTagConfigs;
-            public bool IsNull;
+            // Update Historical data table containing names of created tables
+            var historicalTables = (await historyRepo.GetAllTablesAsync()).ToList();
+            foreach (var tableName in generatedHistoricalTables)
+            {
+                if (!historicalTables.Select(s => s.Name).Contains(tableName))
+                {
+                    historyRepo.Add(new HistoricalDataTable() { Name = tableName });
+                }
+            }
+            await historyRepo.SaveAllAsync();
         }
     }
 }

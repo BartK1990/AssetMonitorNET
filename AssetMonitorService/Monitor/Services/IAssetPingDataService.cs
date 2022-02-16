@@ -2,7 +2,7 @@
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public interface IAssetPingService : IAssetService<AssetPing>
+    public interface IAssetPingDataService : IAssetService<AssetPing>
     {
     }
 }

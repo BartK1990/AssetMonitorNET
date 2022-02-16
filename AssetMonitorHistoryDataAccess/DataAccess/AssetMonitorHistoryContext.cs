@@ -14,6 +14,9 @@ namespace AssetMonitorHistoryDataAccess.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<HistoricalDataTable>()
+                .HasIndex(c => new { c.Name }).IsUnique();
         }
     }
 }

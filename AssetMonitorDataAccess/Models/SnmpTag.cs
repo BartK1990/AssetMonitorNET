@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class SnmpTag
+    public class SnmpTag : IEqualityComparer<SnmpTag>
     {
         public int Id { get; set; }
 
@@ -31,5 +31,19 @@ namespace AssetMonitorDataAccess.Models
         [Required]
         public int SnmpTagSetId { get; set; }
         public SnmpTagSet SnmpTagSet { get; set; }
+
+        public bool Equals(SnmpTag x, SnmpTag y)
+        {
+            if(x.Id == y.Id)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public int GetHashCode(SnmpTag obj)
+        {
+            return this.Id.GetHashCode();
+        }
     }
 }

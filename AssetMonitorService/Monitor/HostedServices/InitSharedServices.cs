@@ -15,13 +15,15 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
         private readonly IHistoricalTablesSharedService _historicalTablesShared;
+        private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
 
         public InitSharedServices(ILogger<InitSharedServices> _logger,
         IAssetsCollectionSharedService assetsCollectionShared,
             IAssetsPingSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
-            IHistoricalTablesSharedService historicalTablesShared
+            IHistoricalTablesSharedService historicalTablesShared,
+            IAssetsHistoricalDataSharedService assetsHistoricalDataShared
             )
         {
             this._logger = _logger;
@@ -30,6 +32,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._assetsPerformanceDataShared = assetsPerformanceDataShared;
             this._assetsSnmpDataShared = assetsSnmpDataShared;
             this._historicalTablesShared = historicalTablesShared;
+            this._assetsHistoricalDataShared = assetsHistoricalDataShared;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -39,7 +42,8 @@ namespace AssetMonitorService.Monitor.HostedServices
             await this._assetsPingShared.UpdateAssetsListBase();
             await this._assetsPerformanceDataShared.UpdateAssetsListBase();
             await this._assetsSnmpDataShared.UpdateAssetsListBase();
-            await this._historicalTablesShared.DatabaseUpdate();
+            await this._historicalTablesShared.DatabaseStructureUpdate();
+            await this._assetsHistoricalDataShared.UpdateAssetsListBase();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

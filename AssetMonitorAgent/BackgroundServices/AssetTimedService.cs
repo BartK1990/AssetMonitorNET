@@ -36,7 +36,7 @@ namespace AssetMonitorAgent.BackgroundServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running.");
+            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running");
 
             _timer = new Timer(
                 GetAssetsData,
@@ -50,7 +50,7 @@ namespace AssetMonitorAgent.BackgroundServices
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is stopping.");
+            _logger.LogInformation($"{this.GetType().Name} - Hosted Service is stopping");
 
             _timer?.Change(Timeout.Infinite, 0);
 

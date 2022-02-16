@@ -8,7 +8,7 @@ namespace AssetMonitorService.Monitor.Model
     {
         public AssetPerformanceData(ICollection<AgentTag> tags)
         {
-            Data = new Dictionary<AgentTag, TagValue>();
+            Data = new Dictionary<AgentTag, TagValue>(new AgentTag());
             foreach (var at in tags)
             {
                 Data.Add(at, new TagValue((TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));

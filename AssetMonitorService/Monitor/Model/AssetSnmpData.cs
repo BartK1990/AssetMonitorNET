@@ -8,7 +8,7 @@ namespace AssetMonitorService.Monitor.Model
     {
         public AssetSnmpData(ICollection<SnmpTag> tags)
         {
-            Data = new Dictionary<SnmpTag, TagValue>();
+            Data = new Dictionary<SnmpTag, TagValue>(new SnmpTag());
             foreach (var at in tags)
             {
                 Data.Add(at, new TagValue((TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));

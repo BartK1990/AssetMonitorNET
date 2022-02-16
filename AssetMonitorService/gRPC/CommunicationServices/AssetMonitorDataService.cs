@@ -1,4 +1,5 @@
-﻿using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorDataAccess.Models;
+using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.SingletonServices;
 using AssetMonitorSharedGRPC.Server;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,10 +73,29 @@ namespace AssetMonitorService.gRPC.CommunicationServices
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
 
-            var snmpAssetValues = await repository.GetSnmpAssetValuesByAssetIdAsync(request.AssetId);
-            var snmpTags = await repository.GetSnmpAssetTagsByAssetIdAsync(request.AssetId);
+            var snmpAssetValues = (await repository.GetSnmpAssetValuesByAssetIdAsync(request.AssetId)).ToList();
+            var snmpTags = (await repository.GetSnmpAssetTagsByAssetIdAsync(request.AssetId)).ToList();
 
+            var assetData = _assetsSnmpDataShared.AssetsData.FirstOrDefault(ad=>ad.Id == request.AssetId);
 
+            foreach (var tag in snmpTags)
+            {
+                if (!assetData.Data.ContainsKey(tag))
+                {
+                    continue;
+                }
+                var snmpTagValue = assetData.Data[tag].Value;
+                var valueToUpdate = snmpAssetValues.FirstOrDefault(sa => sa.SnmpTagId == tag.Id);
+                if (valueToUpdate == null)
+                {
+                    repository.Add(new SnmpAssetValue() { AssetId = request.AssetId, SnmpTag = tag, Value = snmpTagValue.ToString() });
+                    continue;
+                }
+                valueToUpdate.Value = snmpTagValue.ToString();
+                repository.Update(valueToUpdate);
+            }
+
+            reply.Success = await repository.SaveAllAsync();
             return await Task.FromResult(reply);
         }
     }
