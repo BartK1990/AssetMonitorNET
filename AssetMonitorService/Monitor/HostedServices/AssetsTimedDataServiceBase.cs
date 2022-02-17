@@ -18,7 +18,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._scopeFactory = scopeFactory;
         }
 
-        protected override void TimedJob(object state)
+        protected override void TimedJob()
         {
             GetAssetsData();
         }
@@ -68,10 +68,9 @@ namespace AssetMonitorService.Monitor.HostedServices
                     _logger.LogError($"{this.GetType().Name} - Hosted Service executes too frequent");
                 }
             }
-            catch (Exception e)
+            catch
             {
-                _logger.LogError($"{this.GetType().Name} - Hosted Service exception!");
-                _logger.LogDebug(e.Message);
+                throw;
             }
             finally
             {

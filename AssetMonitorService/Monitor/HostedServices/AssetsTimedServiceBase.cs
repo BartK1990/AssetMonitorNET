@@ -39,7 +39,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running. Timer scan time: {ScanTime}");
 
             _timer = new Timer(
-                TimedJob,
+                TimedJobWrapper,
                 null,
                 TimeSpan.Zero,
                 ScanTime
@@ -57,6 +57,19 @@ namespace AssetMonitorService.Monitor.HostedServices
             return Task.CompletedTask;
         }
 
-        protected abstract void TimedJob(object state);
+        protected abstract void TimedJob();
+
+        private void TimedJobWrapper(object state)
+        {
+            try
+            {
+                TimedJob();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{this.GetType().Name} - Hosted Service exception!");
+                _logger.LogDebug(e.Message);
+            }
+        }
     }
 }
