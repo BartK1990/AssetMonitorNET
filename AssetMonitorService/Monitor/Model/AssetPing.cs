@@ -35,8 +35,8 @@ namespace AssetMonitorService.Monitor.Model
 
         public AssetPing()
         {
-            this.PingStateValue = new TagValue(TagDataTypeEnum.Boolean, 1.0, 0.0);
-            this.PingResponseTimeValue = new TagValue(TagDataTypeEnum.Long, 1.0, 0.0);
+            this.PingStateValue = new TagValue("PingState", TagDataTypeEnum.Boolean, 1.0, 0.0);
+            this.PingResponseTimeValue = new TagValue("PingResponseTime", TagDataTypeEnum.Long, 1.0, 0.0);
         }
     }
 }

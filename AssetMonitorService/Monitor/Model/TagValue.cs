@@ -5,10 +5,13 @@ namespace AssetMonitorService.Monitor.Model
 {
     public class TagValue
     {
+        public readonly string Tagname;
+
         public readonly TagDataTypeEnum DataType;
 
-        public TagValue(TagDataTypeEnum dataType, double scaleFactor, double scaleOffset)
+        public TagValue(string tagname, TagDataTypeEnum dataType, double scaleFactor, double scaleOffset)
         {
+            this.Tagname = tagname;
             this.DataType = dataType;
             this.ScaleFactor = scaleFactor;
             this.ScaleOffset = scaleOffset;

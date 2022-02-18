@@ -38,14 +38,14 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
 
                 // Ping
                 var pingShared = _assetsPingShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                foreach (var tag in TagHistoricalPing.Tags)
+                foreach (var tag in HistoricalTagsPing.Tags)
                 {
                     switch (tag.Tagname)
                     {
-                        case "Ping.State":
+                        case "PingState":
                             tags.Add(pingShared.PingStateValue);
                             break;
-                        case "Ping.ResponseTime":
+                        case "PingResponseTime":
                             tags.Add(pingShared.PingResponseTimeValue);
                             break;
                         default:
@@ -58,7 +58,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var agentTags = (await repository.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 foreach (var tag in agentTags)
                 {
-                    if (tag.HistorizationTagConfigs.Any())
+                    if (tag.HistorizationTagConfigs?.Any() ?? false)
                     {
                         if (performanceShared.Data.ContainsKey(tag))
                         {
@@ -72,7 +72,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var snmpTags = (await repository.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 foreach (var tag in snmpTags)
                 {
-                    if (tag.HistorizationTagConfigs.Any())
+                    if (tag.HistorizationTagConfigs?.Any() ?? false)
                     {
                         if (snmpShared.Data.ContainsKey(tag))
                         {

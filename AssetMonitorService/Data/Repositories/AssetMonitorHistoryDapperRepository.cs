@@ -34,7 +34,7 @@ namespace AssetMonitorService.Data.Repositories
             using var connection = _context.CreateSqlConnection();
             var checkQuery = @$"SELECT * FROM information_schema.tables WHERE table_name = '{tableName}'";
             _logger.LogInformation($"{this.GetType().Name} Db query: {checkQuery}");
-            var tableExists = (await connection.QueryAsync<object>(checkQuery)).Any();
+            var tableExists = (await connection.QueryAsync<object>(checkQuery))?.Any() ?? false;
             _logger.LogInformation($"{tableName} exists: {tableExists}");
 
             if (tableExists)
@@ -57,7 +57,7 @@ namespace AssetMonitorService.Data.Repositories
             {
                 _ = await connection.ExecuteScalarAsync(query);
             }
-            catch (Exception)
+            catch
             {
                 _logger.LogError($"Wrong SQL query for creating table: [{tableName}]");
             }
@@ -65,7 +65,7 @@ namespace AssetMonitorService.Data.Repositories
 
         private async Task CheckAddMissingColumnsAsync(SqlConnection connection, string tableName, IList<TableColumnConfig> columns)
         {
-            if (!columns.Any())
+            if (!columns?.Any() ?? true)
             {
                 return;
             }
@@ -118,11 +118,60 @@ namespace AssetMonitorService.Data.Repositories
             {
                 _ = await connection.ExecuteScalarAsync(addColumnsQuery);
             }
-            catch (Exception)
+            catch
             {
                 _logger.LogError($"Wrong SQL query for adding columns to: [{tableName}]");
             }
             _logger.LogInformation($"Columns added to table: [{tableName}]");
+        }
+
+        public async Task InsertToTable(string tableName, IList<TableColumnValue> columns)
+        {
+            using var connection = _context.CreateSqlConnection();
+
+            var query = @$"
+                INSERT INTO [dbo].[{tableName}] (";
+            foreach (var column in columns)
+            {
+                if (columns.First().Equals(column))
+                {
+                    query += $@"[{column.Name}]";
+                }
+                else
+                {
+                    query += $@", [{column.Name}]";
+                }
+            }
+            query += @") 
+                VALUES (";
+            foreach (var column in columns)
+            {
+                if (columns.First().Equals(column))
+                {
+                    query += $@"N'{column.Value}'";
+                }
+                else
+                {
+                    query += $@", N'{column.Value}'";
+                }
+            }
+            query += @")";
+
+            _logger.LogInformation($"{ this.GetType().Name} Db query: {query}");
+            try
+            {
+                _ = await connection.ExecuteScalarAsync(query);
+            }
+            catch
+            {
+                _logger.LogError($"Wrong SQL query for creating table: [{tableName}]");
+            }
+        }
+
+        public async Task InsertToTimeSeriesTable(string tableName, IList<TableColumnValue> columns, string timeStamp)
+        {
+            columns.Insert(0, new TableColumnValue() { Name = "TimeStamp", Value = timeStamp });
+            await InsertToTable(tableName, columns);
         }
 
         public async Task CreateOrUpdateTimeSeriesTable(string tableName, IList<TableColumnConfig> columns)

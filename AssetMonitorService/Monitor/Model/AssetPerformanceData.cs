@@ -11,7 +11,7 @@ namespace AssetMonitorService.Monitor.Model
             Data = new Dictionary<AgentTag, TagValue>(new AgentTag());
             foreach (var at in tags)
             {
-                Data.Add(at, new TagValue((TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
+                Data.Add(at, new TagValue(at.Tagname ,(TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
             }
         }
 

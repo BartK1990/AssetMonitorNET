@@ -15,6 +15,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
         private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
+        private readonly IHistoricalTablesSharedService _historicalTablesShared;
 
         protected readonly object taskGetAssetsDataLock = new object();
         protected readonly object taskSaveAssetsTenMinDataLock = new object();
@@ -26,6 +27,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
             IAssetsHistoricalDataSharedService assetsHistoricalDataShared,
+            IHistoricalTablesSharedService historicalTablesShared,
             ILogger<AssetsHistoryTimedService> logger, TimeSpan? scanTime = null) : base(logger: logger, scanTime: scanTime)
         {
             this._scopeFactory = scopeFactory;
@@ -33,9 +35,12 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._assetsPerformanceDataShared = assetsPerformanceDataShared;
             this._assetsSnmpDataShared = assetsSnmpDataShared;
             this._assetsHistoricalDataShared = assetsHistoricalDataShared;
+            this._historicalTablesShared = historicalTablesShared;
+
+            _lastSaveTimeToDatebase = DateTime.UtcNow; // Added for not creating new historical data at application start
         }
 
-        protected override void TimedJob(object state)
+        protected override void TimedJob()
         {
             // Start all tasks for getting and saving the data
             lock (taskGetAssetsDataLock)
@@ -62,12 +67,21 @@ namespace AssetMonitorService.Monitor.HostedServices
             {
                 return;
             }
+            var timeFormat = "yyyy-MM-dd HH:mm";
+            var tenMinTimeStamp = DateTime.UtcNow.ToString(timeFormat).Substring(0, timeFormat.Length - 1) + "0:00";
+
+            // Below few lines only for testing - saves data every minute
+            //if (_lastSaveTimeToDatebase.ToString("yyyy-MM-dd HH:mm") == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
+            //{
+            //    return;
+            //}
+            //var timeFormat = "yyyy-MM-dd HH:mm";
+            //var tenMinTimeStamp = DateTime.UtcNow.ToString(timeFormat) + ":00";
 
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
 
-
-
+            await _historicalTablesShared.InsertTimedDataForAllAssets(tenMinTimeStamp);
             _lastSaveTimeToDatebase = DateTime.UtcNow;
         }
     }

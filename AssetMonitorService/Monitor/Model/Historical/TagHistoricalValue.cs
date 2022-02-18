@@ -1,20 +1,22 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AssetMonitorService.Monitor.Model.Historical
 {
     public class TagHistoricalValue
     {
+        public readonly string Tagname;
+
         public readonly TagDataTypeEnum DataType;
         public readonly int WindowSize;
 
-        public TagHistoricalValue(TagDataTypeEnum dataType, int windowSize)
+        public TagHistoricalValue(string tagname, TagDataTypeEnum dataType, int windowSize)
         {
             this.DataType = dataType;
             this.WindowSize = windowSize;
+            this.Tagname = tagname;
             ValueBuffer = new Queue<object>();
         }
 
@@ -79,7 +81,7 @@ namespace AssetMonitorService.Monitor.Model.Historical
                 DataType != TagDataTypeEnum.Long &&
                 DataType != TagDataTypeEnum.Float &&
                 DataType != TagDataTypeEnum.Double)
-                || !ValueBuffer.Any())
+                || (!ValueBuffer?.Any() ?? true))
             {
                 return ValueLast;
             }

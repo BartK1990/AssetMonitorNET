@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.SingletonServices.Historical
 {
-    public static class TagHistoricalPing
+    public static class HistoricalTagsPing
     {
-        public static List<TagHistoricalInfo> Tags = new List<TagHistoricalInfo>()
+        public static List<HistoricalTagInfo> Tags = new List<HistoricalTagInfo>()
         {
-            new TagHistoricalInfo()
+            new HistoricalTagInfo()
             {
-                Tagname = "Ping.State",
+                Tagname = "PingState",
+                ColumnNameSuffix = "ICMP",
                 ValueDataTypeId = (int)TagDataTypeEnum.Boolean,
                 HistoricalTagConfigs = new List<HistoricalTagConfig>()
                 {
@@ -18,9 +19,10 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 },
                 IsNull = true
             },
-            new TagHistoricalInfo()
+            new HistoricalTagInfo()
             {
-                Tagname = "Ping.ResponseTime",
+                Tagname = "PingResponseTime",
+                ColumnNameSuffix = "ICMP",
                 ValueDataTypeId = (int)TagDataTypeEnum.Long,
                 HistoricalTagConfigs = new List<HistoricalTagConfig>()
                 {

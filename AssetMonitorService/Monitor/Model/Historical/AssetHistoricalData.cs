@@ -11,7 +11,7 @@ namespace AssetMonitorService.Monitor.Model.Historical
             Data = new Dictionary<TagValue, TagHistoricalValue>();
             foreach (var tag in tags)
             {
-                Data.Add(tag, new TagHistoricalValue(tag.DataType, dataWindowSize));
+                Data.Add(tag, new TagHistoricalValue(tag.Tagname, tag.DataType, dataWindowSize));
             }
             this.Id = assetId;
         }
