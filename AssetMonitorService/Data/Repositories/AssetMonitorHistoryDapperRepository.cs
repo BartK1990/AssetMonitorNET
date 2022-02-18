@@ -170,6 +170,11 @@ namespace AssetMonitorService.Data.Repositories
 
         public async Task InsertToTimeSeriesTable(string tableName, IList<TableColumnValue> columns, string timeStamp)
         {
+            if (!DateTime.TryParse(timeStamp, out _))
+            {
+                throw new ArgumentException("Wrong timestamp format provided for method");
+            }
+
             columns.Insert(0, new TableColumnValue() { Name = "TimeStamp", Value = timeStamp });
             await InsertToTable(tableName, columns);
         }
