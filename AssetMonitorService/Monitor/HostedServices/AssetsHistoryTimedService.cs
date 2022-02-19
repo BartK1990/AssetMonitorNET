@@ -4,7 +4,6 @@ using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
@@ -17,8 +16,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
         private readonly IHistoricalTablesSharedService _historicalTablesShared;
 
-        protected readonly object taskGetAssetsDataLock = new object();
-        protected readonly object taskSaveAssetsTenMinDataLock = new object();
+        protected readonly object taskTimedJobLock = new object();
 
         private DateTime _lastSaveTimeToDatebase;
 
@@ -43,13 +41,10 @@ namespace AssetMonitorService.Monitor.HostedServices
         protected override void TimedJob()
         {
             // Start all tasks for getting and saving the data
-            lock (taskGetAssetsDataLock)
+            lock (taskTimedJobLock)
             {
                 GetAssetsData();
-            }
-            lock (taskSaveAssetsTenMinDataLock)
-            {
-                _ = SaveAssetsTenMinData();
+                SaveAssetsTenMinData();
             }
         }
 
@@ -58,17 +53,19 @@ namespace AssetMonitorService.Monitor.HostedServices
             _assetsHistoricalDataShared.UpdateAssetsHistoricalValues();
         }
 
-        private async Task SaveAssetsTenMinData()
+        private void SaveAssetsTenMinData()
         {
+            var utcNow = DateTime.UtcNow;
+
             // Skip execution if it was already executed in this 10 min period
-            if ((_lastSaveTimeToDatebase.Date == DateTime.UtcNow.Date)
-                && (_lastSaveTimeToDatebase.Hour == DateTime.UtcNow.Hour)
-                && (_lastSaveTimeToDatebase.Minute.ToString().Substring(0, 1) == DateTime.UtcNow.Minute.ToString().Substring(0, 1)))
+            if ((_lastSaveTimeToDatebase.Date == utcNow.Date)
+                && (_lastSaveTimeToDatebase.Hour == utcNow.Hour)
+                && ((_lastSaveTimeToDatebase.Minute/10) == (utcNow.Minute/10)))
             {
                 return;
             }
             var timeFormat = "yyyy-MM-dd HH:mm";
-            var tenMinTimeStamp = DateTime.UtcNow.ToString(timeFormat).Substring(0, timeFormat.Length - 1) + "0:00";
+            var tenMinTimeStamp = utcNow.ToString(timeFormat).Substring(0, timeFormat.Length - 1) + "0:00";
 
             // Below few lines only for testing - saves data every minute
             //if (_lastSaveTimeToDatebase.ToString("yyyy-MM-dd HH:mm") == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
@@ -81,8 +78,8 @@ namespace AssetMonitorService.Monitor.HostedServices
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
 
-            await _historicalTablesShared.InsertTimedDataForAllAssets(tenMinTimeStamp);
-            _lastSaveTimeToDatebase = DateTime.UtcNow;
+            _historicalTablesShared.InsertTimedDataForAllAssetsAsync(tenMinTimeStamp).Wait();
+            _lastSaveTimeToDatebase = utcNow;
         }
     }
 }
