@@ -6,10 +6,10 @@ namespace AssetMonitorService.Data.Repositories
 {
     public interface IAssetMonitorHistoryDapperRepository
     {
-        public Task<string> GetDbVersion();
-        Task CreateOrUpdateTable(string tableName, IList<TableColumnConfig> columns);
-        Task CreateOrUpdateTimeSeriesTable(string tableName, IList<TableColumnConfig> columns);
-        Task InsertToTable(string tableName, IList<TableColumnValue> columns);
-        Task InsertToTimeSeriesTable(string tableName, IList<TableColumnValue> columns, string timeStamp);
+        public Task<string> GetDbVersionAsync();
+        Task CreateOrUpdateTableAsync(string tableName, IList<TableColumnConfig> columns);
+        Task CreateOrUpdateTimeSeriesTableAsync(string tableName, IList<TableColumnConfig> columns);
+        Task InsertToTableAsync(string tableName, IList<TableColumnValue> columns);
+        Task InsertToTimeSeriesTableAsync(string tableName, IList<TableColumnValue> columns, string timeStamp);
     }
 }

@@ -4,7 +4,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
 {
     public interface IHistoricalTablesSharedService
     {
-        Task DatabaseStructureUpdate();
-        Task InsertTimedDataForAllAssets(string timestamp);
+        Task DatabaseStructureUpdateAsync();
+        Task InsertTimedDataForAllAssetsAsync(string timestamp);
     }
 }

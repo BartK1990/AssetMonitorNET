@@ -22,14 +22,14 @@ namespace AssetMonitorService.Data.Repositories
             this._logger = logger;
         }
 
-        public async Task<string> GetDbVersion()
+        public async Task<string> GetDbVersionAsync()
         {
             using var connection = _context.CreateSqlConnection();
             var version = await connection.ExecuteScalarAsync<string>(@"SELECT @@VERSION");
             return version;
         }
 
-        public async Task CreateOrUpdateTable(string tableName, IList<TableColumnConfig> columns)
+        public async Task CreateOrUpdateTableAsync(string tableName, IList<TableColumnConfig> columns)
         {
             using var connection = _context.CreateSqlConnection();
             var checkQuery = @$"SELECT * FROM information_schema.tables WHERE table_name = '{tableName}'";
@@ -125,7 +125,7 @@ namespace AssetMonitorService.Data.Repositories
             _logger.LogInformation($"Columns added to table: [{tableName}]");
         }
 
-        public async Task InsertToTable(string tableName, IList<TableColumnValue> columns)
+        public async Task InsertToTableAsync(string tableName, IList<TableColumnValue> columns)
         {
             using var connection = _context.CreateSqlConnection();
 
@@ -168,7 +168,7 @@ namespace AssetMonitorService.Data.Repositories
             }
         }
 
-        public async Task InsertToTimeSeriesTable(string tableName, IList<TableColumnValue> columns, string timeStamp)
+        public async Task InsertToTimeSeriesTableAsync(string tableName, IList<TableColumnValue> columns, string timeStamp)
         {
             if (!DateTime.TryParse(timeStamp, out _))
             {
@@ -176,16 +176,16 @@ namespace AssetMonitorService.Data.Repositories
             }
 
             columns.Insert(0, new TableColumnValue() { Name = "TimeStamp", Value = timeStamp });
-            await InsertToTable(tableName, columns);
+            await InsertToTableAsync(tableName, columns);
         }
 
-        public async Task CreateOrUpdateTimeSeriesTable(string tableName, IList<TableColumnConfig> columns)
+        public async Task CreateOrUpdateTimeSeriesTableAsync(string tableName, IList<TableColumnConfig> columns)
         {
             columns.Insert(0, new TableColumnConfig() { Name = "TimeStamp", Type = "DATETIME", IsNull = false });
-            await CreateOrUpdateTable(tableName, columns);
+            await CreateOrUpdateTableAsync(tableName, columns);
         }
 
-        public async Task SelectDynamicExample()
+        public async Task SelectDynamicExampleAsync()
         {
             var query = @"SELECT * FROM Companies";
             using var connection = _context.CreateSqlConnection();
@@ -199,7 +199,7 @@ namespace AssetMonitorService.Data.Repositories
             }
         }
 
-        public async Task UpdateExample()
+        public async Task UpdateExampleAsync()
         {
             using var connection = _context.CreateSqlConnection();
             int nOfRows = await connection.ExecuteAsync("UPDATE dbo.[cars] SET [price] = 52000 WHERE [id] = 1");

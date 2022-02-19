@@ -43,7 +43,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             await this._assetsPerformanceDataShared.UpdateAssetsListBase();
             await this._assetsSnmpDataShared.UpdateAssetsListBase();
             await this._assetsHistoricalDataShared.UpdateAssetsListBase();
-            await this._historicalTablesShared.DatabaseStructureUpdate();
+            await this._historicalTablesShared.DatabaseStructureUpdateAsync();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

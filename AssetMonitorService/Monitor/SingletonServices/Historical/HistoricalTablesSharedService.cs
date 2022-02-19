@@ -29,7 +29,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             this._assetsHistoricalDataShared = assetsHistoricalDataShared;
         }
 
-        public async Task DatabaseStructureUpdate()
+        public async Task DatabaseStructureUpdateAsync()
         {
             _assetDataColumnRelations = new List<AssetHistoricalDataColumnRelation>();
 
@@ -110,7 +110,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 }
                 var newTableName = @$"TenMinData_{asset.Id}";
 
-                await historyDynamicRepo.CreateOrUpdateTimeSeriesTable(newTableName, columnsConfigs);
+                await historyDynamicRepo.CreateOrUpdateTimeSeriesTableAsync(newTableName, columnsConfigs);
 
                 assetDataColumnRelation.TableName = newTableName;
                 _assetDataColumnRelations.Add(assetDataColumnRelation);
@@ -130,7 +130,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             await historyRepo.SaveAllAsync();
         }
 
-        public async Task InsertTimedDataForAllAssets(string timestamp)
+        public async Task InsertTimedDataForAllAssetsAsync(string timestamp)
         {
             if (!_assetDataColumnRelations?.Any() ?? true)
             {
@@ -169,7 +169,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                     columnsValues.Add(columnValue);
                 }
 
-                await historyDynamicRepo.InsertToTimeSeriesTable(asset.TableName, columnsValues, timestamp);
+                await historyDynamicRepo.InsertToTimeSeriesTableAsync(asset.TableName, columnsValues, timestamp);
             }
         }
     }
