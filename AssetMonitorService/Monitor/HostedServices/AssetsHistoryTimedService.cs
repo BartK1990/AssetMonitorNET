@@ -58,22 +58,22 @@ namespace AssetMonitorService.Monitor.HostedServices
             var utcNow = DateTime.UtcNow;
 
             // Skip execution if it was already executed in this 10 min period
-            //if ((_lastSaveTimeToDatebase.Date == utcNow.Date)
-            //    && (_lastSaveTimeToDatebase.Hour == utcNow.Hour)
-            //    && ((_lastSaveTimeToDatebase.Minute/10) == (utcNow.Minute/10)))
-            //{
-            //    return;
-            //}
-            //var timeFormat = "yyyy-MM-dd HH:mm";
-            //var tenMinTimeStamp = utcNow.ToString(timeFormat).Substring(0, timeFormat.Length - 1) + "0:00";
+            if ((_lastSaveTimeToDatebase.Date == utcNow.Date)
+                && (_lastSaveTimeToDatebase.Hour == utcNow.Hour)
+                && ((_lastSaveTimeToDatebase.Minute / 10) == (utcNow.Minute / 10)))
+            {
+                return;
+            }
+            var timeFormat = "yyyy-MM-dd HH:mm";
+            var tenMinTimeStamp = utcNow.ToString(timeFormat).Substring(0, timeFormat.Length - 1) + "0:00";
 
             // Below few lines only for testing - saves data every minute
-            if (_lastSaveTimeToDatebase.ToString("yyyy-MM-dd HH:mm") == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
-                {
-                    return;
-                }
-            var timeFormat = "yyyy-MM-dd HH:mm";
-            var tenMinTimeStamp = DateTime.UtcNow.ToString(timeFormat) + ":00";
+            //if (_lastSaveTimeToDatebase.ToString("yyyy-MM-dd HH:mm") == DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"))
+            //    {
+            //        return;
+            //    }
+            //var timeFormat = "yyyy-MM-dd HH:mm";
+            //var tenMinTimeStamp = DateTime.UtcNow.ToString(timeFormat) + ":00";
 
             using var scope = _scopeFactory.CreateScope();
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
