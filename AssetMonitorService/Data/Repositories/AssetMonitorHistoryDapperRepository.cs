@@ -146,13 +146,17 @@ namespace AssetMonitorService.Data.Repositories
                 VALUES (";
             foreach (var column in columns)
             {
-                if (columns.First().Equals(column))
+                if (!columns.First().Equals(column))
+                {
+                    query += @",";
+                }
+                if (column.Value == "NULL")
+                {
+                    query += $@"{column.Value}";
+                }
+                else 
                 {
                     query += $@"N'{column.Value}'";
-                }
-                else
-                {
-                    query += $@", N'{column.Value}'";
                 }
             }
             query += @")";

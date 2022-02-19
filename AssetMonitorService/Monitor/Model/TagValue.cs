@@ -3,6 +3,7 @@ using System;
 
 namespace AssetMonitorService.Monitor.Model
 {
+#nullable enable
     public class TagValue
     {
         public readonly string Tagname;
@@ -20,8 +21,8 @@ namespace AssetMonitorService.Monitor.Model
         public readonly double ScaleFactor;
         public readonly double ScaleOffset;
 
-        private object _value;
-        public object Value
+        private object? _value;
+        public object? Value
         {
             get
             {
@@ -29,6 +30,11 @@ namespace AssetMonitorService.Monitor.Model
             }
             set
             {
+                if(value == null)
+                {
+                    _value = value;
+                    return;
+                }
                 switch (DataType)
                 {
                     case TagDataTypeEnum.Integer:

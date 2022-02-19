@@ -24,36 +24,50 @@ namespace AssetMonitorService.Monitor.Services
 
         public async Task UpdateAsset(AssetPerformanceData assetPerformanceData)
         {
-            if(assetPerformanceData.IpAddress == IPAddress.Loopback.ToString())
+            try
+            {
+                // Get from local windows machine
+                if (assetPerformanceData.IpAddress == IPAddress.Loopback.ToString())
+                {
+                    foreach (var d in assetPerformanceData.Data)
+                    {
+                        switch (d.Key.AgentDataTypeId)
+                        {
+                            case (int)AgentDataTypeEnum.PerformanceCounter:
+                                d.Value.Value = WindowsPerformance.GetPerformanceCounterValue(d.Key.PerformanceCounter);
+                                break;
+                            case (int)AgentDataTypeEnum.WMI:
+                                d.Value.Value = WindowsPerformance.GetWmiValue(d.Key.WmiManagementObject);
+                                break;
+                            case (int)AgentDataTypeEnum.ServiceState:
+                                d.Value.Value = WindowsService.GetServiceState(d.Key.ServiceName);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    return;
+                }
+
+                // Get from gRPC server
+                var reply = await GetAssetDataAsync(assetPerformanceData);
+                var replyDataList = reply.Data.ToList();
+
+                if (replyDataList.Count <= 0 || (replyDataList.Count != assetPerformanceData.Data.Count))
+                    return;
+
+                for (int i = 0; i < replyDataList.Count; i++)
+                {
+                    assetPerformanceData.Data.ElementAt(i).Value.Value = ByteConverterHelper.ByteArrayToObject(replyDataList[i].ByteArray);
+                }
+            }
+            catch // put null values if equest failed
             {
                 foreach (var d in assetPerformanceData.Data)
                 {
-                    switch (d.Key.AgentDataTypeId)
-                    {
-                        case (int)AgentDataTypeEnum.PerformanceCounter:
-                            d.Value.Value = WindowsPerformance.GetPerformanceCounterValue(d.Key.PerformanceCounter);
-                            break;
-                        case (int)AgentDataTypeEnum.WMI:
-                            d.Value.Value = WindowsPerformance.GetWmiValue(d.Key.WmiManagementObject);
-                            break;
-                        case (int)AgentDataTypeEnum.ServiceState:
-                            d.Value.Value = WindowsService.GetServiceState(d.Key.ServiceName);
-                            break;
-                        default:
-                            break;
-                    }
+                    d.Value.Value = null;
                 }
-                return;
-            }
-            var reply = await GetAssetDataAsync(assetPerformanceData);
-            var replyDataList = reply.Data.ToList();
-
-            if (replyDataList.Count <= 0 || (replyDataList.Count != assetPerformanceData.Data.Count))
-                return;
-
-            for (int i = 0; i < replyDataList.Count; i++)
-            {
-                assetPerformanceData.Data.ElementAt(i).Value.Value = ByteConverterHelper.ByteArrayToObject(replyDataList[i].ByteArray);
+                throw;
             }
         }
 

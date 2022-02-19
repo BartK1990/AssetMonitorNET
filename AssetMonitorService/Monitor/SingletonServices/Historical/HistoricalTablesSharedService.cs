@@ -154,16 +154,16 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                     switch (keyValue.Key.Type)
                     {
                         case HistoricalTypeEnum.Maximum:
-                            columnValue.Value = keyValue.Value.ValueMax.ToString();
+                            columnValue.Value = keyValue.Value.ValueMax?.ToString() ?? "NULL";
                             break;
                         case HistoricalTypeEnum.Average:
-                            columnValue.Value = keyValue.Value.ValueAvg.ToString();
+                            columnValue.Value = keyValue.Value.ValueAvg?.ToString() ?? "NULL";
                             break;
                         case HistoricalTypeEnum.Minimum:
-                            columnValue.Value = keyValue.Value.ValueMin.ToString();
+                            columnValue.Value = keyValue.Value.ValueMin?.ToString() ?? "NULL";
                             break;
                         default:
-                            columnValue.Value = keyValue.Value.ValueLast.ToString();
+                            columnValue.Value = keyValue.Value.ValueLast?.ToString() ?? "NULL";
                             break;
                     }
                     columnsValues.Add(columnValue);

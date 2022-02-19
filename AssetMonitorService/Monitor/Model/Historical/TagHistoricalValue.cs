@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace AssetMonitorService.Monitor.Model.Historical
 {
+#nullable enable
     public class TagHistoricalValue
     {
         public readonly string Tagname;
@@ -17,34 +18,16 @@ namespace AssetMonitorService.Monitor.Model.Historical
             this.DataType = dataType;
             this.WindowSize = windowSize;
             this.Tagname = tagname;
-            ValueBuffer = new Queue<object>();
+            ValueBuffer = new Queue<object?>();
         }
 
-        public Queue<object> ValueBuffer { get; private set; }
+        public Queue<object?> ValueBuffer { get; private set; }
 
-        private object _valueLast;
-        public object ValueLast 
+        private object? _valueLast;
+        public object? ValueLast 
         { 
             get 
             {
-                if (_valueLast == null)
-                {
-                    switch (DataType)
-                    {
-                        case TagDataTypeEnum.Boolean:
-                            return false;
-                        case TagDataTypeEnum.Integer:
-                            return 0;
-                        case TagDataTypeEnum.Float:
-                            return 0.0F;
-                        case TagDataTypeEnum.Double:
-                            return 0.0D;
-                        case TagDataTypeEnum.String:
-                            return string.Empty;
-                        case TagDataTypeEnum.Long:
-                            return 0L;
-                    }
-                }
                 return _valueLast;
             }
             private set 
@@ -53,21 +36,21 @@ namespace AssetMonitorService.Monitor.Model.Historical
             } 
         }
 
-        public object ValueMax 
+        public object? ValueMax 
         {
             get
             {
                 return GetSpecificType(CalculationTypeEnum.Max);
             }
         }
-        public object ValueAvg
+        public object? ValueAvg
         {
             get
             {
                 return GetSpecificType(CalculationTypeEnum.Avg);
             }
         }
-        public object ValueMin
+        public object? ValueMin
         {
             get
             {
@@ -75,7 +58,7 @@ namespace AssetMonitorService.Monitor.Model.Historical
             }
         }
 
-        private object GetSpecificType(CalculationTypeEnum calculationType)
+        private object? GetSpecificType(CalculationTypeEnum calculationType)
         {
             if ((DataType != TagDataTypeEnum.Integer &&
                 DataType != TagDataTypeEnum.Long &&
@@ -86,7 +69,11 @@ namespace AssetMonitorService.Monitor.Model.Historical
                 return ValueLast;
             }
 
-            object result = GetCalculatedValue(calculationType, ValueBuffer);
+            object? result = GetCalculatedValue(calculationType, ValueBuffer);
+            if(result == null)
+            {
+                return result;
+            }
 
             switch (DataType)
             {
@@ -102,8 +89,13 @@ namespace AssetMonitorService.Monitor.Model.Historical
             return ValueLast;
         }
 
-        private object GetCalculatedValue(CalculationTypeEnum calculationType, Queue<object> queue)
+        private object? GetCalculatedValue(CalculationTypeEnum calculationType, Queue<object?> queue)
         {
+            if (!queue.Any(q => q != null))
+            {
+                return null;
+            }
+
             switch (calculationType)
             {
                 case CalculationTypeEnum.Max:
@@ -114,9 +106,9 @@ namespace AssetMonitorService.Monitor.Model.Historical
                         case TagDataTypeEnum.Integer:
                         case TagDataTypeEnum.Float:
                         case TagDataTypeEnum.Double:
-                            return queue.Select(x => Convert.ToDouble(x)).Average();
+                            return queue.Where(q => q != null).Select(x => Convert.ToDouble(x)).Average();
                         case TagDataTypeEnum.Long:
-                            return queue.Select(x => Convert.ToInt64(x)).Average();
+                            return queue.Where(q => q != null).Select(x => Convert.ToInt64(x)).Average();
                     }
                     break;
                 case CalculationTypeEnum.Min:
@@ -125,13 +117,8 @@ namespace AssetMonitorService.Monitor.Model.Historical
             return ValueLast;
         }
 
-        public void ValueBufferEnqueue(object value)
+        public void ValueBufferEnqueue(object? value)
         {
-            if (value == null)
-            {
-                return;
-            }
-
             ValueLast = value;
             ValueBuffer.Enqueue(ValueLast);
             if(ValueBuffer.Count > WindowSize)
