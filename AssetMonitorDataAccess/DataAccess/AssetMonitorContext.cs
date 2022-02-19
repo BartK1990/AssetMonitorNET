@@ -18,6 +18,8 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AgentDataType> AgentDataType { get; set; }
         public DbSet<AgentTag> AgentTag { get; set; }
         public DbSet<AgentTagSet> AgentTagSet { get; set; }
+        public DbSet<AlarmTagConfig> AlarmTagConfig { get; set; }
+        public DbSet<AlarmType> AlarmType { get; set; }
         public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
         public DbSet<HistoricalType> HistoricalType { get; set; }
         public DbSet<HttpNodeRedTag> HttpNodeRedTag { get; set; }
@@ -59,6 +61,12 @@ namespace AssetMonitorDataAccess.DataAccess
                 entity.HasCheckConstraint("CK_HistorizationTagConfig_AgentOrSnmp",
                 $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NULL) OR " +
                 $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NOT NULL)"));
+
+            modelBuilder.Entity<AlarmTagConfig>(entity =>
+                entity.HasCheckConstraint("CK_AlarmTagConfig_PingOrAgentOrSnmp",
+                $"([{nameof(Models.AlarmTagConfig.Ping)}] = 1 AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.AlarmTagConfig.Ping)}] = 0 AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.AlarmTagConfig.Ping)}] = 0 AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NOT NULL)"));
 
             #region Enums
             Array enums = Enum.GetValues(typeof(SnmpOperationEnum));
@@ -121,6 +129,16 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
             }
 
+            enums = Enum.GetValues(typeof(AlarmTypeEnum));
+            foreach (var item in enums)
+            {
+                modelBuilder.Entity<AlarmType>().HasData(new AlarmType()
+                {
+                    Id = (int)item,
+                    Type = Enum.GetName(typeof(AlarmTypeEnum), item)
+                });
+            }
+
             enums = Enum.GetValues(typeof(AssetPropertyNameEnum));
             foreach (var item in enums)
             {
@@ -152,6 +170,10 @@ namespace AssetMonitorDataAccess.DataAccess
                 new HistoricalTagConfig() { Id = 5, AgentTagId = 4, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
                 new HistoricalTagConfig() { Id = 6, AgentTagId = 5, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
                 new HistoricalTagConfig() { Id = 7, AgentTagId = 6, HistorizationTypeId = (int)HistoricalTypeEnum.Average }
+                );
+
+            modelBuilder.Entity<AlarmTagConfig>().HasData(
+                new AlarmTagConfig() { Id = 1, Ping = false, AgentTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.GreaterOrEqual, ActivationTime = 30, Value = "50" }
                 );
 
             modelBuilder.Entity<SnmpTagSet>()

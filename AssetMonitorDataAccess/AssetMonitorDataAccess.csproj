@@ -9,6 +9,8 @@
     <Compile Remove="Migrations\20220127204127_TagScaling.Designer.cs" />
     <Compile Remove="Migrations\20220131194006_SnmpUpdate.cs" />
     <Compile Remove="Migrations\20220131194006_SnmpUpdate.Designer.cs" />
+    <Compile Remove="Migrations\20220219200211_AlarmConfiguration.cs" />
+    <Compile Remove="Migrations\20220219200211_AlarmConfiguration.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
