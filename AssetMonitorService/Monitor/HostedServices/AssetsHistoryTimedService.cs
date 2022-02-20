@@ -10,7 +10,7 @@ namespace AssetMonitorService.Monitor.HostedServices
     public class AssetsHistoryTimedService : AssetsTimedServiceBase<AssetsHistoryTimedService>
     {
         protected readonly IServiceScopeFactory _scopeFactory;
-        private readonly IAssetsPingSharedService _assetsPingShared;
+        private readonly IAssetsIcmpSharedService _assetsPingShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
         private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
@@ -21,7 +21,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private DateTime _lastSaveTimeToDatebase;
 
         public AssetsHistoryTimedService(IServiceScopeFactory scopeFactory,
-            IAssetsPingSharedService assetsPingShared,
+            IAssetsIcmpSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
             IAssetsHistoricalDataSharedService assetsHistoricalDataShared,

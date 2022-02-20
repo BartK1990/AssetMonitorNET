@@ -13,12 +13,12 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
         IAssetsHistoricalDataSharedService
     {
         public const int NumberOfSamplesInHistoricalBuffer = 60; // ToDo add configuration how many samples there should be (based on live data frequency + how offen it is saved to DB)
-        private readonly IAssetsPingSharedService _assetsPingShared;
+        private readonly IAssetsIcmpSharedService _assetsPingShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
 
         public AssetsHistoricalDataSharedService(
-            IAssetsPingSharedService assetsPingShared,
+            IAssetsIcmpSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
             IServiceScopeFactory scopeFactory,
@@ -58,7 +58,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var agentTags = (await repository.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 foreach (var tag in agentTags)
                 {
-                    if (tag.HistorizationTagConfigs?.Any() ?? false)
+                    if (tag.HistoricalTagConfigs?.Any() ?? false)
                     {
                         if (performanceShared.Data.ContainsKey(tag))
                         {
@@ -72,7 +72,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var snmpTags = (await repository.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 foreach (var tag in snmpTags)
                 {
-                    if (tag.HistorizationTagConfigs?.Any() ?? false)
+                    if (tag.HistoricalTagConfigs?.Any() ?? false)
                     {
                         if (snmpShared.Data.ContainsKey(tag))
                         {

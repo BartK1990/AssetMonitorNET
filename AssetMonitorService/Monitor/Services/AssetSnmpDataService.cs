@@ -31,17 +31,27 @@ namespace AssetMonitorService.Monitor.Services
             var community = new OctetString(assetData.Community);
             var variables = (assetData.Data.Keys.Select(ak => new Variable(new ObjectIdentifier(ak.OID)))).ToList();
 
-
-            //var snmpResult = Messenger.Get(version, ipEndPoint, community, variables, assetData.Timeout);
-            var snmpResult = await Messenger.GetAsync(version, ipEndPoint, community, variables);
-
-            foreach (var d in assetData.Data)
+            try
             {
-                var val = snmpResult.Where(sr => sr.Id.ToString() == d.Key.OID).FirstOrDefault();
-                if (val!=null)
+                var snmpResult = Messenger.Get(version, ipEndPoint, community, variables, assetData.Timeout);
+
+                foreach (var d in assetData.Data)
                 {
-                    d.Value.Value = val.Data.ToString();
+                    var val = snmpResult.Where(sr => sr.Id.ToString() == d.Key.OID).FirstOrDefault();
+                    if (val != null)
+                    {
+                        d.Value.Value = val.Data.ToString();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                foreach (var d in assetData.Data) // Assing null values if error
+                {
+                    d.Value.Value = null;
+                }
+                _logger.LogWarning($"Cannot retrieve data with SNMP: {assetData.IpAddress}:{assetData.UdpPort}");
+                _logger.LogDebug($"Exception: { ex.Message}");
             }
         }
     }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    [Migration("20220206190335_HistoryTagsConf")]
-    partial class HistoryTagsConf
+    [Migration("20220220214920_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -189,8 +189,7 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(70)")
-                        .HasMaxLength(70);
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -201,6 +200,118 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 1,
                             Name = "Default"
+                        });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.AlarmTagConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ActivationTime")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AgentTagId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AlarmTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("IcmpTagId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SnmpTagId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentTagId");
+
+                    b.HasIndex("AlarmTypeId");
+
+                    b.HasIndex("IcmpTagId");
+
+                    b.HasIndex("SnmpTagId");
+
+                    b.ToTable("AlarmTagConfig");
+
+                    b.HasCheckConstraint("CK_AlarmTagConfig_PingOrAgentOrSnmp", "([IcmpTagId] IS NOT NULL AND [AgentTagId] IS NULL AND [SnmpTagId] IS NULL) OR ([IcmpTagId] IS NULL AND [AgentTagId] IS NOT NULL AND [SnmpTagId] IS NULL) OR ([IcmpTagId] IS NULL AND [AgentTagId] IS NULL AND [SnmpTagId] IS NOT NULL)");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActivationTime = 30,
+                            AlarmTypeId = 1,
+                            Description = "No ping!",
+                            IcmpTagId = 1,
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActivationTime = 30,
+                            AgentTagId = 1,
+                            AlarmTypeId = 3,
+                            Description = "CPU is usage to high!",
+                            Value = "50"
+                        });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.AlarmType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AlarmType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Type = "Equal"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Type = "NotEqual"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Type = "GreaterOrEqual"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Type = "Greater"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Type = "LessOrEqual"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Type = "Less"
                         });
                 });
 
@@ -215,6 +326,9 @@ namespace AssetMonitorDataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("HttpNodeRedTagSetId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IcmpTagSetId")
                         .HasColumnType("int");
 
                     b.Property<string>("IpAddress")
@@ -236,6 +350,8 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasIndex("HttpNodeRedTagSetId");
 
+                    b.HasIndex("IcmpTagSetId");
+
                     b.HasIndex("SnmpTagSetId");
 
                     b.ToTable("Asset");
@@ -245,6 +361,7 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 1,
                             AgentTagSetId = 1,
+                            IcmpTagSetId = 1,
                             IpAddress = "127.0.0.1",
                             Name = "AssetMonitorNET Server",
                             SnmpTagSetId = 1
@@ -401,7 +518,7 @@ namespace AssetMonitorDataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistorizationTagConfig", b =>
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistoricalTagConfig", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -414,6 +531,9 @@ namespace AssetMonitorDataAccess.Migrations
                     b.Property<int>("HistorizationTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("IcmpTagId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SnmpTagId")
                         .HasColumnType("int");
 
@@ -421,13 +541,15 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasIndex("HistorizationTypeId");
 
+                    b.HasIndex("IcmpTagId");
+
                     b.HasIndex("SnmpTagId");
 
                     b.HasIndex("AgentTagId", "SnmpTagId", "HistorizationTypeId")
                         .IsUnique()
                         .HasFilter("[AgentTagId] IS NOT NULL AND [SnmpTagId] IS NOT NULL");
 
-                    b.ToTable("HistorizationTagConfig");
+                    b.ToTable("HistoricalTagConfig");
 
                     b.HasCheckConstraint("CK_HistorizationTagConfig_AgentOrSnmp", "([AgentTagId] IS NOT NULL AND [SnmpTagId] IS NULL) OR ([AgentTagId] IS NULL AND [SnmpTagId] IS NOT NULL)");
 
@@ -473,10 +595,16 @@ namespace AssetMonitorDataAccess.Migrations
                             Id = 7,
                             AgentTagId = 6,
                             HistorizationTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 8,
+                            HistorizationTypeId = 1,
+                            SnmpTagId = 4
                         });
                 });
 
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistorizationType", b =>
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistoricalType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -489,7 +617,7 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HistorizationType");
+                    b.ToTable("HistoricalType");
 
                     b.HasData(
                         new
@@ -573,6 +701,98 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HttpNodeRedTagSet");
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.IcmpTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("IcmpTagSetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tagname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(70)")
+                        .HasMaxLength(70);
+
+                    b.Property<int>("ValueDataTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IcmpTagSetId");
+
+                    b.HasIndex("ValueDataTypeId");
+
+                    b.ToTable("IcmpTag");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IcmpTagSetId = 1,
+                            Tagname = "PingState",
+                            ValueDataTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IcmpTagSetId = 1,
+                            Tagname = "PingResponseTime",
+                            ValueDataTypeId = 6
+                        });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.IcmpTagSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IcmpTagSet");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Default"
+                        });
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpAssetValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AssetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SnmpTagId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("SnmpTagId");
+
+                    b.ToTable("SnmpAssetValue");
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpOperation", b =>
@@ -712,8 +932,7 @@ namespace AssetMonitorDataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(70)")
-                        .HasMaxLength(70);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VersionId")
                         .HasColumnType("int");
@@ -803,6 +1022,11 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 5,
                             DataType = "String"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DataType = "Long"
                         });
                 });
 
@@ -827,6 +1051,27 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.AlarmTagConfig", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.AgentTag", "AgentTag")
+                        .WithMany("AlarmTagConfigs")
+                        .HasForeignKey("AgentTagId");
+
+                    b.HasOne("AssetMonitorDataAccess.Models.AlarmType", "AlarmType")
+                        .WithMany()
+                        .HasForeignKey("AlarmTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.IcmpTag", "IcmpTag")
+                        .WithMany("AlarmTagConfigs")
+                        .HasForeignKey("IcmpTagId");
+
+                    b.HasOne("AssetMonitorDataAccess.Models.SnmpTag", "SnmpTag")
+                        .WithMany("AlarmTagConfigs")
+                        .HasForeignKey("SnmpTagId");
+                });
+
             modelBuilder.Entity("AssetMonitorDataAccess.Models.Asset", b =>
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.AgentTagSet", "AgentTagSet")
@@ -836,6 +1081,10 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.HttpNodeRedTagSet", "HttpNodeRedTagSet")
                         .WithMany()
                         .HasForeignKey("HttpNodeRedTagSetId");
+
+                    b.HasOne("AssetMonitorDataAccess.Models.IcmpTagSet", "IcmpTagSet")
+                        .WithMany()
+                        .HasForeignKey("IcmpTagSetId");
 
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpTagSet", "SnmpTagSet")
                         .WithMany()
@@ -866,20 +1115,24 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistorizationTagConfig", b =>
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.HistoricalTagConfig", b =>
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.AgentTag", "AgentTag")
-                        .WithMany("HistorizationTagConfigs")
+                        .WithMany("HistoricalTagConfigs")
                         .HasForeignKey("AgentTagId");
 
-                    b.HasOne("AssetMonitorDataAccess.Models.HistorizationType", "HistorizationType")
+                    b.HasOne("AssetMonitorDataAccess.Models.HistoricalType", "HistorizationType")
                         .WithMany()
                         .HasForeignKey("HistorizationTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AssetMonitorDataAccess.Models.IcmpTag", null)
+                        .WithMany("HistoricalTagConfigs")
+                        .HasForeignKey("IcmpTagId");
+
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpTag", "SnmpTag")
-                        .WithMany("HistorizationTagConfigs")
+                        .WithMany("HistoricalTagConfigs")
                         .HasForeignKey("SnmpTagId");
                 });
 
@@ -894,6 +1147,36 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.TagDataType", "ValueDataType")
                         .WithMany()
                         .HasForeignKey("ValueDataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.IcmpTag", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.IcmpTagSet", "IcmpTagSet")
+                        .WithMany("IcmpTag")
+                        .HasForeignKey("IcmpTagSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.TagDataType", "ValueDataType")
+                        .WithMany()
+                        .HasForeignKey("ValueDataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpAssetValue", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.Asset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.SnmpTag", "SnmpTag")
+                        .WithMany()
+                        .HasForeignKey("SnmpTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

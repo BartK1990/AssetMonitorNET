@@ -19,11 +19,14 @@ namespace AssetMonitorDataAccess.Models
 
         public ICollection<AssetPropertyValue> AssetPropertyValues { get; set; }
 
-        public int? SnmpTagSetId { get; set; }
-        public SnmpTagSet SnmpTagSet { get; set; }
+        public int? IcmpTagSetId { get; set; }
+        public IcmpTagSet IcmpTagSet { get; set; }
 
         public int? AgentTagSetId { get; set; }
         public AgentTagSet AgentTagSet { get; set; }
+
+        public int? SnmpTagSetId { get; set; }
+        public SnmpTagSet SnmpTagSet { get; set; }
 
         public int? HttpNodeRedTagSetId { get; set; }
         public HttpNodeRedTagSet HttpNodeRedTagSet { get; set; }

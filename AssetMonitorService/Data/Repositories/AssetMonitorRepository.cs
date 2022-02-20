@@ -74,7 +74,7 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.AgentTag
                 .Where(at => at.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().AgentTagSetId))
-                .Include(h => h.HistorizationTagConfigs);
+                .Include(h => h.HistoricalTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -83,7 +83,34 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.SnmpTag
                 .Where(at => at.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().SnmpTagSetId))
-                .Include(h => h.HistorizationTagConfigs);
+                .Include(h => h.HistoricalTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<IcmpTag>> GetIcmpTagsWithAlarmByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.IcmpTag
+                .Where(t => t.IcmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().IcmpTagSetId))
+                .Include(a => a.AlarmTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<AgentTag>> GetAgentTagsWithAlarmByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.AgentTag
+                .Where(t => t.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().AgentTagSetId))
+                .Include(a => a.AlarmTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<SnmpTag>> GetSnmpTagsWithAlarmByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.SnmpTag
+                .Where(t => t.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().SnmpTagSetId))
+                .Include(a => a.AlarmTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
         }

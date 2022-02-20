@@ -6,8 +6,8 @@ namespace AssetMonitorDataAccess.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        public bool Ping { get; set; }
+        public int? IcmpTagId { get; set; }
+        public IcmpTag IcmpTag { get; set; }
 
         public int? AgentTagId { get; set; }
         public AgentTag AgentTag { get; set; }
@@ -24,5 +24,7 @@ namespace AssetMonitorDataAccess.Models
 
         [Required] // Reference value for an alarm
         public string Value { get; set; }
+
+        public string Description { get; set; }
     }
 }

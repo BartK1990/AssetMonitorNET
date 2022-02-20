@@ -4,15 +4,13 @@ using System;
 namespace AssetMonitorService.Monitor.Model
 {
 #nullable enable
-    public class TagValue
+    public class TagValue : TagBase
     {
-        public readonly string Tagname;
-
         public readonly TagDataTypeEnum DataType;
 
         public TagValue(string tagname, TagDataTypeEnum dataType, double scaleFactor, double scaleOffset)
+            : base(tagname: tagname)
         {
-            this.Tagname = tagname;
             this.DataType = dataType;
             this.ScaleFactor = scaleFactor;
             this.ScaleOffset = scaleOffset;

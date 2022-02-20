@@ -2,7 +2,7 @@
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public interface IAssetsPingSharedService : IAssetsSharedServiceBase<AssetPing>
+    public interface IAssetsIcmpSharedService : IAssetsSharedServiceBase<AssetIcmpData>
     {
     }
 }

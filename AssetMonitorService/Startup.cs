@@ -5,6 +5,7 @@ using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
+using AssetMonitorService.Monitor.SingletonServices.Alarm;
 using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -51,22 +52,25 @@ namespace AssetMonitorService
 
             // Hosted services
             services.AddHostedService<InitSharedServices>();
-            services.AddHostedService<AssetsTimedPingDataService>();
+            services.AddHostedService<AssetsTimedIcmpDataService>();
             services.AddHostedService<AssetsTimedPerformanceDataService>();
             services.AddHostedService<AssetsTimedSnmpDataService>();
             services.AddHostedService<AssetsHistoryTimedService>();
+            services.AddHostedService<AssetsAlarmTimedService>();
 
             // Shared (Singleton) services
             services.AddSingleton<IAssetsCollectionSharedService, AssetsCollectionSharedService>();
-            services.AddSingleton<IAssetsPingSharedService, AssetsPingDataSharedService>();
+            services.AddSingleton<IAssetsIcmpSharedService, AssetsIcmpDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
             // Shared (Singleton) services for Historical Data
             services.AddSingleton<IHistoricalTablesSharedService, HistoricalTablesSharedService>();
             services.AddSingleton<IAssetsHistoricalDataSharedService, AssetsHistoricalDataSharedService>();
+            // Shared (Singleton) services for Alarm Data
+            services.AddSingleton<IAssetsAlarmDataSharedService, AssetsAlarmDataSharedService>();
 
             // Scoped services
-            services.AddScoped<IAssetPingDataService, AssetPingDataService>();
+            services.AddScoped<IAssetIcmpDataService, AssetIcmpDataService>();
             services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
             services.AddScoped<IAssetSnmpDataService, AssetSnmpDataService>();
 

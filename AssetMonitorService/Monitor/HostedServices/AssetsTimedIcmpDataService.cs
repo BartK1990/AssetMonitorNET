@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
-    public class AssetsTimedPingDataService : AssetsTimedDataServiceBase<AssetsTimedPingDataService, 
-        IAssetPingDataService, 
-        AssetPing>
+    public class AssetsTimedIcmpDataService : AssetsTimedDataServiceBase<AssetsTimedIcmpDataService, 
+        IAssetIcmpDataService, 
+        AssetIcmpData>
     {
-        private readonly IAssetsPingSharedService _assetsPingSharedService;
+        private readonly IAssetsIcmpSharedService _assetsPingSharedService;
 
-        public AssetsTimedPingDataService(IAssetsPingSharedService assetsPingSharedService,
-            ILogger<AssetsTimedPingDataService> logger,
+        public AssetsTimedIcmpDataService(IAssetsIcmpSharedService assetsPingSharedService,
+            ILogger<AssetsTimedIcmpDataService> logger,
             IServiceScopeFactory scopeFactory,
             TimeSpan? scanTime = null
             ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
@@ -24,12 +24,12 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._assetsPingSharedService = assetsPingSharedService;
         }
 
-        protected override IEnumerable<AssetPing> GetAssets()
+        protected override IEnumerable<AssetIcmpData> GetAssets()
         {
             return _assetsPingSharedService.AssetsData;
         }
 
-        protected override async Task GetTask(IAssetPingDataService iAssetService, AssetPing asset)
+        protected override async Task GetTask(IAssetIcmpDataService iAssetService, AssetIcmpData asset)
         {
             _logger.LogInformation($"Service {this.GetType().Name} ping to: {asset.IpAddress}");
             await iAssetService.UpdateAsset(asset);

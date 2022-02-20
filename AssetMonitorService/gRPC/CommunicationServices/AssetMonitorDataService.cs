@@ -14,13 +14,13 @@ namespace AssetMonitorService.gRPC.CommunicationServices
     {
         private readonly ILogger<AssetMonitorDataService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IAssetsPingSharedService _assetsPingDataShared;
+        private readonly IAssetsIcmpSharedService _assetsPingDataShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
 
         public AssetMonitorDataService(ILogger<AssetMonitorDataService> logger,
             IServiceScopeFactory scopeFactory,
-            IAssetsPingSharedService assetsPingDataShared,
+            IAssetsIcmpSharedService assetsPingDataShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared)
         {

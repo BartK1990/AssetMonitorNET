@@ -2,7 +2,7 @@
 
 namespace AssetMonitorService.Monitor.Model
 {
-    public class AssetPing
+    public class AssetIcmpData
     {
         public int Id { get; set; }
 
@@ -33,7 +33,7 @@ namespace AssetMonitorService.Monitor.Model
         public TagValue PingStateValue { get; private set; }
         public TagValue PingResponseTimeValue { get; private set; }
 
-        public AssetPing()
+        public AssetIcmpData()
         {
             this.PingStateValue = new TagValue("PingState", TagDataTypeEnum.Boolean, 1.0, 0.0);
             this.PingResponseTimeValue = new TagValue("PingResponseTime", TagDataTypeEnum.Long, 1.0, 0.0);

@@ -22,10 +22,11 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = (await repository.GetAgentAssetsWithTagSetAsync()).ToList();
             foreach (var a in assets)
             {
-                var assetProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetProperties = assetWithProperties.AssetPropertyValues;
 
                 // Only for localhost no TCP port is required
-                if(a.IpAddress == IPAddress.Loopback.ToString())
+                if (a.IpAddress == IPAddress.Loopback.ToString())
                 {
                     AssetsData.Add(new AssetPerformanceData(a.AgentTagSet.AgentTag)
                     {
@@ -36,10 +37,14 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     continue;
                 }
 
-                if (int.TryParse(assetProperties.AssetPropertyValues
-                    .Where(p=>p.AssetPropertyId == (int)AssetPropertyNameEnum.AgentTcpPort)
-                    .FirstOrDefault().Value
-                    , out var tcpPort))
+                var agentTcpPort = assetProperties?
+                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.AgentTcpPort)?.Value ?? null;
+                if(agentTcpPort == null)
+                {
+                    agentTcpPort = "9560";
+                    _logger.LogError($"No Agent TCP port specified for Asset (Id): {a.Id} | default {agentTcpPort} used");
+                }
+                if (int.TryParse(agentTcpPort, out var tcpPort))
                 {
                     AssetsData.Add(new AssetPerformanceData(a.AgentTagSet.AgentTag)
                     {

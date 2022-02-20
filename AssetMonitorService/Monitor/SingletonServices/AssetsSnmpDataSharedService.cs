@@ -21,38 +21,55 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = (await repository.GetSnmpAssetsWithTagSetAsync()).ToList();
             foreach (var a in assets)
             {
-                var assetProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetProperties = assetWithProperties.AssetPropertyValues;
 
-                if (!int.TryParse(assetProperties.AssetPropertyValues
-                    .Where(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpUdpPort)
-                    .FirstOrDefault().Value
-                    , out var udpPort))
+                var snmpUdpPort = assetProperties?
+                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpUdpPort)?.Value ?? null;
+                if (snmpUdpPort == null)
+                {
+                    snmpUdpPort = "161";
+                    _logger.LogError($"No SNMP UDP port specified for Asset (Id): {a.Id} | default [{snmpUdpPort}] used");
+                }
+                if (!int.TryParse(snmpUdpPort, out var udpPort))
                 {
                     _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpUdpPort]} for Asset: {a.Name} (Id: {a.Id})");
                     return;
                 }
 
-                if (!int.TryParse(assetProperties.AssetPropertyValues
-                    .Where(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpTimeout)
-                    .FirstOrDefault().Value
-                    , out var timeout))
+                var snmpTimeout = assetProperties?
+                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpTimeout)?.Value ?? null;
+                if (snmpTimeout == null)
+                {
+                    snmpTimeout = "8000";
+                    _logger.LogError($"No SNMP timeout specified for Asset (Id): {a.Id} | default [{snmpTimeout}] used");
+                }
+                if (!int.TryParse(snmpTimeout, out var timeout))
                 {
                     _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpTimeout]} for Asset: {a.Name} (Id: {a.Id})");
                     return;
                 }
 
-                if (!int.TryParse(assetProperties.AssetPropertyValues
-                    .Where(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpRetries)
-                    .FirstOrDefault().Value
-                    , out var retries))
+                var snmpRetries = assetProperties?
+                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpRetries)?.Value ?? null;
+                if (snmpRetries == null)
+                {
+                    snmpRetries = "1";
+                    _logger.LogError($"No SNMP retries specified for Asset (Id): {a.Id} | default [{snmpRetries}] used");
+                }
+                if (!int.TryParse(snmpRetries, out var retries))
                 {
                     _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpRetries]} for Asset: {a.Name} (Id: {a.Id})");
                     return;
                 }
 
-                var community = assetProperties.AssetPropertyValues
-                    .Where(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpCommunity)
-                    .FirstOrDefault().Value;
+                var community = assetProperties?
+                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpCommunity)?.Value ?? null;
+                if (community == null)
+                {
+                    community = "public";
+                    _logger.LogError($"No SNMP community specified for Asset (Id): {a.Id} | default [{community}] used");
+                }
                 if (string.IsNullOrEmpty(community))
                 {
                     _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpCommunity]} for Asset: {a.Name} (Id: {a.Id})");

@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Services
 {
-    public class AssetPingDataService : IAssetPingDataService
+    public class AssetIcmpDataService : IAssetIcmpDataService
     {
-        private readonly ILogger<AssetPingDataService> _logger;
+        private readonly ILogger<AssetIcmpDataService> _logger;
 
-        public AssetPingDataService(ILogger<AssetPingDataService> logger)
+        public AssetIcmpDataService(ILogger<AssetIcmpDataService> logger)
         {
             this._logger = logger;
         }
 
-        public async Task UpdateAsset(AssetPing assetPing)
+        public async Task UpdateAsset(AssetIcmpData assetPing)
         {
             var pData = await PingHostAsync(assetPing.IpAddress);
 

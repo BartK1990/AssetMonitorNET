@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {
-    public class AssetsPingDataSharedService : AssetsSharedServiceBase<AssetsPingDataSharedService, AssetPing>, 
-        IAssetsPingSharedService
+    public class AssetsIcmpDataSharedService : AssetsSharedServiceBase<AssetsIcmpDataSharedService, AssetIcmpData>, 
+        IAssetsIcmpSharedService
     {
-        public AssetsPingDataSharedService(IServiceScopeFactory scopeFactory,
-            ILogger<AssetsPingDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
+        public AssetsIcmpDataSharedService(IServiceScopeFactory scopeFactory,
+            ILogger<AssetsIcmpDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
         {
         }
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
             var assets = (await repository.GetAllAssetsAsync()).ToList();
-            AssetsData.AddRange(assets.Select(a => new AssetPing() { Id = a.Id, IpAddress = a.IpAddress }));
+            AssetsData.AddRange(assets.Select(a => new AssetIcmpData() { Id = a.Id, IpAddress = a.IpAddress }));
         }
     }
 }

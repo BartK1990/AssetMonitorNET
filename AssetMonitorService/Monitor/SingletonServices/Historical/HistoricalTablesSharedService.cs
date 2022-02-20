@@ -55,11 +55,11 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
 
                 var agentTags = (await assetRepo.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 tagHistInfos.AddRange(agentTags.Select(a => new HistoricalTagInfo() 
-                { ColumnNameSuffix = "Agent", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
+                { ColumnNameSuffix = "Agent", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistoricalTagConfigs, IsNull = true }));
 
                 var snmpTags = (await assetRepo.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
                 tagHistInfos.AddRange(snmpTags.Select(a => new HistoricalTagInfo() 
-                { ColumnNameSuffix = "SNMP", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistorizationTagConfigs, IsNull = true }));
+                { ColumnNameSuffix = "SNMP", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistoricalTagConfigs, IsNull = true }));
 
                 foreach (var tagHistInfo in tagHistInfos)
                 {
