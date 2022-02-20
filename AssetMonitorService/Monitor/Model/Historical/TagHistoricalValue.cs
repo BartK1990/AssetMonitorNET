@@ -6,18 +6,16 @@ using System.Linq;
 namespace AssetMonitorService.Monitor.Model.Historical
 {
 #nullable enable
-    public class TagHistoricalValue
+    public class TagHistoricalValue : TagBase
     {
-        public readonly string Tagname;
-
         public readonly TagDataTypeEnum DataType;
         public readonly int WindowSize;
 
         public TagHistoricalValue(string tagname, TagDataTypeEnum dataType, int windowSize)
+            : base(tagname: tagname)
         {
             this.DataType = dataType;
             this.WindowSize = windowSize;
-            this.Tagname = tagname;
             ValueBuffer = new Queue<object?>();
         }
 
@@ -63,14 +61,18 @@ namespace AssetMonitorService.Monitor.Model.Historical
             if ((DataType != TagDataTypeEnum.Integer &&
                 DataType != TagDataTypeEnum.Long &&
                 DataType != TagDataTypeEnum.Float &&
-                DataType != TagDataTypeEnum.Double)
-                || (!ValueBuffer?.Any() ?? true))
+                DataType != TagDataTypeEnum.Double))
             {
                 return ValueLast;
             }
 
+            if (!(ValueBuffer?.Any()) ?? true)
+            {
+                return ValueLast;
+            }
             object? result = GetCalculatedValue(calculationType, ValueBuffer);
-            if(result == null)
+
+            if (result == null)
             {
                 return result;
             }
