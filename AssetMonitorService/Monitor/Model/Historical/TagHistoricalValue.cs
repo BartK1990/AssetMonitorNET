@@ -70,7 +70,9 @@ namespace AssetMonitorService.Monitor.Model.Historical
             {
                 return ValueLast;
             }
-            object? result = GetCalculatedValue(calculationType, ValueBuffer);
+#pragma warning disable CS8604 // Possible null reference argument.
+            object? result = GetCalculatedValue(calculationType, ValueBuffer); // Null check should be performed above
+#pragma warning restore CS8604 // Possible null reference argument.
 
             if (result == null)
             {
