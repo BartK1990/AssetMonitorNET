@@ -4,14 +4,16 @@ using AssetMonitorDataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    partial class AssetMonitorContextModelSnapshot : ModelSnapshot
+    [Migration("20220221003028_EmailNotifications")]
+    partial class EmailNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1040,48 +1042,6 @@ namespace AssetMonitorDataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserEmailAssetRelId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserEmailAssetRelId");
-
-                    b.ToTable("UserEmailAddress");
-                });
-
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AssetId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssetId");
-
-                    b.ToTable("UserEmailAssetRel");
-                });
-
             modelBuilder.Entity("AssetMonitorDataAccess.Models.AgentTag", b =>
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.AgentDataType", "AgentDataType")
@@ -1259,22 +1219,6 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpVersion", "Version")
                         .WithMany()
                         .HasForeignKey("VersionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
-                {
-                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAssetRel", null)
-                        .WithMany("UserEmailAddresses")
-                        .HasForeignKey("UserEmailAssetRelId");
-                });
-
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
-                {
-                    b.HasOne("AssetMonitorDataAccess.Models.Asset", "Asset")
-                        .WithMany()
-                        .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

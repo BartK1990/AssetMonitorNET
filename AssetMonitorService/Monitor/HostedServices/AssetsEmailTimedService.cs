@@ -47,7 +47,7 @@ namespace AssetMonitorService.Monitor.HostedServices
                     Content = "Just test"
                 };
 
-                emailService.Send(emailMessage);
+                //emailService.Send(emailMessage);
             }
             emailTest = 2;
         }

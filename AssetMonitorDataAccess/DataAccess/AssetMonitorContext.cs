@@ -32,6 +32,8 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<SnmpTagSet> SnmpTagSet { get; set; }
         public DbSet<SnmpVersion> SnmpVersion { get; set; }
         public DbSet<TagDataType> TagDataType { get; set; }
+        public DbSet<UserEmailAddress> UserEmailAddress { get; set; }
+        public DbSet<UserEmailAssetRel> UserEmailAssetRel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

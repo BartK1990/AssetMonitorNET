@@ -4,6 +4,7 @@
     {
         String = 1,
         Integer = 2,
-        Double = 3
+        Double = 3,
+        Boolean = 4
     }
 }
