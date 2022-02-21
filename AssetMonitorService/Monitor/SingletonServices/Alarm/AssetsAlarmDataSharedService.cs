@@ -106,7 +106,6 @@ namespace AssetMonitorService.Monitor.SingletonServices.Alarm
             foreach (var asset in this.AssetsData)
             {
                 asset.UpdateData();
-                _logger.LogError($"{asset.Data.ElementAt(0).Value.AlarmState.ToString()} {asset.Data.ElementAt(0).Value.AlarmSetTime}");
             }
         }
     }
