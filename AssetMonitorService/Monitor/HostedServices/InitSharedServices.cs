@@ -20,7 +20,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsAlarmDataSharedService _assetsAlarmDataShared;
 
         public InitSharedServices(ILogger<InitSharedServices> _logger,
-        IAssetsCollectionSharedService assetsCollectionShared,
+            IAssetsCollectionSharedService assetsCollectionShared,
             IAssetsIcmpSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,

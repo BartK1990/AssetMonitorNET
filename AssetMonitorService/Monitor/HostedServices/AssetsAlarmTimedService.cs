@@ -12,8 +12,6 @@ namespace AssetMonitorService.Monitor.HostedServices
 
         protected readonly object taskTimedJobLock = new object();
 
-        private DateTime _lastSaveTimeToDatebase;
-
         public AssetsAlarmTimedService(IServiceScopeFactory scopeFactory,
             IAssetsAlarmDataSharedService assetsAlarmDataShared,
             ILogger<AssetsAlarmTimedService> logger, TimeSpan? scanTime = null) : base(logger: logger, scanTime: scanTime)

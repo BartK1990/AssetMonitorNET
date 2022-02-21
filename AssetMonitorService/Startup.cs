@@ -4,8 +4,10 @@ using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.Services.Email;
 using AssetMonitorService.Monitor.SingletonServices;
 using AssetMonitorService.Monitor.SingletonServices.Alarm;
+using AssetMonitorService.Monitor.SingletonServices.Email;
 using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -57,6 +59,7 @@ namespace AssetMonitorService
             services.AddHostedService<AssetsTimedSnmpDataService>();
             services.AddHostedService<AssetsHistoryTimedService>();
             services.AddHostedService<AssetsAlarmTimedService>();
+            services.AddHostedService<AssetsEmailTimedService>();
 
             // Shared (Singleton) services
             services.AddSingleton<IAssetsCollectionSharedService, AssetsCollectionSharedService>();
@@ -68,12 +71,16 @@ namespace AssetMonitorService
             services.AddSingleton<IAssetsHistoricalDataSharedService, AssetsHistoricalDataSharedService>();
             // Shared (Singleton) services for Alarm Data
             services.AddSingleton<IAssetsAlarmDataSharedService, AssetsAlarmDataSharedService>();
+            // Shared (Singleton) services for Emails
+            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
 
             // Scoped services
             services.AddScoped<IAssetIcmpDataService, AssetIcmpDataService>();
             services.AddScoped<IAssetPerformanceDataService, AssetPerformanceDataService>();
             services.AddScoped<IAssetSnmpDataService, AssetSnmpDataService>();
 
+            // Transient services
+            services.AddTransient<IEmailService, EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
