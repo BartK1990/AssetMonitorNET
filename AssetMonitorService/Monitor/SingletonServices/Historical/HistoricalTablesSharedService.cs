@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices.Historical
@@ -142,6 +144,8 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 throw new ArgumentException("Wrong timestamp format provided for method");
             }
 
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-GB");
+
             using var scope = _scopeFactory.CreateScope();
             var historyDynamicRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();
 
@@ -151,20 +155,29 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 foreach (var keyValue in asset.Data)
                 {
                     var columnValue = new TableColumnValue() { Name = keyValue.Key.Name };
+                    object? value = null;
                     switch (keyValue.Key.Type)
                     {
                         case HistoricalTypeEnum.Maximum:
-                            columnValue.Value = keyValue.Value.ValueMax?.ToString() ?? "NULL";
+                            value = keyValue.Value.ValueMax;
                             break;
                         case HistoricalTypeEnum.Average:
-                            columnValue.Value = keyValue.Value.ValueAvg?.ToString() ?? "NULL";
+                            value = keyValue.Value.ValueAvg;
                             break;
                         case HistoricalTypeEnum.Minimum:
-                            columnValue.Value = keyValue.Value.ValueMin?.ToString() ?? "NULL";
+                            value = keyValue.Value.ValueMin;
                             break;
                         default:
-                            columnValue.Value = keyValue.Value.ValueLast?.ToString() ?? "NULL";
+                            value = keyValue.Value.ValueLast;
                             break;
+                    }
+                    if(value == null)
+                    {
+                        columnValue.Value = "NULL";
+                    }
+                    else
+                    {
+                        columnValue.Value = Convert.ToString(value, CultureInfo.InvariantCulture);
                     }
                     columnsValues.Add(columnValue);
                 }
