@@ -252,7 +252,7 @@ namespace AssetMonitorDataAccess.Migrations
                             AlarmTypeId = 1,
                             Description = "No ping!",
                             IcmpTagId = 1,
-                            Value = "1"
+                            Value = "False"
                         },
                         new
                         {
@@ -1055,14 +1055,30 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserEmailAssetRelId")
+                    b.Property<int>("UserEmailAddressSetId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserEmailAssetRelId");
+                    b.HasIndex("UserEmailAddressSetId");
 
                     b.ToTable("UserEmailAddress");
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddressSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserEmailAddressSet");
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
@@ -1075,9 +1091,14 @@ namespace AssetMonitorDataAccess.Migrations
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserEmailAddressSetId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
+
+                    b.HasIndex("UserEmailAddressSetId");
 
                     b.ToTable("UserEmailAssetRel");
                 });
@@ -1265,9 +1286,11 @@ namespace AssetMonitorDataAccess.Migrations
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
                 {
-                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAssetRel", null)
+                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAddressSet", "UserEmailAddressSet")
                         .WithMany("UserEmailAddresses")
-                        .HasForeignKey("UserEmailAssetRelId");
+                        .HasForeignKey("UserEmailAddressSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
@@ -1275,6 +1298,12 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.Asset", "Asset")
                         .WithMany()
                         .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAddressSet", "UserEmailAddressSet")
+                        .WithMany()
+                        .HasForeignKey("UserEmailAddressSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

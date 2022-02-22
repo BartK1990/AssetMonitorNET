@@ -2,16 +2,16 @@
 
 namespace AssetMonitorDataAccess.Migrations
 {
-    public partial class AlarmTagDescCorrect : Migration
+    public partial class AlarmFix : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(
                 table: "AlarmTagConfig",
                 keyColumn: "Id",
-                keyValue: 2,
-                column: "Description",
-                value: "CPU usage is to high!");
+                keyValue: 1,
+                column: "Value",
+                value: "False");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -19,9 +19,9 @@ namespace AssetMonitorDataAccess.Migrations
             migrationBuilder.UpdateData(
                 table: "AlarmTagConfig",
                 keyColumn: "Id",
-                keyValue: 2,
-                column: "Description",
-                value: "CPU is usage to high!");
+                keyValue: 1,
+                column: "Value",
+                value: "1");
         }
     }
 }

@@ -7,7 +7,9 @@ namespace AssetMonitorService.Data.Repositories
     public interface IAssetMonitorRepository
     {
         Task<IEnumerable<Asset>> GetAllAssetsAsync();
+        Task<IEnumerable<Asset>> GetIcmpAssetsAsync();
         Task<IEnumerable<Asset>> GetAgentAssetsAsync();
+        Task<IEnumerable<Asset>> GetSnmpAssetsAsync();
         Task<IEnumerable<Asset>> GetAgentAssetsWithTagSetAsync();
         Task<IEnumerable<Asset>> GetSnmpAssetsWithTagSetAsync();
         Task<Asset> GetAssetByIdAsync(int? id);
@@ -20,6 +22,7 @@ namespace AssetMonitorService.Data.Repositories
         Task<IEnumerable<IcmpTag>> GetIcmpTagsWithAlarmByAssetIdAsync(int? id);
         Task<IEnumerable<AgentTag>> GetAgentTagsWithAlarmByAssetIdAsync(int? id);
         Task<IEnumerable<SnmpTag>> GetSnmpTagsWithAlarmByAssetIdAsync(int? id);
+        Task<IEnumerable<UserEmailAddress>> GetUserEmailAddressByAssetIdAsync(int? id);
         void Add(object entity);
         void Update(object entity);
         Task<bool> SaveAllAsync();

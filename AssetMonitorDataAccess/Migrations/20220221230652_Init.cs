@@ -137,6 +137,19 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserEmailAddressSet",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEmailAddressSet", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AssetProperty",
                 columns: table => new
                 {
@@ -275,6 +288,27 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserEmailAddress",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false),
+                    Address = table.Column<string>(nullable: false),
+                    UserEmailAddressSetId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEmailAddress", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserEmailAddress_UserEmailAddressSet_UserEmailAddressSetId",
+                        column: x => x.UserEmailAddressSetId,
+                        principalTable: "UserEmailAddressSet",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Asset",
                 columns: table => new
                 {
@@ -376,6 +410,32 @@ namespace AssetMonitorDataAccess.Migrations
                         name: "FK_AssetPropertyValue_AssetProperty_AssetPropertyId",
                         column: x => x.AssetPropertyId,
                         principalTable: "AssetProperty",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserEmailAssetRel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AssetId = table.Column<int>(nullable: false),
+                    UserEmailAddressSetId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEmailAssetRel", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserEmailAssetRel_Asset_AssetId",
+                        column: x => x.AssetId,
+                        principalTable: "Asset",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserEmailAssetRel_UserEmailAddressSet_UserEmailAddressSetId",
+                        column: x => x.UserEmailAddressSetId,
+                        principalTable: "UserEmailAddressSet",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -525,9 +585,10 @@ namespace AssetMonitorDataAccess.Migrations
                 columns: new[] { "Id", "DataType" },
                 values: new object[,]
                 {
+                    { 3, "Double" },
+                    { 4, "Boolean" },
                     { 1, "String" },
-                    { 2, "Integer" },
-                    { 3, "Double" }
+                    { 2, "Integer" }
                 });
 
             migrationBuilder.InsertData(
@@ -535,10 +596,10 @@ namespace AssetMonitorDataAccess.Migrations
                 columns: new[] { "Id", "Type" },
                 values: new object[,]
                 {
-                    { 4, "Minimum" },
-                    { 3, "Average" },
                     { 1, "Last" },
-                    { 2, "Maximum" }
+                    { 2, "Maximum" },
+                    { 3, "Average" },
+                    { 4, "Minimum" }
                 });
 
             migrationBuilder.InsertData(
@@ -595,7 +656,8 @@ namespace AssetMonitorDataAccess.Migrations
                     { 1, "Agent TCP Port", "AgentTcpPort", 2 },
                     { 2, "SNMP UDP Port", "SnmpUdpPort", 2 },
                     { 3, "SNMP timeout", "SnmpTimeout", 2 },
-                    { 4, "SNMP number of retries", "SnmpRetries", 2 }
+                    { 4, "SNMP number of retries", "SnmpRetries", 2 },
+                    { 6, "Enable or disable email notifications", "EmailNotificationsEnable", 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -618,7 +680,7 @@ namespace AssetMonitorDataAccess.Migrations
                 values: new object[,]
                 {
                     { 1, 30, null, 1, "No ping!", 1, null, "1" },
-                    { 2, 30, 1, 3, "CPU is usage to high!", null, null, "50" }
+                    { 2, 30, 1, 3, "CPU usage is to high!", null, null, "50" }
                 });
 
             migrationBuilder.InsertData(
@@ -817,6 +879,21 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "IX_SnmpTagSet_VersionId",
                 table: "SnmpTagSet",
                 column: "VersionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEmailAddress_UserEmailAddressSetId",
+                table: "UserEmailAddress",
+                column: "UserEmailAddressSetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEmailAssetRel_AssetId",
+                table: "UserEmailAssetRel",
+                column: "AssetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEmailAssetRel_UserEmailAddressSetId",
+                table: "UserEmailAssetRel",
+                column: "UserEmailAddressSetId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -837,6 +914,12 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "SnmpAssetValue");
 
             migrationBuilder.DropTable(
+                name: "UserEmailAddress");
+
+            migrationBuilder.DropTable(
+                name: "UserEmailAssetRel");
+
+            migrationBuilder.DropTable(
                 name: "AlarmType");
 
             migrationBuilder.DropTable(
@@ -852,16 +935,25 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "IcmpTag");
 
             migrationBuilder.DropTable(
+                name: "SnmpTag");
+
+            migrationBuilder.DropTable(
                 name: "Asset");
 
             migrationBuilder.DropTable(
-                name: "SnmpTag");
+                name: "UserEmailAddressSet");
 
             migrationBuilder.DropTable(
                 name: "AssetPropertyDataType");
 
             migrationBuilder.DropTable(
                 name: "AgentDataType");
+
+            migrationBuilder.DropTable(
+                name: "SnmpOperation");
+
+            migrationBuilder.DropTable(
+                name: "TagDataType");
 
             migrationBuilder.DropTable(
                 name: "AgentTagSet");
@@ -873,13 +965,7 @@ namespace AssetMonitorDataAccess.Migrations
                 name: "IcmpTagSet");
 
             migrationBuilder.DropTable(
-                name: "SnmpOperation");
-
-            migrationBuilder.DropTable(
                 name: "SnmpTagSet");
-
-            migrationBuilder.DropTable(
-                name: "TagDataType");
 
             migrationBuilder.DropTable(
                 name: "SnmpVersion");

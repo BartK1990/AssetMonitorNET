@@ -11,5 +11,9 @@ namespace AssetMonitorDataAccess.Models
 
         [Required]
         public string Address { get; set; }
+
+        [Required]
+        public int UserEmailAddressSetId { get; set; }
+        public UserEmailAddressSet UserEmailAddressSet { get; set; }
     }
 }

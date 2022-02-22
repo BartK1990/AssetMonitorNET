@@ -10,7 +10,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
     {
         public List<T> AssetsData { get; set; }
 
-        private readonly IServiceScopeFactory _scopeFactory;
+        protected readonly IServiceScopeFactory _scopeFactory;
         protected readonly ILogger<TShared> _logger;
 
         public AssetsSharedServiceBase(IServiceScopeFactory scopeFactory,

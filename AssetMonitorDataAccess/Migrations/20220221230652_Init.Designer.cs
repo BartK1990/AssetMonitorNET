@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    [Migration("20220220222846_AlarmTagDescCorrect")]
-    partial class AlarmTagDescCorrect
+    [Migration("20220221230652_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -426,6 +426,13 @@ namespace AssetMonitorDataAccess.Migrations
                             Description = "SNMP Community String",
                             Name = "SnmpCommunity",
                             ValueDataTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Enable or disable email notifications",
+                            Name = "EmailNotificationsEnable",
+                            ValueDataTypeId = 4
                         });
                 });
 
@@ -460,6 +467,11 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 3,
                             DataType = "Double"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DataType = "Boolean"
                         });
                 });
 
@@ -1030,6 +1042,69 @@ namespace AssetMonitorDataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserEmailAddressSetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserEmailAddressSetId");
+
+                    b.ToTable("UserEmailAddress");
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddressSet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserEmailAddressSet");
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AssetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserEmailAddressSetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("UserEmailAddressSetId");
+
+                    b.ToTable("UserEmailAssetRel");
+                });
+
             modelBuilder.Entity("AssetMonitorDataAccess.Models.AgentTag", b =>
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.AgentDataType", "AgentDataType")
@@ -1207,6 +1282,30 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpVersion", "Version")
                         .WithMany()
                         .HasForeignKey("VersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAddressSet", "UserEmailAddressSet")
+                        .WithMany("UserEmailAddresses")
+                        .HasForeignKey("UserEmailAddressSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAssetRel", b =>
+                {
+                    b.HasOne("AssetMonitorDataAccess.Models.Asset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AssetMonitorDataAccess.Models.UserEmailAddressSet", "UserEmailAddressSet")
+                        .WithMany()
+                        .HasForeignKey("UserEmailAddressSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

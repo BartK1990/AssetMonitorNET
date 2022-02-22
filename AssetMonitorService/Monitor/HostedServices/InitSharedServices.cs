@@ -1,5 +1,6 @@
 ﻿using AssetMonitorService.Monitor.SingletonServices;
 using AssetMonitorService.Monitor.SingletonServices.Alarm;
+using AssetMonitorService.Monitor.SingletonServices.Email;
 using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IHistoricalTablesSharedService _historicalTablesShared;
         private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
         private readonly IAssetsAlarmDataSharedService _assetsAlarmDataShared;
+        private readonly IAssetsNotificationDataSharedService _assetsNotificationDataShared;
 
         public InitSharedServices(ILogger<InitSharedServices> _logger,
             IAssetsCollectionSharedService assetsCollectionShared,
@@ -26,7 +28,8 @@ namespace AssetMonitorService.Monitor.HostedServices
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
             IHistoricalTablesSharedService historicalTablesShared,
             IAssetsHistoricalDataSharedService assetsHistoricalDataShared,
-            IAssetsAlarmDataSharedService assetsAlarmDataShared
+            IAssetsAlarmDataSharedService assetsAlarmDataShared,
+            IAssetsNotificationDataSharedService assetsNotificationDataShared
             )
         {
             this._logger = _logger;
@@ -37,6 +40,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._historicalTablesShared = historicalTablesShared;
             this._assetsHistoricalDataShared = assetsHistoricalDataShared;
             this._assetsAlarmDataShared = assetsAlarmDataShared;
+            this._assetsNotificationDataShared = assetsNotificationDataShared;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -49,6 +53,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             await this._assetsHistoricalDataShared.UpdateAssetsListBase();
             await this._assetsAlarmDataShared.UpdateAssetsListBase();
             await this._historicalTablesShared.DatabaseStructureUpdateAsync();
+            await this._assetsNotificationDataShared.UpdateAssetsListBase();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

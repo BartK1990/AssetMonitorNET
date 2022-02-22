@@ -4,6 +4,7 @@ using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
@@ -80,6 +81,14 @@ namespace AssetMonitorService.Monitor.HostedServices
 
             _historicalTablesShared.InsertTimedDataForAllAssetsAsync(tenMinTimeStamp).Wait();
             _lastSaveTimeToDatebase = utcNow;
+
+            // ToDo remove this when User interface is created
+            var repositoryAssets = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
+            var assets = repositoryAssets.GetSnmpAssetsAsync().Result.ToList();
+            foreach (var asset in assets)
+            {
+                _assetsHistoricalDataShared.UpdateAssetActualSnmpValuesByIdAsync(asset.Id);
+            }
         }
     }
 }

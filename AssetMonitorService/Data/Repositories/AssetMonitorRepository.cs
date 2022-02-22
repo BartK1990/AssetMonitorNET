@@ -22,10 +22,26 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
+        public async Task<IEnumerable<Asset>> GetIcmpAssetsAsync()
+        {
+            var assetMonitorContext = _context.Asset
+                .Where(at => at.IcmpTagSet != null);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
         public async Task<IEnumerable<Asset>> GetAgentAssetsAsync()
         {
             var assetMonitorContext = _context.Asset
                 .Where(at => at.AgentTagSet != null);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Asset>> GetSnmpAssetsAsync()
+        {
+            var assetMonitorContext = _context.Asset
+                .Where(at => at.SnmpTagSet != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -129,6 +145,14 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.SnmpAssetValue
                 .Where(sa => sa.AssetId == id);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserEmailAddress>> GetUserEmailAddressByAssetIdAsync(int? id)
+        {
+            var assetMonitorContext = _context.UserEmailAddress
+                .Where(sa => sa.UserEmailAddressSetId == (_context.UserEmailAssetRel.FirstOrDefault(a=>a.AssetId == id).UserEmailAddressSetId));
 
             return await assetMonitorContext.ToListAsync();
         }

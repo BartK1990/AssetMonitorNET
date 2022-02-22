@@ -59,7 +59,7 @@ namespace AssetMonitorService
             services.AddHostedService<AssetsTimedSnmpDataService>();
             services.AddHostedService<AssetsHistoryTimedService>();
             services.AddHostedService<AssetsAlarmTimedService>();
-            services.AddHostedService<AssetsEmailTimedService>();
+            services.AddHostedService<AssetsNotificationTimedService>();
 
             // Shared (Singleton) services
             services.AddSingleton<IAssetsCollectionSharedService, AssetsCollectionSharedService>();
@@ -72,6 +72,7 @@ namespace AssetMonitorService
             // Shared (Singleton) services for Alarm Data
             services.AddSingleton<IAssetsAlarmDataSharedService, AssetsAlarmDataSharedService>();
             // Shared (Singleton) services for Emails
+            services.AddSingleton<IAssetsNotificationDataSharedService, AssetsNotificationDataSharedService>();
             services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
 
             // Scoped services

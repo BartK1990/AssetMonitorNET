@@ -1,6 +1,5 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.SingletonServices;
+﻿using AssetMonitorService.Monitor.SingletonServices;
+using AssetMonitorService.Monitor.SingletonServices.Historical;
 using AssetMonitorSharedGRPC.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,18 +16,21 @@ namespace AssetMonitorService.gRPC.CommunicationServices
         private readonly IAssetsIcmpSharedService _assetsPingDataShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
+        private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
 
         public AssetMonitorDataService(ILogger<AssetMonitorDataService> logger,
             IServiceScopeFactory scopeFactory,
             IAssetsIcmpSharedService assetsPingDataShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
-            IAssetsSnmpDataSharedService assetsSnmpDataShared)
+            IAssetsSnmpDataSharedService assetsSnmpDataShared,
+            IAssetsHistoricalDataSharedService assetsHistoricalDataShared)
         {
             this._logger = logger;
             this._scopeFactory = scopeFactory;
             this._assetsPingDataShared = assetsPingDataShared;
             this._assetsPerformanceDataShared = assetsPerformanceDataShared;
             this._assetsSnmpDataShared = assetsSnmpDataShared;
+            this._assetsHistoricalDataShared = assetsHistoricalDataShared;
         }
 
         public async Task<AssetsPerformanceDataReply> GetAssetsPerformanceData(AssetsPerformanceDataRequest request, CallContext context = default)
@@ -68,35 +70,12 @@ namespace AssetMonitorService.gRPC.CommunicationServices
         public async Task<AssetSnmpUpdateCommandReply> UpdateAssetSnmpValuesById(AssetSnmpUpdateCommandRequest request, CallContext context = default)
         {
             _logger.LogInformation($"Asset (Id: {request.AssetId}) SNMP update command from {context.ServerCallContext.Peer}");
-            var reply = new AssetSnmpUpdateCommandReply();
-
-            using var scope = _scopeFactory.CreateScope();
-            var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
-
-            var snmpAssetValues = (await repository.GetSnmpAssetValuesByAssetIdAsync(request.AssetId)).ToList();
-            var snmpTags = (await repository.GetSnmpAssetTagsByAssetIdAsync(request.AssetId)).ToList();
-
-            var assetData = _assetsSnmpDataShared.AssetsData.FirstOrDefault(ad=>ad.Id == request.AssetId);
-
-            foreach (var tag in snmpTags)
+            var reply = new AssetSnmpUpdateCommandReply
             {
-                if (!assetData.Data.ContainsKey(tag))
-                {
-                    continue;
-                }
-                var snmpTagValue = assetData.Data[tag].Value;
-                var valueToUpdate = snmpAssetValues.FirstOrDefault(sa => sa.SnmpTagId == tag.Id);
-                if (valueToUpdate == null)
-                {
-                    repository.Add(new SnmpAssetValue() { AssetId = request.AssetId, SnmpTag = tag, Value = snmpTagValue.ToString() });
-                    continue;
-                }
-                valueToUpdate.Value = snmpTagValue.ToString();
-                repository.Update(valueToUpdate);
-            }
-
-            reply.Success = await repository.SaveAllAsync();
+                Success = await _assetsHistoricalDataShared.UpdateAssetActualSnmpValuesByIdAsync(request.AssetId)
+            };
             return await Task.FromResult(reply);
         }
+
     }
 }

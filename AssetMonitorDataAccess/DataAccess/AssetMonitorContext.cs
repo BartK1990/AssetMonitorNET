@@ -33,6 +33,7 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<SnmpVersion> SnmpVersion { get; set; }
         public DbSet<TagDataType> TagDataType { get; set; }
         public DbSet<UserEmailAddress> UserEmailAddress { get; set; }
+        public DbSet<UserEmailAddressSet> UserEmailAddressSet { get; set; }
         public DbSet<UserEmailAssetRel> UserEmailAssetRel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -207,7 +208,7 @@ namespace AssetMonitorDataAccess.DataAccess
                 );
 
             modelBuilder.Entity<AlarmTagConfig>().HasData(
-                new AlarmTagConfig() { Id = 1, IcmpTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.Equal, ActivationTime = 30, Value = "1", Description = "No ping!" },
+                new AlarmTagConfig() { Id = 1, IcmpTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.Equal, ActivationTime = 30, Value = "False", Description = "No ping!" },
                 new AlarmTagConfig() { Id = 2, AgentTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.GreaterOrEqual, ActivationTime = 30, Value = "50", Description = "CPU usage is to high!" }
                 );
 
