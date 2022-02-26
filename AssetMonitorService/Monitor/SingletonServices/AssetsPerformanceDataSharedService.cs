@@ -20,43 +20,32 @@ namespace AssetMonitorService.Monitor.SingletonServices
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
             var assets = (await repository.GetAgentAssetsWithTagSetAsync()).ToList();
-            foreach (var a in assets)
+            foreach (var asset in assets)
             {
-                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
 
                 // Only for localhost no TCP port is required
-                if (a.IpAddress == IPAddress.Loopback.ToString())
+                if (asset.IpAddress == IPAddress.Loopback.ToString())
                 {
-                    AssetsData.Add(new AssetPerformanceData(a.AgentTagSet.AgentTag)
+                    AssetsData.Add(new AssetPerformanceData(asset.AgentTagSet.AgentTag)
                     {
-                        Id = a.Id,
-                        IpAddress = a.IpAddress,
+                        Id = asset.Id,
+                        IpAddress = asset.IpAddress,
                         TcpPort = null,
                     });
                     continue;
                 }
 
-                var agentTcpPort = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.AgentTcpPort)?.Value ?? null;
-                if(agentTcpPort == null)
+                // Properties
+                int tcpPort = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.AgentTcpPort, int.Parse, 9560);
+
+                AssetsData.Add(new AssetPerformanceData(asset.AgentTagSet.AgentTag)
                 {
-                    agentTcpPort = "9560";
-                    _logger.LogError($"No Agent TCP port specified for Asset (Id): {a.Id} | default {agentTcpPort} used");
-                }
-                if (int.TryParse(agentTcpPort, out var tcpPort))
-                {
-                    AssetsData.Add(new AssetPerformanceData(a.AgentTagSet.AgentTag)
-                    {
-                        Id = a.Id,
-                        IpAddress = a.IpAddress,
-                        TcpPort = tcpPort
-                    });
-                }
-                else
-                {
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.AgentTcpPort]} for Asset: {a.Name} (Id: {a.Id})");
-                }
+                    Id = asset.Id,
+                    IpAddress = asset.IpAddress,
+                    TcpPort = tcpPort
+                });
             }
         }
     }

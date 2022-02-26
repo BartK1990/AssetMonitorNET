@@ -8,18 +8,6 @@ namespace AssetMonitorDataAccess.Models
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(70)]
-        public string Tagname { get; set; }
-
-        public double ScaleFactor { get; set; }
-
-        public double ScaleOffset { get; set; }
-
-        public ICollection<HistoricalTagConfig> HistoricalTagConfigs { get; set; }
-
-        public ICollection<AlarmTagConfig> AlarmTagConfigs { get; set; }
-
-        [Required]
         public string OID { get; set; }
 
         [Required]
@@ -27,12 +15,10 @@ namespace AssetMonitorDataAccess.Models
         public SnmpOperation Operation { get; set; }
 
         [Required]
-        public int ValueDataTypeId { get; set; }
-        public TagDataType ValueDataType { get; set; }
+        public int SnmpCommunicationTypeId { get; set; }
+        public SnmpCommunicationType SnmpCommunicationType { get; set; }
 
-        [Required]
-        public int SnmpTagSetId { get; set; }
-        public SnmpTagSet SnmpTagSet { get; set; }
+        public TagCommunicationRel TagCommunicationRel { get; set; }
 
         public bool Equals(SnmpTag x, SnmpTag y)
         {

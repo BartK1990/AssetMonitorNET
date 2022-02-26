@@ -3,13 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AssetMonitorDataAccess.Models
 {
-    public class AgentTagSet
+    public class TagSet
     {
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public ICollection<AgentTag> AgentTag { get; set; }
+        public ICollection<Tag> Tags { get; set; }
     }
 }

@@ -17,21 +17,19 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AssetPropertyValue> AssetPropertyValue { get; set; }
         public DbSet<AgentDataType> AgentDataType { get; set; }
         public DbSet<AgentTag> AgentTag { get; set; }
-        public DbSet<AgentTagSet> AgentTagSet { get; set; }
         public DbSet<AlarmTagConfig> AlarmTagConfig { get; set; }
         public DbSet<AlarmType> AlarmType { get; set; }
         public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
         public DbSet<HistoricalType> HistoricalType { get; set; }
-        public DbSet<HttpNodeRedTag> HttpNodeRedTag { get; set; }
-        public DbSet<HttpNodeRedTagSet> HttpNodeRedTagSet { get; set; }
-        public DbSet<IcmpTag> IcmpTag { get; set; }
-        public DbSet<IcmpTagSet> IcmpTagSet { get; set; }
         public DbSet<SnmpAssetValue> SnmpAssetValue { get; set; }
+        public DbSet<SnmpCommunicationType> SnmpCommunicationType { get; set; }
         public DbSet<SnmpOperation> SnmpOperation { get; set; }
         public DbSet<SnmpTag> SnmpTag { get; set; }
-        public DbSet<SnmpTagSet> SnmpTagSet { get; set; }
         public DbSet<SnmpVersion> SnmpVersion { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<TagCommunicationRel> TagCommunicationRel { get; set; }
         public DbSet<TagDataType> TagDataType { get; set; }
+        public DbSet<TagSet> TagSet { get; set; }
         public DbSet<UserEmailAddress> UserEmailAddress { get; set; }
         public DbSet<UserEmailAddressSet> UserEmailAddressSet { get; set; }
         public DbSet<UserEmailAssetRel> UserEmailAssetRel { get; set; }
@@ -40,38 +38,26 @@ namespace AssetMonitorDataAccess.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<AgentTag>()
-                .HasIndex(c => new { c.AgentTagSetId, c.Tagname }).IsUnique();
-            modelBuilder.Entity<AgentTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
-            modelBuilder.Entity<AgentTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
+            modelBuilder.Entity<Tag>().HasIndex(c => new { c.TagSetId, c.Tagname }).IsUnique();
+            modelBuilder.Entity<Tag>().HasIndex(c => new { c.TagCommunicationRelId }).IsUnique();
+            modelBuilder.Entity<Tag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
+            modelBuilder.Entity<Tag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
 
-            modelBuilder.Entity<SnmpTag>()
-                .HasIndex(c => new { c.SnmpTagSetId, c.Tagname }).IsUnique();
-            modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
-            modelBuilder.Entity<SnmpTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
-
-            modelBuilder.Entity<HttpNodeRedTag>()
-                .HasIndex(c => new { c.Id, c.Tagname }).IsUnique();
-            modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleFactor).HasDefaultValue(1.0);
-            modelBuilder.Entity<HttpNodeRedTag>().Property(p => p.ScaleOffset).HasDefaultValue(0.0);
+            modelBuilder.Entity<TagCommunicationRel>(entity =>
+                entity.HasCheckConstraint("CK_AlarmTagConfig_PingOrAgentOrSnmp",
+                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 1 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 0 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NOT NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 0 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NOT NULL)"));
 
             modelBuilder.Entity<HistoricalTagConfig>()
-                .HasIndex(c => new { c.AgentTagId, c.SnmpTagId, c.HistorizationTypeId }).IsUnique();
+                .HasIndex(c => new { c.TagId, c.HistorizationTypeId }).IsUnique();
+
+            modelBuilder.Entity<AlarmTagConfig>()
+                .HasIndex(c => new { c.TagId, c.AlarmTypeId }).IsUnique();
 
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo",
                 $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
-
-            modelBuilder.Entity<HistoricalTagConfig>(entity =>
-                entity.HasCheckConstraint("CK_HistorizationTagConfig_AgentOrSnmp",
-                $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.HistoricalTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.HistoricalTagConfig.SnmpTagId)}] IS NOT NULL)"));
-
-            modelBuilder.Entity<AlarmTagConfig>(entity =>
-                entity.HasCheckConstraint("CK_AlarmTagConfig_PingOrAgentOrSnmp",
-                $"([{nameof(Models.AlarmTagConfig.IcmpTagId)}] IS NOT NULL AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.AlarmTagConfig.IcmpTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NOT NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.AlarmTagConfig.IcmpTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.AgentTagId)}] IS NULL AND [{nameof(Models.AlarmTagConfig.SnmpTagId)}] IS NOT NULL)"));
 
             #region Enums
             Array enums = Enum.GetValues(typeof(SnmpOperationEnum));
@@ -144,6 +130,16 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
             }
 
+            enums = Enum.GetValues(typeof(SnmpCommunicationTypeEnum));
+            foreach (var item in enums)
+            {
+                modelBuilder.Entity<SnmpCommunicationType>().HasData(new AlarmType()
+                {
+                    Id = (int)item,
+                    Type = Enum.GetName(typeof(SnmpCommunicationTypeEnum), item)
+                });
+            }
+
             enums = Enum.GetValues(typeof(AssetPropertyNameEnum));
             foreach (var item in enums)
             {
@@ -151,65 +147,112 @@ namespace AssetMonitorDataAccess.DataAccess
             }
             #endregion
 
-            modelBuilder.Entity<IcmpTagSet>()
-                .HasData(new IcmpTagSet()
-                {
-                    Id = 1,
-                    Name = "Default"
-                });
-
-            modelBuilder.Entity<AgentTagSet>()
-                .HasData(new AgentTagSet()
-                {
-                    Id = 1,
-                    Name = "Default"
-                });
-
-            modelBuilder.Entity<SnmpTagSet>()
-                .HasData(new SnmpTagSet()
-                {
-                    Id = 1,
-                    Name = "Default",
-                    VersionId = (int)SnmpVersionEnum.V2c
-                });
-
-            modelBuilder.Entity<IcmpTag>().HasData(
-               new IcmpTag() { Id = 1, Tagname = "PingState", ValueDataTypeId = (int)TagDataTypeEnum.Boolean, IcmpTagSetId = 1 },
-               new IcmpTag() { Id = 2, Tagname = "PingResponseTime", ValueDataTypeId = (int)TagDataTypeEnum.Long, IcmpTagSetId = 1 }
-               );
-
             modelBuilder.Entity<AgentTag>().HasData(
-                new AgentTag() {Id = 1, Tagname = "CpuUsage", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 2, Tagname = "MemoryAvailable", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 3, Tagname = "MemoryTotal", AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory", ValueDataTypeId = (int)TagDataTypeEnum.Double, AgentTagSetId = 1 },
-                new AgentTag() {Id = 4, Tagname = "PhysicalDiskIdleTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 5, Tagname = "PhysicalDiskWorkTime", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 },
-                new AgentTag() {Id = 6, Tagname = "LogicalDiskFreeSpace", AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total", ValueDataTypeId = (int)TagDataTypeEnum.Float, AgentTagSetId = 1 }
+                new AgentTag() { Id = 1, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total" },
+                new AgentTag() { Id = 2, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes" },
+                new AgentTag() { Id = 3, AgentDataTypeId = (int)AgentDataTypeEnum.WMI, WmiManagementObject = @"TotalPhysicalMemory" },
+                new AgentTag() { Id = 4, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Idle Time;_Total" },
+                new AgentTag() { Id = 5, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"PhysicalDisk;% Disk Time;_Total" },
+                new AgentTag() { Id = 6, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"LogicalDisk;% Free Space;_Total" }
                 );
 
             modelBuilder.Entity<SnmpTag>().HasData(
-                new SnmpTag() { Id = 1, Tagname = "sysName", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
-                new SnmpTag() { Id = 2, Tagname = "sysDescr", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
-                new SnmpTag() { Id = 3, Tagname = "sysObjectID", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
-                new SnmpTag() { Id = 4, Tagname = "sysUpTime", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 },
-                new SnmpTag() { Id = 5, Tagname = "sysContact", OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0", ValueDataTypeId = (int)TagDataTypeEnum.String, SnmpTagSetId = 1 }
+                // TagSet Id = 1
+                new SnmpTag() { Id = 1, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0" },
+                new SnmpTag() { Id = 2, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0" },
+                new SnmpTag() { Id = 3, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0" },
+                new SnmpTag() { Id = 4, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0" },
+                new SnmpTag() { Id = 5, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0" },
+
+                // TagSet Id = 2
+                new SnmpTag() { Id = 6, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0" },
+                new SnmpTag() { Id = 7, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0" },
+                new SnmpTag() { Id = 8, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0" },
+                new SnmpTag() { Id = 9, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0" },
+                new SnmpTag() { Id = 10, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0" }
                 );
 
-            modelBuilder.Entity<HistoricalTagConfig>().HasData(
-                new HistoricalTagConfig() { Id = 1, AgentTagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 2, AgentTagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Maximum },
-                new HistoricalTagConfig() { Id = 3, AgentTagId = 2, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 4, AgentTagId = 3, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 5, AgentTagId = 4, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 6, AgentTagId = 5, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 7, AgentTagId = 6, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+            modelBuilder.Entity<TagCommunicationRel>().HasData(
+                // TagSet Id = 1
+                new TagCommunicationRel() { Id = 1, IcmpTag = true },
+                new TagCommunicationRel() { Id = 2, IcmpTag = true },
+                new TagCommunicationRel() { Id = 3, IcmpTag = false, AgentTagId = 1 },
+                new TagCommunicationRel() { Id = 4, IcmpTag = false, AgentTagId = 2 },
+                new TagCommunicationRel() { Id = 5, IcmpTag = false, AgentTagId = 3 },
+                new TagCommunicationRel() { Id = 6, IcmpTag = false, AgentTagId = 4 },
+                new TagCommunicationRel() { Id = 7, IcmpTag = false, AgentTagId = 5 },
+                new TagCommunicationRel() { Id = 8, IcmpTag = false, AgentTagId = 6 },
+                new TagCommunicationRel() { Id = 9, IcmpTag = false, SnmpTagId = 1 },
+                new TagCommunicationRel() { Id = 10, IcmpTag = false, SnmpTagId = 2 },
+                new TagCommunicationRel() { Id = 11, IcmpTag = false, SnmpTagId = 3 },
+                new TagCommunicationRel() { Id = 12, IcmpTag = false, SnmpTagId = 4 },
+                new TagCommunicationRel() { Id = 13, IcmpTag = false, SnmpTagId = 5 },
 
-                new HistoricalTagConfig() { Id = 8, SnmpTagId = 4, HistorizationTypeId = (int)HistoricalTypeEnum.Last }
+                // TagSet Id = 2
+                new TagCommunicationRel() { Id = 14, IcmpTag = true },
+                new TagCommunicationRel() { Id = 15, IcmpTag = true },
+                new TagCommunicationRel() { Id = 16, IcmpTag = false, SnmpTagId = 6 },
+                new TagCommunicationRel() { Id = 17, IcmpTag = false, SnmpTagId = 7 },
+                new TagCommunicationRel() { Id = 18, IcmpTag = false, SnmpTagId = 8 },
+                new TagCommunicationRel() { Id = 19, IcmpTag = false, SnmpTagId = 9 },
+                new TagCommunicationRel() { Id = 20, IcmpTag = false, SnmpTagId = 10 }
+                );
+
+            modelBuilder.Entity<TagSet>().HasData(
+                new TagSet() { Id = 1, Name = "Windows Agent and SNMP Default" },
+                new TagSet() { Id = 2, Name = "SNMP Default" }
+                );
+
+            modelBuilder.Entity<Tag>().HasData(
+                new Tag() { Id = 1, TagCommunicationRelId = 1, TagSetId = 1, Tagname = "ICMP.PingState", ValueDataTypeId = (int)TagDataTypeEnum.Boolean },
+                new Tag() { Id = 2, TagCommunicationRelId = 2, TagSetId = 1, Tagname = "ICMP.PingResponseTime", ValueDataTypeId = (int)TagDataTypeEnum.Long },
+                new Tag() { Id = 3, TagCommunicationRelId = 3, TagSetId = 1, Tagname = "Agent.CpuUsage", ValueDataTypeId = (int)TagDataTypeEnum.Float },
+                new Tag() { Id = 4, TagCommunicationRelId = 4, TagSetId = 1, Tagname = "Agent.MemoryAvailable", ValueDataTypeId = (int)TagDataTypeEnum.Float },
+                new Tag() { Id = 5, TagCommunicationRelId = 5, TagSetId = 1, Tagname = "Agent.MemoryTotal", ValueDataTypeId = (int)TagDataTypeEnum.Double },
+                new Tag() { Id = 6, TagCommunicationRelId = 6, TagSetId = 1, Tagname = "Agent.PhysicalDiskIdleTime", ValueDataTypeId = (int)TagDataTypeEnum.Float },
+                new Tag() { Id = 7, TagCommunicationRelId = 7, TagSetId = 1, Tagname = "Agent.PhysicalDiskWorkTime", ValueDataTypeId = (int)TagDataTypeEnum.Float },
+                new Tag() { Id = 8, TagCommunicationRelId = 8, TagSetId = 1, Tagname = "Agent.LogicalDiskFreeSpace", ValueDataTypeId = (int)TagDataTypeEnum.Float },
+                new Tag() { Id = 9, TagCommunicationRelId = 9, TagSetId = 1, Tagname = "SNMP.sysName", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 10, TagCommunicationRelId = 10, TagSetId = 1, Tagname = "SNMP.sysDescr", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 11, TagCommunicationRelId = 11, TagSetId = 1, Tagname = "SNMP.sysObjectID", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 12, TagCommunicationRelId = 12, TagSetId = 1, Tagname = "SNMP.sysUpTime", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 13, TagCommunicationRelId = 13, TagSetId = 1, Tagname = "SNMP.sysContact", ValueDataTypeId = (int)TagDataTypeEnum.String },
+
+                new Tag() { Id = 14, TagCommunicationRelId = 14, TagSetId = 2, Tagname = "ICMP.PingState", ValueDataTypeId = (int)TagDataTypeEnum.Boolean },
+                new Tag() { Id = 15, TagCommunicationRelId = 15, TagSetId = 2, Tagname = "ICMP.PingResponseTime", ValueDataTypeId = (int)TagDataTypeEnum.Long },
+                new Tag() { Id = 16, TagCommunicationRelId = 16, TagSetId = 2, Tagname = "SNMP.sysName", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 17, TagCommunicationRelId = 17, TagSetId = 2, Tagname = "SNMP.sysDescr", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 18, TagCommunicationRelId = 18, TagSetId = 2, Tagname = "SNMP.sysObjectID", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 19, TagCommunicationRelId = 19, TagSetId = 2, Tagname = "SNMP.sysUpTime", ValueDataTypeId = (int)TagDataTypeEnum.String },
+                new Tag() { Id = 20, TagCommunicationRelId = 20, TagSetId = 2, Tagname = "SNMP.sysContact", ValueDataTypeId = (int)TagDataTypeEnum.String }
+               );
+
+            modelBuilder.Entity<HistoricalTagConfig>().HasData(
+                // TagSet Id = 1
+                new HistoricalTagConfig() { Id = 1, TagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Last },
+                new HistoricalTagConfig() { Id = 2, TagId = 2, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 3, TagId = 3, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 4, TagId = 3, HistorizationTypeId = (int)HistoricalTypeEnum.Maximum },
+                new HistoricalTagConfig() { Id = 5, TagId = 4, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 6, TagId = 5, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 7, TagId = 6, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 8, TagId = 7, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 9, TagId = 8, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 10, TagId = 12, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+
+                // TagSet Id = 2
+                new HistoricalTagConfig() { Id = 11, TagId = 14, HistorizationTypeId = (int)HistoricalTypeEnum.Last },
+                new HistoricalTagConfig() { Id = 12, TagId = 15, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 13, TagId = 19, HistorizationTypeId = (int)HistoricalTypeEnum.Last }
                 );
 
             modelBuilder.Entity<AlarmTagConfig>().HasData(
-                new AlarmTagConfig() { Id = 1, IcmpTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.Equal, ActivationTime = 30, Value = "False", Description = "No ping!" },
-                new AlarmTagConfig() { Id = 2, AgentTagId = 1, AlarmTypeId = (int)AlarmTypeEnum.GreaterOrEqual, ActivationTime = 30, Value = "50", Description = "CPU usage is to high!" }
+                // TagSet Id = 1
+                new AlarmTagConfig() { Id = 1, TagId = 1, AlarmTypeId = (int)AlarmTypeEnum.Equal, ActivationTime = 30, Value = "False", Description = "No ping!" },
+                new AlarmTagConfig() { Id = 2, TagId = 3, AlarmTypeId = (int)AlarmTypeEnum.GreaterOrEqual, ActivationTime = 30, Value = "50", Description = "CPU usage is to high!" },
+
+                // TagSet Id = 2
+                new AlarmTagConfig() { Id = 3, TagId = 14, AlarmTypeId = (int)AlarmTypeEnum.Equal, ActivationTime = 30, Value = "False", Description = "No ping!" }
                 );
 
             modelBuilder.Entity<Asset>()
@@ -218,16 +261,15 @@ namespace AssetMonitorDataAccess.DataAccess
                     Id = 1,
                     Name = "AssetMonitorNET Server",
                     IpAddress = "127.0.0.1",
-                    IcmpTagSetId = 1,
-                    AgentTagSetId = 1,
-                    SnmpTagSetId = 1
+                    TagSetId = 1
                 });
 
             modelBuilder.Entity<AssetPropertyValue>().HasData(
                 new AssetPropertyValue() { Id = -1, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpUdpPort, AssetId = 1, Value = "161" },
                 new AssetPropertyValue() { Id = -2, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpTimeout, AssetId = 1, Value = "3000" },
                 new AssetPropertyValue() { Id = -3, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpRetries, AssetId = 1, Value = "1" },
-                new AssetPropertyValue() { Id = -4, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpCommunity, AssetId = 1, Value = "public" }
+                new AssetPropertyValue() { Id = -4, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpCommunity, AssetId = 1, Value = "public" },
+                new AssetPropertyValue() { Id = -5, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpVersion, AssetId = 1, Value = "2" }
                 );
         }
     }

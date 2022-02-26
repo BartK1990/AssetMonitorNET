@@ -23,7 +23,7 @@ namespace AssetMonitorService.Monitor.Services
             var version = assetData.Version switch
             {
                 AssetMonitorDataAccess.Models.Enums.SnmpVersionEnum.V1 => VersionCode.V1,
-                AssetMonitorDataAccess.Models.Enums.SnmpVersionEnum.V2c => VersionCode.V2,
+                AssetMonitorDataAccess.Models.Enums.SnmpVersionEnum.V2 => VersionCode.V2,
                 _ => throw new ArgumentException("Wrong SNMP version configured"),
             };
 

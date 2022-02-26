@@ -9,7 +9,8 @@ namespace AssetMonitorDataAccess.Models.Enums
         SnmpTimeout = 3,
         SnmpRetries = 4,
         SnmpCommunity = 5,
-        EmailNotificationsEnable = 6
+        SnmpVersion = 6,
+        EmailNotificationsEnable = 7
     }
 
     public static class AssetPropertyNameDictionary
@@ -24,6 +25,7 @@ namespace AssetMonitorDataAccess.Models.Enums
             id = AssetPropertyNameEnum.SnmpTimeout; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP timeout", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer });
             id = AssetPropertyNameEnum.SnmpRetries; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP number of retries", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Integer });
             id = AssetPropertyNameEnum.SnmpCommunity; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP Community String", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.String });
+            id = AssetPropertyNameEnum.SnmpVersion; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "SNMP Version (1 or 2)", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.String });
             id = AssetPropertyNameEnum.EmailNotificationsEnable; Dict.Add(id, new AssetProperty() { Id = (int)id, Name = id.ToString(), Description = "Enable or disable email notifications", ValueDataTypeId = (int)AssetPropertyDataTypeEnum.Boolean });
         }
     }

@@ -3,6 +3,6 @@
     public enum SnmpVersionEnum
     {
         V1 = 1,
-        V2c = 2
+        V2 = 2
     }
 }

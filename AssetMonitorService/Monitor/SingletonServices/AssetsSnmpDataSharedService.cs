@@ -3,6 +3,7 @@ using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,68 +20,29 @@ namespace AssetMonitorService.Monitor.SingletonServices
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
             var assets = (await repository.GetSnmpAssetsWithTagSetAsync()).ToList();
-            foreach (var a in assets)
+            foreach (var asset in assets)
             {
-                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(a.Id);
+                var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
 
-                var snmpUdpPort = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpUdpPort)?.Value ?? null;
-                if (snmpUdpPort == null)
+                // Properties
+                int udpPort = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpTimeout, int.Parse, 161);
+                int timeout = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpTimeout, int.Parse, 6000);
+                int retries = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpRetries, int.Parse, 1);
+                string community = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpCommunity, FuncString, "public");
+
+                int version = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpVersion, int.Parse, 2);
+                if(!Enum.IsDefined(typeof(SnmpVersionEnum), version))
                 {
-                    snmpUdpPort = "161";
-                    _logger.LogError($"No SNMP UDP port specified for Asset (Id): {a.Id} | default [{snmpUdpPort}] used");
-                }
-                if (!int.TryParse(snmpUdpPort, out var udpPort))
-                {
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpUdpPort]} for Asset: {a.Name} (Id: {a.Id})");
-                    return;
+                    version = (int)SnmpVersionEnum.V2;
+                    _logger.LogError($"Wrong SNMP Version for Asset: {asset.Name} (Id: {asset.Id}) | Default [{version}] used");
                 }
 
-                var snmpTimeout = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpTimeout)?.Value ?? null;
-                if (snmpTimeout == null)
+                AssetsData.Add(new AssetSnmpData(asset.SnmpTagSet.SnmpTag)
                 {
-                    snmpTimeout = "8000";
-                    _logger.LogError($"No SNMP timeout specified for Asset (Id): {a.Id} | default [{snmpTimeout}] used");
-                }
-                if (!int.TryParse(snmpTimeout, out var timeout))
-                {
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpTimeout]} for Asset: {a.Name} (Id: {a.Id})");
-                    return;
-                }
-
-                var snmpRetries = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpRetries)?.Value ?? null;
-                if (snmpRetries == null)
-                {
-                    snmpRetries = "1";
-                    _logger.LogError($"No SNMP retries specified for Asset (Id): {a.Id} | default [{snmpRetries}] used");
-                }
-                if (!int.TryParse(snmpRetries, out var retries))
-                {
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpRetries]} for Asset: {a.Name} (Id: {a.Id})");
-                    return;
-                }
-
-                var community = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.SnmpCommunity)?.Value ?? null;
-                if (community == null)
-                {
-                    community = "public";
-                    _logger.LogError($"No SNMP community specified for Asset (Id): {a.Id} | default [{community}] used");
-                }
-                if (string.IsNullOrEmpty(community))
-                {
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.SnmpCommunity]} for Asset: {a.Name} (Id: {a.Id})");
-                    return;
-                }
-
-                AssetsData.Add(new AssetSnmpData(a.SnmpTagSet.SnmpTag)
-                {
-                    Id = a.Id,
-                    IpAddress = a.IpAddress,
-                    Version = (SnmpVersionEnum)a.SnmpTagSet.Version.Id,
+                    Id = asset.Id,
+                    IpAddress = asset.IpAddress,
+                    Version = (SnmpVersionEnum)version,
                     Community = community,
                     UdpPort = udpPort,
                     Timeout = timeout,

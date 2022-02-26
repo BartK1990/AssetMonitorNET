@@ -1,7 +1,11 @@
-﻿using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorDataAccess.Models;
+using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Data.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.SingletonServices
@@ -30,5 +34,35 @@ namespace AssetMonitorService.Monitor.SingletonServices
         }
 
         protected abstract Task UpdateAssetsList(IAssetMonitorRepository repository);
+
+        protected TParam GetAssetProperty<TParam>(Asset asset, ICollection<AssetPropertyValue> assetProperties, AssetPropertyNameEnum assetPropertyName, Func<string, TParam> parse, TParam defaultValue)
+        {
+            TParam param = defaultValue;
+            var errorMessage = $"Wrong {AssetPropertyNameDictionary.Dict[assetPropertyName]} for Asset: {asset.Name} (Id: {asset.Id}) | Default [{param}] used";
+            var result = assetProperties?
+                .FirstOrDefault(p => p.AssetPropertyId == (int)assetPropertyName)?.Value ?? null;
+            if (result != null)
+            {
+                try
+                {
+                    param = parse(result);
+                }
+                catch
+                {
+                    _logger.LogError(errorMessage);
+                }
+            }
+            else
+            {
+                _logger.LogError(errorMessage);
+            }
+
+            return param;
+        }
+
+        protected string FuncString(string s)
+        {
+            return s;
+        }
     }
 }
