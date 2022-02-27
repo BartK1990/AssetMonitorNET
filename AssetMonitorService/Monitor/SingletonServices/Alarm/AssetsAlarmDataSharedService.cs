@@ -34,70 +34,35 @@ namespace AssetMonitorService.Monitor.SingletonServices.Alarm
             var assets = (await repository.GetAllAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var tags = new Dictionary<TagValue, AlarmTagInfo>();
+                var alarmTags = new Dictionary<TagValue, AlarmTagInfo>();
 
-                // Ping
                 var pingShared = _assetsPingShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var pingTags = (await repository.GetIcmpTagsWithAlarmByAssetIdAsync(asset.Id)).ToList();
-                foreach (var tag in pingTags)
-                {
-                    if (tag.AlarmTagConfigs?.Any() ?? false)
-                    {
-                        foreach (var alarmConfigs in tag.AlarmTagConfigs)
-                        {
-                            switch (tag.Tagname)
-                            {
-                                case "PingState":
-                                    tags.Add(pingShared.PingStateValue, 
-                                        new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
-                                    break;
-                                case "PingResponseTime":
-                                    tags.Add(pingShared.PingResponseTimeValue,
-                                        new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
-                                    break;
-                            }
-                        }
-                    }
-                }
-
-                // Performance Data
                 var performanceShared = _assetsPerformanceDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var agentTags = (await repository.GetAgentTagsWithAlarmByAssetIdAsync(asset.Id)).ToList();
-                foreach (var tag in agentTags)
-                {
-                    if (tag.AlarmTagConfigs?.Any() ?? false)
-                    {
-                        if (performanceShared.Data.ContainsKey(tag))
-                        {
-                            foreach (var alarmConfigs in tag.AlarmTagConfigs)
-                            {
-                                tags.Add(performanceShared.Data[tag],
-                                    new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
-                            }
-                        }
-                    }
-                }
-
-                // SNMP Data
                 var snmpShared = _assetsSnmpDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var snmpTags = (await repository.GetSnmpTagsWithAlarmByAssetIdAsync(asset.Id)).ToList();
-                foreach (var tag in snmpTags)
+                var tags = (await repository.GetTagsWithAlarmByAssetIdAsync(asset.Id)).ToList();
+                foreach (var tag in tags)
                 {
                     if (tag.AlarmTagConfigs?.Any() ?? false)
                     {
-                        if (snmpShared.Data.ContainsKey(tag))
+                        if (tag.TagCommunicationRel.IcmpTagId != null)
                         {
-                            foreach (var alarmConfigs in tag.AlarmTagConfigs)
+                            var icmpTag = new TagIcmp() { Id = tag.Id };
+                            if (pingShared.Data.ContainsKey(icmpTag))
                             {
-                                tags.Add(snmpShared.Data[tag],
-                                    new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
+                                foreach (var alarmConfigs in tag.AlarmTagConfigs)
+                                {
+                                    alarmTags.Add(pingShared.Data[icmpTag],
+                                        new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
+                                }
                             }
                         }
+
+                        // ToDo add performance and SNMP
                     }
                 }
 
                 // Add all tags to Alarm data list
-                this.AssetsData.Add(new AssetAlarmData(tags, asset.Id));
+                this.AssetsData.Add(new AssetAlarmData(alarmTags, asset.Id));
             }
         }
 

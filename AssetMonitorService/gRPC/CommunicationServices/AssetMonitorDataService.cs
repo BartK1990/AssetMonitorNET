@@ -33,39 +33,39 @@ namespace AssetMonitorService.gRPC.CommunicationServices
             this._assetsHistoricalDataShared = assetsHistoricalDataShared;
         }
 
-        public async Task<AssetsPerformanceDataReply> GetAssetsPerformanceData(AssetsPerformanceDataRequest request, CallContext context = default)
-        {
-            _logger.LogInformation($"Replying performance data to {context.ServerCallContext.Peer}");
-            var reply = new AssetsPerformanceDataReply
-            {
-                AssetsData = _assetsPerformanceDataShared.AssetsData
-                .Select(a => new AssetsPerformanceDataMessage()
-                {
-                    Id = a.Id,
-                    IpAddress = a.IpAddress,
-                })
-            };
+        //public async Task<AssetsPerformanceDataReply> GetAssetsPerformanceData(AssetsPerformanceDataRequest request, CallContext context = default)
+        //{
+        //    _logger.LogInformation($"Replying performance data to {context.ServerCallContext.Peer}");
+        //    var reply = new AssetsPerformanceDataReply
+        //    {
+        //        AssetsData = _assetsPerformanceDataShared.AssetsData
+        //        .Select(a => new AssetsPerformanceDataMessage()
+        //        {
+        //            Id = a.Id,
+        //            IpAddress = a.IpAddress,
+        //        })
+        //    };
 
-            return await Task.FromResult(reply);
-        }
+        //    return await Task.FromResult(reply);
+        //}
 
-        public async Task<AssetsPingDataReply> GetAssetsPingData(AssetsPingDataRequest request, CallContext context = default)
-        {
-            _logger.LogInformation($"Replying ping data to {context.ServerCallContext.Peer}");
-            var reply = new AssetsPingDataReply
-            {
-                AssetsData = _assetsPingDataShared.AssetsData
-                .Select(a => new AssetsPingDataMessage()
-                {
-                    Id = a.Id,
-                    IpAddress = a.IpAddress,
-                    PingState = a.PingState,
-                    PingResponseTime = a.PingResponseTime
-                })
-            };
+        //public async Task<AssetsPingDataReply> GetAssetsPingData(AssetsPingDataRequest request, CallContext context = default)
+        //{
+        //    _logger.LogInformation($"Replying ping data to {context.ServerCallContext.Peer}");
+        //    var reply = new AssetsPingDataReply
+        //    {
+        //        AssetsData = _assetsPingDataShared.AssetsData
+        //        .Select(a => new AssetsPingDataMessage()
+        //        {
+        //            Id = a.Id,
+        //            IpAddress = a.IpAddress,
+        //            PingState = a.PingState,
+        //            PingResponseTime = a.PingResponseTime
+        //        })
+        //    };
 
-            return await Task.FromResult(reply);
-        }
+        //    return await Task.FromResult(reply);
+        //}
 
         public async Task<AssetSnmpUpdateCommandReply> UpdateAssetSnmpValuesById(AssetSnmpUpdateCommandRequest request, CallContext context = default)
         {

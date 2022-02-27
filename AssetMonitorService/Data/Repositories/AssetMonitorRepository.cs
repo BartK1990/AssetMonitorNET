@@ -129,7 +129,8 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.Tag
                 .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
-                .Include(h => h.HistoricalTagConfigs);
+                .Include(h => h.HistoricalTagConfigs)
+                .Include(tc => tc.TagCommunicationRel);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -138,7 +139,8 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.Tag
                 .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
-                .Include(a => a.AlarmTagConfigs);
+                .Include(a => a.AlarmTagConfigs)
+                .Include(tc => tc.TagCommunicationRel);
 
             return await assetMonitorContext.ToListAsync();
         }
