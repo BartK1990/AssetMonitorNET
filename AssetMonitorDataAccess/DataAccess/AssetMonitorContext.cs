@@ -21,6 +21,8 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AlarmType> AlarmType { get; set; }
         public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
         public DbSet<HistoricalType> HistoricalType { get; set; }
+        public DbSet<IcmpTag> IcmpTag { get; set; }
+        public DbSet<IcmpType> IcmpType { get; set; }
         public DbSet<SnmpAssetValue> SnmpAssetValue { get; set; }
         public DbSet<SnmpCommunicationType> SnmpCommunicationType { get; set; }
         public DbSet<SnmpOperation> SnmpOperation { get; set; }
@@ -45,9 +47,9 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<TagCommunicationRel>(entity =>
                 entity.HasCheckConstraint("CK_AlarmTagConfig_PingOrAgentOrSnmp",
-                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 1 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 0 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NOT NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
-                $"([{nameof(Models.TagCommunicationRel.IcmpTag)}] = 0 AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NOT NULL)"));
+                $"([{nameof(Models.TagCommunicationRel.IcmpTagId)}] IS NOT NULL AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.TagCommunicationRel.IcmpTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NOT NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NULL) OR " +
+                $"([{nameof(Models.TagCommunicationRel.IcmpTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.AgentTagId)}] IS NULL AND [{nameof(Models.TagCommunicationRel.SnmpTagId)}] IS NOT NULL)"));
 
             modelBuilder.Entity<HistoricalTagConfig>()
                 .HasIndex(c => new { c.TagId, c.HistorizationTypeId }).IsUnique();
@@ -147,6 +149,16 @@ namespace AssetMonitorDataAccess.DataAccess
             }
             #endregion
 
+            modelBuilder.Entity<IcmpTag>().HasData(
+                // TagSet Id = 1
+                new IcmpTag() { Id = 1, IcmpTypeId = (int)IcmpTypeEnum.PingState },
+                new IcmpTag() { Id = 2, IcmpTypeId = (int)IcmpTypeEnum.PingResponseTime },
+
+                // TagSet Id = 2
+                new IcmpTag() { Id = 3, IcmpTypeId = (int)IcmpTypeEnum.PingState },
+                new IcmpTag() { Id = 4, IcmpTypeId = (int)IcmpTypeEnum.PingResponseTime }
+                );
+
             modelBuilder.Entity<AgentTag>().HasData(
                 new AgentTag() { Id = 1, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Processor;% Processor Time;_Total" },
                 new AgentTag() { Id = 2, AgentDataTypeId = (int)AgentDataTypeEnum.PerformanceCounter, PerformanceCounter = @"Memory;Available MBytes" },
@@ -174,28 +186,28 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<TagCommunicationRel>().HasData(
                 // TagSet Id = 1
-                new TagCommunicationRel() { Id = 1, IcmpTag = true },
-                new TagCommunicationRel() { Id = 2, IcmpTag = true },
-                new TagCommunicationRel() { Id = 3, IcmpTag = false, AgentTagId = 1 },
-                new TagCommunicationRel() { Id = 4, IcmpTag = false, AgentTagId = 2 },
-                new TagCommunicationRel() { Id = 5, IcmpTag = false, AgentTagId = 3 },
-                new TagCommunicationRel() { Id = 6, IcmpTag = false, AgentTagId = 4 },
-                new TagCommunicationRel() { Id = 7, IcmpTag = false, AgentTagId = 5 },
-                new TagCommunicationRel() { Id = 8, IcmpTag = false, AgentTagId = 6 },
-                new TagCommunicationRel() { Id = 9, IcmpTag = false, SnmpTagId = 1 },
-                new TagCommunicationRel() { Id = 10, IcmpTag = false, SnmpTagId = 2 },
-                new TagCommunicationRel() { Id = 11, IcmpTag = false, SnmpTagId = 3 },
-                new TagCommunicationRel() { Id = 12, IcmpTag = false, SnmpTagId = 4 },
-                new TagCommunicationRel() { Id = 13, IcmpTag = false, SnmpTagId = 5 },
+                new TagCommunicationRel() { Id = 1, IcmpTagId = 1 },
+                new TagCommunicationRel() { Id = 2, IcmpTagId = 2 },
+                new TagCommunicationRel() { Id = 3, AgentTagId = 1 },
+                new TagCommunicationRel() { Id = 4, AgentTagId = 2 },
+                new TagCommunicationRel() { Id = 5, AgentTagId = 3 },
+                new TagCommunicationRel() { Id = 6, AgentTagId = 4 },
+                new TagCommunicationRel() { Id = 7, AgentTagId = 5 },
+                new TagCommunicationRel() { Id = 8, AgentTagId = 6 },
+                new TagCommunicationRel() { Id = 9, SnmpTagId = 1 },
+                new TagCommunicationRel() { Id = 10, SnmpTagId = 2 },
+                new TagCommunicationRel() { Id = 11, SnmpTagId = 3 },
+                new TagCommunicationRel() { Id = 12, SnmpTagId = 4 },
+                new TagCommunicationRel() { Id = 13, SnmpTagId = 5 },
 
                 // TagSet Id = 2
-                new TagCommunicationRel() { Id = 14, IcmpTag = true },
-                new TagCommunicationRel() { Id = 15, IcmpTag = true },
-                new TagCommunicationRel() { Id = 16, IcmpTag = false, SnmpTagId = 6 },
-                new TagCommunicationRel() { Id = 17, IcmpTag = false, SnmpTagId = 7 },
-                new TagCommunicationRel() { Id = 18, IcmpTag = false, SnmpTagId = 8 },
-                new TagCommunicationRel() { Id = 19, IcmpTag = false, SnmpTagId = 9 },
-                new TagCommunicationRel() { Id = 20, IcmpTag = false, SnmpTagId = 10 }
+                new TagCommunicationRel() { Id = 14, IcmpTagId = 3 },
+                new TagCommunicationRel() { Id = 15, IcmpTagId = 4 },
+                new TagCommunicationRel() { Id = 16, SnmpTagId = 6 },
+                new TagCommunicationRel() { Id = 17, SnmpTagId = 7 },
+                new TagCommunicationRel() { Id = 18, SnmpTagId = 8 },
+                new TagCommunicationRel() { Id = 19, SnmpTagId = 9 },
+                new TagCommunicationRel() { Id = 20, SnmpTagId = 10 }
                 );
 
             modelBuilder.Entity<TagSet>().HasData(

@@ -24,124 +24,126 @@ namespace AssetMonitorService.Data.Repositories
 
         public async Task<IEnumerable<Asset>> GetIcmpAssetsAsync()
         {
+            var IcmpTagSets = _context.Tag
+                .Include(tc => tc.TagCommunicationRel)
+                .Where(t => t.TagCommunicationRel.IcmpTagId != null);
+
             var assetMonitorContext = _context.Asset
-                .Where(at => at.IcmpTagSet != null);
+                .Where(t => IcmpTagSets.Any(ts => ts.TagSetId == t.TagSetId));
 
             return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<IEnumerable<Asset>> GetAgentAssetsAsync()
         {
+            var AgentTagSets = _context.Tag
+                .Include(tc => tc.TagCommunicationRel)
+                .Where(t => t.TagCommunicationRel.AgentTagId != null);
+
             var assetMonitorContext = _context.Asset
-                .Where(at => at.AgentTagSet != null);
+                .Where(t => AgentTagSets.Any(ts => ts.TagSetId == t.TagSetId));
 
             return await assetMonitorContext.ToListAsync();
         }
 
         public async Task<IEnumerable<Asset>> GetSnmpAssetsAsync()
         {
+            var SnmpTagSets = _context.Tag
+                .Include(tc => tc.TagCommunicationRel)
+                .Where(t => t.TagCommunicationRel.SnmpTagId != null);
+
             var assetMonitorContext = _context.Asset
-                .Where(at => at.SnmpTagSet != null);
+                .Where(t => SnmpTagSets.Any(ts => ts.TagSetId == t.TagSetId));
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<Asset>> GetAgentAssetsWithTagSetAsync()
-        {
-            var assetMonitorContext = _context.Asset
-                .Include(at=>at.AgentTagSet).ThenInclude(ats=>ats.AgentTag)
-                .Where(at => at.AgentTagSet != null);
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Asset>> GetSnmpAssetsWithTagSetAsync()
-        {
-            var assetMonitorContext = _context.Asset
-                .Include(st => st.SnmpTagSet).ThenInclude(sts => sts.SnmpTag)
-                .Include(st => st.SnmpTagSet).ThenInclude(stv => stv.Version)
-                .Where(at => at.SnmpTagSet != null);
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<Asset> GetAssetByIdAsync(int? id)
+        public async Task<Asset> GetAssetByIdAsync(int id)
         {
             return await _context.Asset
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<Asset> GetAssetPropertiesByIdAsync(int? id)
+        public async Task<Asset> GetAssetPropertiesByIdAsync(int id)
         {
             return await _context.Asset
                 .Include(p=>p.AssetPropertyValues)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<IEnumerable<AgentTag>> GetAgentTagsBySetIdAsync(int? setId)
+        public async Task<IEnumerable<Tag>> GetIcmpTagSetByAssetIdAsync(int id)
         {
-            var assetMonitorContext = _context.AgentTag
-                .Where(at => at.AgentTagSetId == setId);
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.IcmpTag)
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<AgentTag>> GetAgentTagsWithHistoricalByAssetIdAsync(int? id)
+        public async Task<IEnumerable<Tag>> GetAgentTagSetByAssetIdAsync(int id)
         {
-            var assetMonitorContext = _context.AgentTag
-                .Where(at => at.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().AgentTagSetId))
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.AgentTag)
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tag>> GetSnmpTagSetByAssetIdAsync(int id)
+        {
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.SnmpTag)
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tag>> GetIcmpTagsBySetIdAsync(int setId)
+        {
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.IcmpTag)
+                .Where(t => t.TagSetId == setId);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tag>> GetAgentTagsBySetIdAsync(int setId)
+        {
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.AgentTag)
+                .Where(t => t.TagSetId == setId);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tag>> GetSnmpTagsBySetIdAsync(int setId)
+        {
+            var assetMonitorContext = _context.Tag
+                .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.SnmpTag)
+                .Where(t => t.TagSetId == setId);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tag>> GetTagsWithHistoricalByAssetIdAsync(int id)
+        {
+            var assetMonitorContext = _context.Tag
+                .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
                 .Include(h => h.HistoricalTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<SnmpTag>> GetSnmpTagsWithHistoricalByAssetIdAsync(int? id)
+        public async Task<IEnumerable<Tag>> GetTagsWithAlarmByAssetIdAsync(int id)
         {
-            var assetMonitorContext = _context.SnmpTag
-                .Where(at => at.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().SnmpTagSetId))
-                .Include(h => h.HistoricalTagConfigs);
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<IEnumerable<IcmpTag>> GetIcmpTagsWithAlarmByAssetIdAsync(int? id)
-        {
-            var assetMonitorContext = _context.IcmpTag
-                .Where(t => t.IcmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().IcmpTagSetId))
+            var assetMonitorContext = _context.Tag
+                .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
                 .Include(a => a.AlarmTagConfigs);
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<AgentTag>> GetAgentTagsWithAlarmByAssetIdAsync(int? id)
-        {
-            var assetMonitorContext = _context.AgentTag
-                .Where(t => t.AgentTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().AgentTagSetId))
-                .Include(a => a.AlarmTagConfigs);
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<IEnumerable<SnmpTag>> GetSnmpTagsWithAlarmByAssetIdAsync(int? id)
-        {
-            var assetMonitorContext = _context.SnmpTag
-                .Where(t => t.SnmpTagSetId == (_context.Asset.Where(a => a.Id == id).FirstOrDefault().SnmpTagSetId))
-                .Include(a => a.AlarmTagConfigs);
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<IEnumerable<SnmpTag>> GetSnmpAssetTagsByAssetIdAsync(int? id)
-        {
-            var assetMonitorContext = _context.SnmpTag
-                .Where(st => st.SnmpTagSetId == 
-                    _context.Asset.Where(a=>a.Id == id).Select(a=>a.SnmpTagSetId).FirstOrDefault()
-                );
-
-            return await assetMonitorContext.ToListAsync();
-        }
-
-        public async Task<IEnumerable<SnmpAssetValue>> GetSnmpAssetValuesByAssetIdAsync(int? id)
+        public async Task<IEnumerable<SnmpAssetValue>> GetSnmpAssetValuesByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.SnmpAssetValue
                 .Where(sa => sa.AssetId == id);
@@ -149,7 +151,7 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<UserEmailAddress>> GetUserEmailAddressByAssetIdAsync(int? id)
+        public async Task<IEnumerable<UserEmailAddress>> GetUserEmailAddressByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.UserEmailAddress
                 .Where(sa => sa.UserEmailAddressSetId == (_context.UserEmailAssetRel.FirstOrDefault(a=>a.AssetId == id).UserEmailAddressSetId));

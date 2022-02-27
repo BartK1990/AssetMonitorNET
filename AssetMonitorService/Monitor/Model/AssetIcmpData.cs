@@ -1,4 +1,4 @@
-﻿using AssetMonitorDataAccess.Models.Enums;
+﻿using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model
 {
@@ -8,35 +8,15 @@ namespace AssetMonitorService.Monitor.Model
 
         public string IpAddress { get; set; }
 
-        private bool _pingState;
-        public bool PingState 
+        public AssetIcmpData(ICollection<TagIcmp> tags)
         {
-            get { return _pingState; }
-            set 
+            Data = new Dictionary<TagIcmp, TagValue>(new TagIcmp());
+            foreach (var tag in tags)
             {
-                PingStateValue.Value = value;
-                _pingState = value;
+                Data.Add(tag, new TagValue(tag.Tagname, tag.ValueDataType, tag.ScaleFactor, tag.ScaleOffset));
             }
         }
 
-        private long _pingResponseTime;
-        public long PingResponseTime
-        {
-            get { return _pingResponseTime; }
-            set
-            {
-                PingResponseTimeValue.Value = value;
-                _pingResponseTime = value;
-            }
-        }
-
-        public TagValue PingStateValue { get; private set; }
-        public TagValue PingResponseTimeValue { get; private set; }
-
-        public AssetIcmpData()
-        {
-            this.PingStateValue = new TagValue("PingState", TagDataTypeEnum.Boolean, 1.0, 0.0);
-            this.PingResponseTimeValue = new TagValue("PingResponseTime", TagDataTypeEnum.Long, 1.0, 0.0);
-        }
+        public IDictionary<TagIcmp, TagValue> Data { get; set; }
     }
 }

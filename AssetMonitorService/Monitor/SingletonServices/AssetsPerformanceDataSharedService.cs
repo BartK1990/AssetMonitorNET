@@ -19,7 +19,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            var assets = (await repository.GetAgentAssetsWithTagSetAsync()).ToList();
+            var assets = (await repository.GetAgentTagSetByAssetIdAsync()).ToList();
             foreach (var asset in assets)
             {
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);

@@ -14,7 +14,7 @@ namespace AssetMonitorAgent.BackgroundServices
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetDataSharedService _assetDataSharedService;
         private Timer _timer;
-        public readonly TimeSpan ScanTime;
+        public TimeSpan ScanTime { get; private set; }
 
         public AssetTimedService(ILogger<AssetTimedService> logger, IServiceScopeFactory scopeFactory, IAssetDataSharedService assetDataSharedService,
             TimeSpan? scanTime = null)
@@ -39,7 +39,7 @@ namespace AssetMonitorAgent.BackgroundServices
             _logger.LogInformation($"{this.GetType().Name} - Hosted Service is running");
 
             _timer = new Timer(
-                GetAssetsData,
+                TimedJob,
                 null,
                 TimeSpan.Zero,
                 ScanTime
@@ -57,12 +57,33 @@ namespace AssetMonitorAgent.BackgroundServices
             return Task.CompletedTask;
         }
 
-        private void GetAssetsData(object state)
+        private void TimedJob(object state)
         {
-            //using var scope = _scopeFactory.CreateScope();
-            //var assetService = scope.ServiceProvider.GetRequiredService<IAssetPerformanceService>();
+            GetAssetData();
+            GetScanTime();
+        }
 
+        private void GetAssetData()
+        {
             _assetDataSharedService.UpdateData();
+        }
+
+        private void GetScanTime()
+        {
+            var newScanTime = _assetDataSharedService.ScanTime;
+            if (newScanTime != this.ScanTime.TotalSeconds)
+            {
+                if(newScanTime > 0)
+                {
+                    ScanTime = TimeSpan.FromSeconds(newScanTime);
+                    _timer.Change(TimeSpan.Zero, ScanTime);
+                    _logger.LogInformation($"{this.GetType().Name} - Hosted Service new scan time (seconds): {newScanTime}");
+                }
+                else
+                {
+                    _logger.LogWarning($"{this.GetType().Name} - Hosted Service wrong scan time passed: {newScanTime}. Scan time not updated");
+                }
+            }
         }
 
         public void Dispose()

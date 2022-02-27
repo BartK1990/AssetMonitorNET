@@ -1,17 +1,16 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorDataAccess.Models.Enums;
+﻿using AssetMonitorDataAccess.Models.Enums;
 using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model
 {
     public class AssetSnmpData
     {
-        public AssetSnmpData(ICollection<SnmpTag> tags)
+        public AssetSnmpData(ICollection<TagSnmp> tags)
         {
-            Data = new Dictionary<SnmpTag, TagValue>(new SnmpTag());
-            foreach (var at in tags)
+            Data = new Dictionary<TagSnmp, TagValue>(new TagSnmp());
+            foreach (var tag in tags)
             {
-                Data.Add(at, new TagValue(at.Tagname, (TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
+                Data.Add(tag, new TagValue(tag.Tagname, tag.ValueDataType, tag.ScaleFactor, tag.ScaleOffset));
             }
         }
 
@@ -24,6 +23,6 @@ namespace AssetMonitorService.Monitor.Model
         public int Retries { get; set; }
         public SnmpVersionEnum Version { get; set; }
 
-        public IDictionary<SnmpTag, TagValue> Data { get; set; }
+        public IDictionary<TagSnmp, TagValue> Data { get; set; }
     }
 }

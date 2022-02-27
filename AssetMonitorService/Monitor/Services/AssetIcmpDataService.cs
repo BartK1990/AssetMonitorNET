@@ -1,6 +1,7 @@
 ﻿using AssetMonitorService.Monitor.Model;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
@@ -17,10 +18,26 @@ namespace AssetMonitorService.Monitor.Services
 
         public async Task UpdateAsset(AssetIcmpData assetPing)
         {
+            if(!assetPing.Data?.Any() ?? true)
+            {
+                _logger.LogWarning($"Service {this.GetType().Name} has no data tags to ping");
+                return;
+            }
+
             var pData = await PingHostAsync(assetPing.IpAddress);
 
-            assetPing.PingState = pData.PingState;
-            assetPing.PingResponseTime = pData.RoundtripTime;
+            foreach (var tag in assetPing.Data)
+            {
+                switch (tag.Key.IcmpType)
+                {
+                    case AssetMonitorDataAccess.Models.Enums.IcmpTypeEnum.PingState:
+                        tag.Value.Value = pData.PingState;
+                        break;
+                    case AssetMonitorDataAccess.Models.Enums.IcmpTypeEnum.PingResponseTime:
+                        tag.Value.Value = pData.RoundtripTime;
+                        break;
+                }
+            }
         }
 
         private async Task<PingHostReturnData> PingHostAsync(string hostname)

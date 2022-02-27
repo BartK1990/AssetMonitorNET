@@ -1,6 +1,5 @@
 ﻿using AssetMonitorAgent.BackgroundServices;
 using AssetMonitorAgent.CommunicationServices;
-using AssetMonitorAgent.Services;
 using AssetMonitorAgent.SingletonServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,8 +27,6 @@ namespace AssetMonitorAgent
                 scanTime: TimeSpan.FromSeconds(10)));
 
             services.AddSingleton<IAssetDataSharedService, AssetDataSharedService>();
-
-            //services.AddScoped<IAssetPerformanceService, AssetPerformanceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

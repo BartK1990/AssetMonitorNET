@@ -61,7 +61,7 @@ namespace AssetMonitorService.Monitor.Services
                     assetPerformanceData.Data.ElementAt(i).Value.Value = ByteConverterHelper.ByteArrayToObject(replyDataList[i].ByteArray);
                 }
             }
-            catch // put null values if equest failed
+            catch // put null values if request failed
             {
                 foreach (var d in assetPerformanceData.Data)
                 {

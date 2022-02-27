@@ -21,7 +21,7 @@ namespace AssetMonitorAgent.CommunicationServices
 
         public async Task<AssetDataReply> GetAssetDataAsync(AssetDataRequest request, CallContext context = default)
         {
-            _assetDataSharedService.UpdateConfiguration(request.Tags);
+            _assetDataSharedService.UpdateConfiguration(request.Tags, request.ScanTime);
 
             var dataList = new List<AssetDataItemReply>();
             foreach (var r in request.Tags)

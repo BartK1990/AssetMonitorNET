@@ -8,8 +8,8 @@ namespace AssetMonitorDataAccess.Models
 
         public Tag Tag { get; set; }
 
-        [Required]
-        public bool IcmpTag { get; set; }
+        public int? IcmpTagId { get; set; }
+        public IcmpTag IcmpTag { get; set; }
 
         public int? AgentTagId { get; set; }
         public AgentTag AgentTag { get; set; }

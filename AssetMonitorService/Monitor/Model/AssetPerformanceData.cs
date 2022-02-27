@@ -1,17 +1,15 @@
-﻿using AssetMonitorDataAccess.Models;
-using AssetMonitorDataAccess.Models.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model
 {
     public class AssetPerformanceData
     {
-        public AssetPerformanceData(ICollection<AgentTag> tags)
+        public AssetPerformanceData(ICollection<TagAgent> tags)
         {
-            Data = new Dictionary<AgentTag, TagValue>(new AgentTag());
-            foreach (var at in tags)
+            Data = new Dictionary<TagAgent, TagValue>(new TagAgent());
+            foreach (var tag in tags)
             {
-                Data.Add(at, new TagValue(at.Tagname ,(TagDataTypeEnum)at.ValueDataTypeId, at.ScaleFactor, at.ScaleOffset));
+                Data.Add(tag, new TagValue(tag.Tagname , tag.ValueDataType, tag.ScaleFactor, tag.ScaleOffset));
             }
         }
 
@@ -20,6 +18,6 @@ namespace AssetMonitorService.Monitor.Model
         public string IpAddress { get; set; }
         public int? TcpPort { get; set; }
 
-        public IDictionary<AgentTag, TagValue> Data { get; set; }
+        public IDictionary<TagAgent, TagValue> Data { get; set; }
     }
 }
