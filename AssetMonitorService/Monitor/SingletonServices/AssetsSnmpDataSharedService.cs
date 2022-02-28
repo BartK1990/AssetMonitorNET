@@ -1,6 +1,7 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
 using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.Model;
+using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -19,9 +20,11 @@ namespace AssetMonitorService.Monitor.SingletonServices
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            var assets = (await repository.GetSnmpTagSetByAssetIdAsync()).ToList();
+            var assets = (await repository.GetSnmpAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
+                var tags = (await repository.GetSnmpTagSetByAssetIdAsync(asset.Id)).ToList();
+
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
 
@@ -38,7 +41,10 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     _logger.LogError($"Wrong SNMP Version for Asset: {asset.Name} (Id: {asset.Id}) | Default [{version}] used");
                 }
 
-                AssetsData.Add(new AssetSnmpData(asset.SnmpTagSet.SnmpTag)
+                var snmpTags = tags
+                    .Select(tag => new TagSnmp(tag)).ToList();
+                
+                AssetsData.Add(new AssetSnmpData(snmpTags)
                 {
                     Id = asset.Id,
                     IpAddress = asset.IpAddress,

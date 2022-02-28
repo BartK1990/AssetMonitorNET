@@ -1,4 +1,4 @@
-﻿using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorService.Monitor.Model.Live;
 
 namespace AssetMonitorService.Monitor.SingletonServices
 {

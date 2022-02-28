@@ -1,5 +1,7 @@
-﻿using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Data.Repositories;
+using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -17,8 +19,20 @@ namespace AssetMonitorService.Monitor.SingletonServices
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            var assets = (await repository.GetAllAssetsAsync()).ToList();
-            AssetsData.AddRange(assets.Select(a => new AssetIcmpData() { Id = a.Id, IpAddress = a.IpAddress }));
+            var assets = (await repository.GetIcmpAssetsAsync()).ToList();
+            foreach (var asset in assets)
+            {
+                var tags = (await repository.GetIcmpTagSetByAssetIdAsync(asset.Id)).ToList();
+
+                var icmpTags = tags
+                    .Select(tag => new TagIcmp(tag)).ToList();
+
+                AssetsData.Add(new AssetIcmpData(icmpTags)
+                {
+                    Id = asset.Id,
+                    IpAddress = asset.IpAddress
+                });
+            }
         }
     }
 }

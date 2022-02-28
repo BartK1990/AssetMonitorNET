@@ -1,12 +1,9 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AssetMonitorService.Monitor.Model.Alarm
 {
-    public class TagAlarmValue : TagBase
+    public class TagAlarmValue : TagValueBase
     {
         public readonly TagDataTypeEnum DataType;
         public readonly AlarmTypeEnum AlarmType;

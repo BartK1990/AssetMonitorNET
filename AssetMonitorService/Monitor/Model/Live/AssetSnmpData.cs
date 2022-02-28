@@ -1,7 +1,8 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using System.Collections.Generic;
 
-namespace AssetMonitorService.Monitor.Model
+namespace AssetMonitorService.Monitor.Model.Live
 {
     public class AssetSnmpData
     {

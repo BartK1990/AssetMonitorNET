@@ -1,6 +1,6 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
 using AssetMonitorService.gRPC;
-using AssetMonitorService.Monitor.Model;
+using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorSharedGRPC.Agent;
 using AssetMonitorSharedGRPC.Helpers;
 using Microsoft.Extensions.Logging;
@@ -31,15 +31,15 @@ namespace AssetMonitorService.Monitor.Services
                 {
                     foreach (var d in assetPerformanceData.Data)
                     {
-                        switch (d.Key.AgentDataTypeId)
+                        switch (d.Key.AgentDataType)
                         {
-                            case (int)AgentDataTypeEnum.PerformanceCounter:
+                            case AgentDataTypeEnum.PerformanceCounter:
                                 d.Value.Value = WindowsPerformance.GetPerformanceCounterValue(d.Key.PerformanceCounter);
                                 break;
-                            case (int)AgentDataTypeEnum.WMI:
+                            case AgentDataTypeEnum.WMI:
                                 d.Value.Value = WindowsPerformance.GetWmiValue(d.Key.WmiManagementObject);
                                 break;
-                            case (int)AgentDataTypeEnum.ServiceState:
+                            case AgentDataTypeEnum.ServiceState:
                                 d.Value.Value = WindowsService.GetServiceState(d.Key.ServiceName);
                                 break;
                             default:
@@ -84,8 +84,8 @@ namespace AssetMonitorService.Monitor.Services
             {
                 requestTags.Add(new AssetDataItemRequest() 
                 {
-                    DataType = d.Key.ValueDataTypeId,
-                    AgentDataTypeId = d.Key.AgentDataTypeId, 
+                    DataType = (int)d.Key.ValueDataType,
+                    AgentDataTypeId = (int)d.Key.AgentDataType, 
                     PerformanceCounter = d.Key.PerformanceCounter,
                     WmiManagementObject = d.Key.WmiManagementObject,
                     ServiceName = d.Key.ServiceName

@@ -1,10 +1,10 @@
 ﻿namespace AssetMonitorService.Monitor.Model
 {
-    public abstract class TagBase
+    public abstract class TagValueBase
     {
         public readonly string Tagname;
 
-        public TagBase(string tagname)
+        public TagValueBase(string tagname)
         {
             this.Tagname = tagname;
         }

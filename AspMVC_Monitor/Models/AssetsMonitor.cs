@@ -57,27 +57,27 @@ namespace AspMVC_Monitor.Models
 
         public void UpdateAssetPing()
         {
-            try
-            {
-                var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
-                // ToDo just for test, delete
-                var repTest = client.UpdateAssetSnmpValuesById(new AssetSnmpUpdateCommandRequest() { AssetId = 1 });
+            //try
+            //{
+            //    var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
+            //    // ToDo just for test, delete
+            //    var repTest = client.UpdateAssetSnmpValuesById(new AssetSnmpUpdateCommandRequest() { AssetId = 1 });
 
-                var reply = client.GetAssetsPingData(
-                    new AssetsPingDataRequest { Init = 1 }).Result;
+            //    var reply = client.GetAssetsPingData(
+            //        new AssetsPingDataRequest { Init = 1 }).Result;
 
-                foreach (var asset in AssetsList)
-                {
-                    var assetPingData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                    asset.PingState = assetPingData.PingState;
-                    asset.PingResponseTime = assetPingData.PingResponseTime;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning($"Cannot retrieve ping data from Asset Monitor service");
-                _logger.LogDebug($"Exception: {ex.Message}");
-            }
+            //    foreach (var asset in AssetsList)
+            //    {
+            //        var assetPingData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
+            //        asset.PingState = assetPingData.PingState;
+            //        asset.PingResponseTime = assetPingData.PingResponseTime;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogWarning($"Cannot retrieve ping data from Asset Monitor service");
+            //    _logger.LogDebug($"Exception: {ex.Message}");
+            //}
         }
         public async Task UpdateAssetPingAsync()
         {
@@ -86,25 +86,25 @@ namespace AspMVC_Monitor.Models
 
         public void UpdateAssetPerformance()
         {
-            try
-            {
-                var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
-                var reply = client.GetAssetsPerformanceData(
-                    new AssetsPerformanceDataRequest { Init = 1 }).Result;
+            //try
+            //{
+            //    var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
+            //    var reply = client.GetAssetsPerformanceData(
+            //        new AssetsPerformanceDataRequest { Init = 1 }).Result;
 
-                foreach (var asset in AssetsList)
-                {
-                    var assetPerformanceData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                    asset.CpuUsage = assetPerformanceData.CpuUsage;
-                    asset.MemoryAvailable = assetPerformanceData.MemoryAvailableMB;
-                    asset.MemoryTotal = assetPerformanceData.MemoryTotalMB;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning($"Cannot retrieve performance data from Asset Monitor service");
-                _logger.LogDebug($"Exception: {ex.Message}");
-            }
+            //    foreach (var asset in AssetsList)
+            //    {
+            //        var assetPerformanceData = reply.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
+            //        asset.CpuUsage = assetPerformanceData.CpuUsage;
+            //        asset.MemoryAvailable = assetPerformanceData.MemoryAvailableMB;
+            //        asset.MemoryTotal = assetPerformanceData.MemoryTotalMB;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogWarning($"Cannot retrieve performance data from Asset Monitor service");
+            //    _logger.LogDebug($"Exception: {ex.Message}");
+            //}
         }
         public async Task UpdateAssetPerformanceAsync()
         {

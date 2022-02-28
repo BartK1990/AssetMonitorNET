@@ -1,4 +1,4 @@
-﻿using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;

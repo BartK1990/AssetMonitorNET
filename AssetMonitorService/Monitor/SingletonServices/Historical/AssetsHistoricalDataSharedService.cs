@@ -1,7 +1,8 @@
 ﻿using AssetMonitorDataAccess.Models;
 using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.Model;
 using AssetMonitorService.Monitor.Model.Historical;
+using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -35,55 +36,62 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             var assets = (await repository.GetAllAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var tags = new List<TagValue>();
+                var historicalTags = new List<TagValue>();
 
-                // Ping
-                var pingShared = _assetsPingShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                foreach (var tag in HistoricalTagsPing.Tags)
-                {
-                    switch (tag.Tagname)
-                    {
-                        case "PingState":
-                            tags.Add(pingShared.PingStateValue);
-                            break;
-                        case "PingResponseTime":
-                            tags.Add(pingShared.PingResponseTimeValue);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                var pingSharedData = _assetsPingShared.AssetsData?.Where(a => a.Id == asset.Id).FirstOrDefault()?.Data
+                    .ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
+                var performanceSharedData = _assetsPerformanceDataShared.AssetsData?.Where(a => a.Id == asset.Id).FirstOrDefault()?.Data
+                    .ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
+                var snmpSharedData = _assetsSnmpDataShared.AssetsData?.Where(a => a.Id == asset.Id).FirstOrDefault()?.Data
+                    .ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
 
-                // Performance Data
-                var performanceShared = _assetsPerformanceDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var agentTags = (await repository.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                foreach (var tag in agentTags)
+                var tags = (await repository.GetTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
+                foreach (var tag in tags)
                 {
                     if (tag.HistoricalTagConfigs?.Any() ?? false)
                     {
-                        if (performanceShared.Data.ContainsKey(tag))
+                        // ICMP tags
+                        if (tag.TagCommunicationRel.IcmpTagId != null)
                         {
-                            tags.Add(performanceShared.Data[tag]);
+                            AddHistoricalTag(historicalTags, pingSharedData, tag);
+                            continue;
                         }
-                    }
-                }
 
-                // SNMP Data
-                var snmpShared = _assetsSnmpDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var snmpTags = (await repository.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                foreach (var tag in snmpTags)
-                {
-                    if (tag.HistoricalTagConfigs?.Any() ?? false)
-                    {
-                        if (snmpShared.Data.ContainsKey(tag))
+                        // Agent tags
+                        if (tag.TagCommunicationRel.AgentTagId != null)
                         {
-                            tags.Add(snmpShared.Data[tag]);
+                            AddHistoricalTag(historicalTags, performanceSharedData, tag);
+                            continue;
+                        }
+
+                        // SNMP tags
+                        if (tag.TagCommunicationRel.SnmpTagId != null)
+                        {
+                            AddHistoricalTag(historicalTags, snmpSharedData, tag);
+                            continue;
                         }
                     }
                 }
 
                 // Add all tags to Historical data list
-                this.AssetsData.Add(new AssetHistoricalData(tags, NumberOfSamplesInHistoricalBuffer, asset.Id));
+                this.AssetsData.Add(new AssetHistoricalData(historicalTags, NumberOfSamplesInHistoricalBuffer, asset.Id));
+            }
+        }
+
+        private static void AddHistoricalTag(List<TagValue> historicalTags, Dictionary<TagConfigBase, TagValue> sharedData, Tag tag)
+        {
+            if (sharedData == null)
+            {
+                return;
+            }
+
+            var key = sharedData.Keys.FirstOrDefault(k => k.Id == tag.Id);
+            if (key != null)
+            {
+                foreach (var historicalConfigs in tag.HistoricalTagConfigs)
+                {
+                    historicalTags.Add(sharedData[key]);
+                }
             }
         }
 
@@ -101,17 +109,18 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
 
             var snmpAssetValues = (await repository.GetSnmpAssetValuesByAssetIdAsync(assetId)).ToList();
-            var snmpTags = (await repository.GetSnmpAssetTagsByAssetIdAsync(assetId)).ToList();
+            var snmpTags = (await repository.GetSnmpTagSetByAssetIdAsync(assetId)).ToList();
 
             var assetData = _assetsSnmpDataShared.AssetsData.FirstOrDefault(ad => ad.Id == assetId);
 
             foreach (var tag in snmpTags)
             {
-                if (!assetData.Data.ContainsKey(tag))
+                var snmpTag = new TagSnmp(tag);
+                if (!assetData.Data.ContainsKey(snmpTag))
                 {
                     continue;
                 }
-                var snmpTagValue = assetData.Data[tag].Value;
+                var snmpTagValue = assetData.Data[snmpTag].Value;
                 if(snmpTagValue == null)
                 {
                     continue;
@@ -119,7 +128,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var valueToUpdate = snmpAssetValues.FirstOrDefault(sa => sa.SnmpTagId == tag.Id);
                 if (valueToUpdate == null)
                 {
-                    repository.Add(new SnmpAssetValue() { AssetId = assetId, SnmpTag = tag, Value = snmpTagValue.ToString() });
+                    repository.Add(new SnmpAssetValue() { AssetId = assetId, SnmpTagId = tag.Id, Value = snmpTagValue.ToString() });
                     continue;
                 }
                 valueToUpdate.Value = snmpTagValue.ToString();

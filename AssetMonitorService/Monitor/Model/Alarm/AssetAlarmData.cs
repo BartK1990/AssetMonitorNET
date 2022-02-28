@@ -1,4 +1,5 @@
-﻿using AssetMonitorService.Monitor.SingletonServices.Alarm;
+﻿using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.SingletonServices.Alarm;
 using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model.Alarm

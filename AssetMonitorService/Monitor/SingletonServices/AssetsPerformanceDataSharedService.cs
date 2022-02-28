@@ -1,6 +1,7 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
 using AssetMonitorService.Data.Repositories;
-using AssetMonitorService.Monitor.Model;
+using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -19,16 +20,21 @@ namespace AssetMonitorService.Monitor.SingletonServices
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
-            var assets = (await repository.GetAgentTagSetByAssetIdAsync()).ToList();
+            var assets = (await repository.GetAgentAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
+                var tags = (await repository.GetAgentTagSetByAssetIdAsync(asset.Id)).ToList();
+
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
+
+                var agentTags = tags
+                    .Select(tag => new TagAgent(tag)).ToList();
 
                 // Only for localhost no TCP port is required
                 if (asset.IpAddress == IPAddress.Loopback.ToString())
                 {
-                    AssetsData.Add(new AssetPerformanceData(asset.AgentTagSet.AgentTag)
+                    AssetsData.Add(new AssetPerformanceData(agentTags)
                     {
                         Id = asset.Id,
                         IpAddress = asset.IpAddress,
@@ -40,7 +46,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                 // Properties
                 int tcpPort = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.AgentTcpPort, int.Parse, 9560);
 
-                AssetsData.Add(new AssetPerformanceData(asset.AgentTagSet.AgentTag)
+                AssetsData.Add(new AssetPerformanceData(agentTags)
                 {
                     Id = asset.Id,
                     IpAddress = asset.IpAddress,

@@ -1,4 +1,4 @@
-﻿using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorService.Monitor.Model.Live;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;

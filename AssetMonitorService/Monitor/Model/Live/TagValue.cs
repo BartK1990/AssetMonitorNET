@@ -1,10 +1,10 @@
 ﻿using AssetMonitorDataAccess.Models.Enums;
 using System;
 
-namespace AssetMonitorService.Monitor.Model
+namespace AssetMonitorService.Monitor.Model.Live
 {
 #nullable enable
-    public class TagValue : TagBase
+    public class TagValue : TagValueBase
     {
         public readonly TagDataTypeEnum DataType;
 

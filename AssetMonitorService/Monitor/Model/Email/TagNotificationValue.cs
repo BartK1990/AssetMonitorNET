@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace AssetMonitorService.Monitor.Model.Email
 {
 #nullable enable
-    public class TagNotificationValue : TagBase
+    public class TagNotificationValue : TagValueBase
     {
         public TagNotificationValue(string tagname) : base(tagname: tagname)
         {

@@ -1,4 +1,4 @@
-﻿using AssetMonitorService.Monitor.Model;
+﻿using AssetMonitorService.Monitor.Model.Live;
 using Lextm.SharpSnmpLib;
 using Lextm.SharpSnmpLib.Messaging;
 using Microsoft.Extensions.Logging;

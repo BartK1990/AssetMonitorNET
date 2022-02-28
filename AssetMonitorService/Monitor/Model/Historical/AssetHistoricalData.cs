@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AssetMonitorService.Monitor.Model.Live;
+using System.Collections.Generic;
 
 namespace AssetMonitorService.Monitor.Model.Historical
 {

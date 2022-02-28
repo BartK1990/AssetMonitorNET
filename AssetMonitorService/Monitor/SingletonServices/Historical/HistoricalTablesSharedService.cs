@@ -52,16 +52,9 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 var columnsConfigs = new List<TableColumnConfig>();
                 var tagHistInfos = new List<HistoricalTagInfo>();
 
-                // Initial columns - always present - ping state
-                tagHistInfos.AddRange(HistoricalTagsPing.Tags);
-
-                var agentTags = (await assetRepo.GetAgentTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                tagHistInfos.AddRange(agentTags.Select(a => new HistoricalTagInfo() 
-                { ColumnNameSuffix = "Agent", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistoricalTagConfigs, IsNull = true }));
-
-                var snmpTags = (await assetRepo.GetSnmpTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
-                tagHistInfos.AddRange(snmpTags.Select(a => new HistoricalTagInfo() 
-                { ColumnNameSuffix = "SNMP", Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistoricalTagConfigs, IsNull = true }));
+                var tags = (await assetRepo.GetTagsWithHistoricalByAssetIdAsync(asset.Id)).ToList();
+                tagHistInfos.AddRange(tags.Select(a => new HistoricalTagInfo()
+                { Tagname = a.Tagname, ValueDataTypeId = a.ValueDataTypeId, HistoricalTagConfigs = a.HistoricalTagConfigs, IsNull = true }));
 
                 foreach (var tagHistInfo in tagHistInfos)
                 {
@@ -95,7 +88,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                         if (!string.IsNullOrEmpty(sqlTypeName))
                         {
                             var historicalType = (HistoricalTypeEnum)hType.HistorizationTypeId;
-                            var columnName = $"{tagHistInfo.ColumnNameSuffix}.{tagHistInfo.Tagname}.{historicalType}";
+                            var columnName = $"{tagHistInfo.Tagname}.{historicalType}";
                             columnsConfigs.Add(new TableColumnConfig()
                             {
                                 Name = columnName,
@@ -155,6 +148,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 foreach (var keyValue in asset.Data)
                 {
                     var columnValue = new TableColumnValue() { Name = keyValue.Key.Name };
+#nullable enable
                     object? value = null;
                     switch (keyValue.Key.Type)
                     {
@@ -171,7 +165,8 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                             value = keyValue.Value.ValueLast;
                             break;
                     }
-                    if(value == null)
+#nullable disable
+                    if (value == null)
                     {
                         columnValue.Value = "NULL";
                     }

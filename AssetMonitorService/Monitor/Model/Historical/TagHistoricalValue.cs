@@ -6,7 +6,7 @@ using System.Linq;
 namespace AssetMonitorService.Monitor.Model.Historical
 {
 #nullable enable
-    public class TagHistoricalValue : TagBase
+    public class TagHistoricalValue : TagValueBase
     {
         public readonly TagDataTypeEnum DataType;
         public readonly int WindowSize;

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using AssetMonitorService.Monitor.Model.TagConfig;
+using System.Collections.Generic;
 
-namespace AssetMonitorService.Monitor.Model
+namespace AssetMonitorService.Monitor.Model.Live
 {
     public class AssetIcmpData
     {
