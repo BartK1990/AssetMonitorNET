@@ -12,9 +12,9 @@ namespace AssetMonitorService.Data.Repositories
         Task<IEnumerable<Asset>> GetSnmpAssetsAsync();
         Task<Asset> GetAssetByIdAsync(int id);
         Task<Asset> GetAssetPropertiesByIdAsync(int id);
-        Task<IEnumerable<Tag>> GetIcmpTagSetByAssetIdAsync(int id);
-        Task<IEnumerable<Tag>> GetAgentTagSetByAssetIdAsync(int id);
-        Task<IEnumerable<Tag>> GetSnmpTagSetByAssetIdAsync(int id);
+        Task<IEnumerable<Tag>> GetIcmpTagsByAssetIdAsync(int id);
+        Task<IEnumerable<Tag>> GetAgentTagsByAssetIdAsync(int id);
+        Task<IEnumerable<Tag>> GetSnmpTagsByAssetIdAsync(int id);
         Task<IEnumerable<Tag>> GetIcmpTagsBySetIdAsync(int setId);
         Task<IEnumerable<Tag>> GetAgentTagsBySetIdAsync(int setId);
         Task<IEnumerable<Tag>> GetSnmpTagsBySetIdAsync(int setId);

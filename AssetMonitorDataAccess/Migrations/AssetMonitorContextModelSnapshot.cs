@@ -524,7 +524,7 @@ namespace AssetMonitorDataAccess.Migrations
                         new
                         {
                             Id = 10,
-                            HistorizationTypeId = 3,
+                            HistorizationTypeId = 1,
                             TagId = 12
                         },
                         new
@@ -638,6 +638,18 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IcmpType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Type = "PingState"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Type = "PingResponseTime"
+                        });
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpAssetValue", b =>
@@ -647,10 +659,10 @@ namespace AssetMonitorDataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AssetId")
+                    b.Property<int?>("AssetId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SnmpTagId")
+                    b.Property<int?>("SnmpTagId")
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
@@ -750,70 +762,70 @@ namespace AssetMonitorDataAccess.Migrations
                             Id = 1,
                             OID = "1.3.6.1.2.1.1.5.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 2,
                             OID = "1.3.6.1.2.1.1.1.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 3,
                             OID = "1.3.6.1.2.1.1.2.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 4,
                             OID = "1.3.6.1.2.1.1.3.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 1
                         },
                         new
                         {
                             Id = 5,
                             OID = "1.3.6.1.2.1.1.4.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 6,
                             OID = "1.3.6.1.2.1.1.5.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 7,
                             OID = "1.3.6.1.2.1.1.1.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 8,
                             OID = "1.3.6.1.2.1.1.2.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         },
                         new
                         {
                             Id = 9,
                             OID = "1.3.6.1.2.1.1.3.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 1
                         },
                         new
                         {
                             Id = 10,
                             OID = "1.3.6.1.2.1.1.4.0",
                             OperationId = 1,
-                            SnmpCommunicationTypeId = 0
+                            SnmpCommunicationTypeId = 2
                         });
                 });
 
@@ -1454,15 +1466,11 @@ namespace AssetMonitorDataAccess.Migrations
                 {
                     b.HasOne("AssetMonitorDataAccess.Models.Asset", "Asset")
                         .WithMany()
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssetId");
 
-                    b.HasOne("AssetMonitorDataAccess.Models.SnmpTag", "SnmpTag")
+                    b.HasOne("AssetMonitorDataAccess.Models.Tag", "SnmpTag")
                         .WithMany()
-                        .HasForeignKey("SnmpTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SnmpTagId");
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.SnmpTag", b =>

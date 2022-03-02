@@ -71,29 +71,32 @@ namespace AssetMonitorService.Data.Repositories
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<IEnumerable<Tag>> GetIcmpTagSetByAssetIdAsync(int id)
+        public async Task<IEnumerable<Tag>> GetIcmpTagsByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.IcmpTag)
-                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId)
+                .Where(t => t.TagCommunicationRel.IcmpTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<Tag>> GetAgentTagSetByAssetIdAsync(int id)
+        public async Task<IEnumerable<Tag>> GetAgentTagsByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.AgentTag)
-                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId)
+                .Where(t => t.TagCommunicationRel.AgentTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
 
-        public async Task<IEnumerable<Tag>> GetSnmpTagSetByAssetIdAsync(int id)
+        public async Task<IEnumerable<Tag>> GetSnmpTagsByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.SnmpTag)
-                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId);
+                .Where(t => t.TagSetId == _context.Asset.FirstOrDefault(a => a.Id == id).TagSetId)
+                .Where(t => t.TagCommunicationRel.SnmpTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -102,7 +105,8 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.IcmpTag)
-                .Where(t => t.TagSetId == setId);
+                .Where(t => t.TagSetId == setId)
+                .Where(t => t.TagCommunicationRel.IcmpTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -111,7 +115,8 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.AgentTag)
-                .Where(t => t.TagSetId == setId);
+                .Where(t => t.TagSetId == setId)
+                .Where(t => t.TagCommunicationRel.AgentTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -120,7 +125,8 @@ namespace AssetMonitorService.Data.Repositories
         {
             var assetMonitorContext = _context.Tag
                 .Include(tc => tc.TagCommunicationRel).ThenInclude(tt => tt.SnmpTag)
-                .Where(t => t.TagSetId == setId);
+                .Where(t => t.TagSetId == setId)
+                .Where(t => t.TagCommunicationRel.SnmpTag != null);
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -130,7 +136,8 @@ namespace AssetMonitorService.Data.Repositories
             var assetMonitorContext = _context.Tag
                 .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
                 .Include(h => h.HistoricalTagConfigs)
-                .Include(tc => tc.TagCommunicationRel);
+                .Include(tc => tc.TagCommunicationRel)
+                .Where(t => t.HistoricalTagConfigs.Any()); 
 
             return await assetMonitorContext.ToListAsync();
         }
@@ -140,7 +147,8 @@ namespace AssetMonitorService.Data.Repositories
             var assetMonitorContext = _context.Tag
                 .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == id).FirstOrDefault().TagSetId)
                 .Include(a => a.AlarmTagConfigs)
-                .Include(tc => tc.TagCommunicationRel);
+                .Include(tc => tc.TagCommunicationRel)
+                .Where(t => t.AlarmTagConfigs.Any());
 
             return await assetMonitorContext.ToListAsync();
         }

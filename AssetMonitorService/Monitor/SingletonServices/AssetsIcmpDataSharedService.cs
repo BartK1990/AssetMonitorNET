@@ -22,7 +22,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = (await repository.GetIcmpAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var tags = (await repository.GetIcmpTagSetByAssetIdAsync(asset.Id)).ToList();
+                var tags = (await repository.GetIcmpTagsByAssetIdAsync(asset.Id)).ToList();
 
                 var icmpTags = tags
                     .Select(tag => new TagIcmp(tag)).ToList();

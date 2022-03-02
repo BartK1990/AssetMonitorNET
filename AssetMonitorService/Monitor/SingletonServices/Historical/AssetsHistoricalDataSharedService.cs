@@ -109,7 +109,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
             var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
 
             var snmpAssetValues = (await repository.GetSnmpAssetValuesByAssetIdAsync(assetId)).ToList();
-            var snmpTags = (await repository.GetSnmpTagSetByAssetIdAsync(assetId)).ToList();
+            var snmpTags = (await repository.GetSnmpTagsByAssetIdAsync(assetId)).ToList();
 
             var assetData = _assetsSnmpDataShared.AssetsData.FirstOrDefault(ad => ad.Id == assetId);
 

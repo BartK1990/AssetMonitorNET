@@ -36,13 +36,8 @@ namespace AssetMonitorService.Monitor.SingletonServices.Email
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
 
-                var emailNotificationsEnable = assetProperties?
-                    .FirstOrDefault(p => p.AssetPropertyId == (int)AssetPropertyNameEnum.EmailNotificationsEnable)?.Value ?? null;
-                if (!(emailNotificationsEnable != null && bool.TryParse(emailNotificationsEnable, out var enabled)))
-                {
-                    enabled = false;
-                    _logger.LogError($"Wrong {AssetPropertyNameDictionary.Dict[AssetPropertyNameEnum.EmailNotificationsEnable]} for Asset: {asset.Name} (Id: {asset.Id}) | Default [{enabled}] used");
-                }
+                // Properties
+                bool enabled = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.EmailNotificationsEnable, bool.Parse, false);
 
                 // Get Alarm tags
                 var alarmShared = _assetsAlarmDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();

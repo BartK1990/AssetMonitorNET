@@ -343,33 +343,6 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SnmpAssetValue",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Value = table.Column<string>(nullable: false),
-                    AssetId = table.Column<int>(nullable: false),
-                    SnmpTagId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SnmpAssetValue", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SnmpAssetValue_Asset_AssetId",
-                        column: x => x.AssetId,
-                        principalTable: "Asset",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SnmpAssetValue_SnmpTag_SnmpTagId",
-                        column: x => x.SnmpTagId,
-                        principalTable: "SnmpTag",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserEmailAssetRel",
                 columns: table => new
                 {
@@ -486,6 +459,33 @@ namespace AssetMonitorDataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SnmpAssetValue",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Value = table.Column<string>(nullable: false),
+                    AssetId = table.Column<int>(nullable: true),
+                    SnmpTagId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SnmpAssetValue", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SnmpAssetValue_Asset_AssetId",
+                        column: x => x.AssetId,
+                        principalTable: "Asset",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SnmpAssetValue_Tag_SnmpTagId",
+                        column: x => x.SnmpTagId,
+                        principalTable: "Tag",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.InsertData(
                 table: "AgentDataType",
                 columns: new[] { "Id", "DataType" },
@@ -525,21 +525,19 @@ namespace AssetMonitorDataAccess.Migrations
                 columns: new[] { "Id", "Type" },
                 values: new object[,]
                 {
-                    { 3, "Average" },
                     { 4, "Minimum" },
+                    { 3, "Average" },
                     { 1, "Last" },
                     { 2, "Maximum" }
                 });
 
             migrationBuilder.InsertData(
-                table: "IcmpTag",
-                columns: new[] { "Id", "IcmpTypeId" },
+                table: "IcmpType",
+                columns: new[] { "Id", "Type" },
                 values: new object[,]
                 {
-                    { 1, 1 },
-                    { 2, 2 },
-                    { 3, 1 },
-                    { 4, 2 }
+                    { 1, "PingState" },
+                    { 2, "PingResponseTime" }
                 });
 
             migrationBuilder.InsertData(
@@ -620,31 +618,31 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "IcmpTag",
+                columns: new[] { "Id", "IcmpTypeId" },
+                values: new object[,]
+                {
+                    { 4, 2 },
+                    { 1, 1 },
+                    { 3, 1 },
+                    { 2, 2 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "SnmpTag",
                 columns: new[] { "Id", "OID", "OperationId", "SnmpCommunicationTypeId" },
                 values: new object[,]
                 {
-                    { 9, "1.3.6.1.2.1.1.3.0", 1, 0 },
-                    { 8, "1.3.6.1.2.1.1.2.0", 1, 0 },
-                    { 7, "1.3.6.1.2.1.1.1.0", 1, 0 },
-                    { 6, "1.3.6.1.2.1.1.5.0", 1, 0 },
-                    { 5, "1.3.6.1.2.1.1.4.0", 1, 0 },
-                    { 4, "1.3.6.1.2.1.1.3.0", 1, 0 },
-                    { 1, "1.3.6.1.2.1.1.5.0", 1, 0 },
-                    { 2, "1.3.6.1.2.1.1.1.0", 1, 0 },
-                    { 10, "1.3.6.1.2.1.1.4.0", 1, 0 },
-                    { 3, "1.3.6.1.2.1.1.2.0", 1, 0 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "TagCommunicationRel",
-                columns: new[] { "Id", "AgentTagId", "IcmpTagId", "SnmpTagId" },
-                values: new object[,]
-                {
-                    { 15, null, 4, null },
-                    { 14, null, 3, null },
-                    { 2, null, 2, null },
-                    { 1, null, 1, null }
+                    { 10, "1.3.6.1.2.1.1.4.0", 1, 2 },
+                    { 2, "1.3.6.1.2.1.1.1.0", 1, 2 },
+                    { 3, "1.3.6.1.2.1.1.2.0", 1, 2 },
+                    { 4, "1.3.6.1.2.1.1.3.0", 1, 1 },
+                    { 5, "1.3.6.1.2.1.1.4.0", 1, 2 },
+                    { 6, "1.3.6.1.2.1.1.5.0", 1, 2 },
+                    { 7, "1.3.6.1.2.1.1.1.0", 1, 2 },
+                    { 8, "1.3.6.1.2.1.1.2.0", 1, 2 },
+                    { 9, "1.3.6.1.2.1.1.3.0", 1, 1 },
+                    { 1, "1.3.6.1.2.1.1.5.0", 1, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -660,17 +658,6 @@ namespace AssetMonitorDataAccess.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Tag",
-                columns: new[] { "Id", "TagCommunicationRelId", "TagSetId", "Tagname", "ValueDataTypeId" },
-                values: new object[,]
-                {
-                    { 1, 1, 1, "ICMP.PingState", 1 },
-                    { 2, 2, 1, "ICMP.PingResponseTime", 6 },
-                    { 14, 14, 2, "ICMP.PingState", 1 },
-                    { 15, 15, 2, "ICMP.PingResponseTime", 6 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "TagCommunicationRel",
                 columns: new[] { "Id", "AgentTagId", "IcmpTagId", "SnmpTagId" },
                 values: new object[,]
@@ -680,37 +667,21 @@ namespace AssetMonitorDataAccess.Migrations
                     { 18, null, null, 8 },
                     { 17, null, null, 7 },
                     { 16, null, null, 6 },
-                    { 11, null, null, 3 },
+                    { 13, null, null, 5 },
                     { 12, null, null, 4 },
-                    { 10, null, null, 2 },
+                    { 11, null, null, 3 },
                     { 9, null, null, 1 },
+                    { 15, null, 4, null },
+                    { 2, null, 2, null },
+                    { 14, null, 3, null },
+                    { 1, null, 1, null },
                     { 5, 3, null, null },
                     { 8, 6, null, null },
                     { 7, 5, null, null },
                     { 6, 4, null, null },
                     { 4, 2, null, null },
-                    { 13, null, null, 5 },
+                    { 10, null, null, 2 },
                     { 3, 1, null, null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "AlarmTagConfig",
-                columns: new[] { "Id", "ActivationTime", "AlarmTypeId", "Description", "TagId", "Value" },
-                values: new object[,]
-                {
-                    { 1, 30, 1, "No ping!", 1, "False" },
-                    { 3, 30, 1, "No ping!", 14, "False" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "HistoricalTagConfig",
-                columns: new[] { "Id", "HistorizationTypeId", "TagId" },
-                values: new object[,]
-                {
-                    { 11, 1, 14 },
-                    { 1, 1, 1 },
-                    { 2, 3, 2 },
-                    { 12, 3, 15 }
                 });
 
             migrationBuilder.InsertData(
@@ -718,6 +689,7 @@ namespace AssetMonitorDataAccess.Migrations
                 columns: new[] { "Id", "TagCommunicationRelId", "TagSetId", "Tagname", "ValueDataTypeId" },
                 values: new object[,]
                 {
+                    { 3, 3, 1, "Agent.CpuUsage", 3 },
                     { 18, 18, 2, "SNMP.sysObjectID", 5 },
                     { 17, 17, 2, "SNMP.sysDescr", 5 },
                     { 16, 16, 2, "SNMP.sysName", 5 },
@@ -725,21 +697,29 @@ namespace AssetMonitorDataAccess.Migrations
                     { 12, 12, 1, "SNMP.sysUpTime", 5 },
                     { 11, 11, 1, "SNMP.sysObjectID", 5 },
                     { 10, 10, 1, "SNMP.sysDescr", 5 },
-                    { 3, 3, 1, "Agent.CpuUsage", 3 },
-                    { 19, 19, 2, "SNMP.sysUpTime", 5 },
+                    { 9, 9, 1, "SNMP.sysName", 5 },
+                    { 15, 15, 2, "ICMP.PingResponseTime", 6 },
+                    { 2, 2, 1, "ICMP.PingResponseTime", 6 },
+                    { 14, 14, 2, "ICMP.PingState", 1 },
+                    { 1, 1, 1, "ICMP.PingState", 1 },
                     { 5, 5, 1, "Agent.MemoryTotal", 4 },
                     { 8, 8, 1, "Agent.LogicalDiskFreeSpace", 3 },
                     { 7, 7, 1, "Agent.PhysicalDiskWorkTime", 3 },
                     { 6, 6, 1, "Agent.PhysicalDiskIdleTime", 3 },
                     { 4, 4, 1, "Agent.MemoryAvailable", 3 },
-                    { 9, 9, 1, "SNMP.sysName", 5 },
+                    { 19, 19, 2, "SNMP.sysUpTime", 5 },
                     { 20, 20, 2, "SNMP.sysContact", 5 }
                 });
 
             migrationBuilder.InsertData(
                 table: "AlarmTagConfig",
                 columns: new[] { "Id", "ActivationTime", "AlarmTypeId", "Description", "TagId", "Value" },
-                values: new object[] { 2, 30, 3, "CPU usage is to high!", 3, "50" });
+                values: new object[,]
+                {
+                    { 2, 30, 3, "CPU usage is to high!", 3, "50" },
+                    { 1, 30, 1, "No ping!", 1, "False" },
+                    { 3, 30, 1, "No ping!", 14, "False" }
+                });
 
             migrationBuilder.InsertData(
                 table: "HistoricalTagConfig",
@@ -753,7 +733,11 @@ namespace AssetMonitorDataAccess.Migrations
                     { 8, 3, 7 },
                     { 9, 3, 8 },
                     { 6, 3, 5 },
-                    { 10, 3, 12 },
+                    { 1, 1, 1 },
+                    { 11, 1, 14 },
+                    { 2, 3, 2 },
+                    { 12, 3, 15 },
+                    { 10, 1, 12 },
                     { 13, 1, 19 }
                 });
 

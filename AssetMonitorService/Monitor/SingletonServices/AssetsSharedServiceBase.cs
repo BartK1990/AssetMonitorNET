@@ -38,7 +38,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
         protected TParam GetAssetProperty<TParam>(Asset asset, ICollection<AssetPropertyValue> assetProperties, AssetPropertyNameEnum assetPropertyName, Func<string, TParam> parse, TParam defaultValue)
         {
             TParam param = defaultValue;
-            var errorMessage = $"Wrong {AssetPropertyNameDictionary.Dict[assetPropertyName]} for Asset: {asset.Name} (Id: {asset.Id}) | Default [{param}] used";
+            var errorMessage = $"Wrong [{AssetPropertyNameDictionary.Dict[assetPropertyName].Description}] for Asset: {asset.Name} (Id: {asset.Id}) | Default [{param}] used";
             var result = assetProperties?
                 .FirstOrDefault(p => p.AssetPropertyId == (int)assetPropertyName)?.Value ?? null;
             if (result != null)

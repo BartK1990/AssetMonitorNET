@@ -23,13 +23,13 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = (await repository.GetSnmpAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var tags = (await repository.GetSnmpTagSetByAssetIdAsync(asset.Id)).ToList();
+                var tags = (await repository.GetSnmpTagsByAssetIdAsync(asset.Id)).ToList();
 
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;
 
                 // Properties
-                int udpPort = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpTimeout, int.Parse, 161);
+                int udpPort = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpUdpPort, int.Parse, 161);
                 int timeout = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpTimeout, int.Parse, 6000);
                 int retries = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpRetries, int.Parse, 1);
                 string community = GetAssetProperty(asset, assetProperties, AssetPropertyNameEnum.SnmpCommunity, FuncString, "public");

@@ -135,10 +135,20 @@ namespace AssetMonitorDataAccess.DataAccess
             enums = Enum.GetValues(typeof(SnmpCommunicationTypeEnum));
             foreach (var item in enums)
             {
-                modelBuilder.Entity<SnmpCommunicationType>().HasData(new AlarmType()
+                modelBuilder.Entity<SnmpCommunicationType>().HasData(new SnmpCommunicationType()
                 {
                     Id = (int)item,
                     Type = Enum.GetName(typeof(SnmpCommunicationTypeEnum), item)
+                });
+            }
+
+            enums = Enum.GetValues(typeof(IcmpTypeEnum));
+            foreach (var item in enums)
+            {
+                modelBuilder.Entity<IcmpType>().HasData(new IcmpType()
+                {
+                    Id = (int)item,
+                    Type = Enum.GetName(typeof(IcmpTypeEnum), item)
                 });
             }
 
@@ -170,18 +180,18 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<SnmpTag>().HasData(
                 // TagSet Id = 1
-                new SnmpTag() { Id = 1, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0" },
-                new SnmpTag() { Id = 2, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0" },
-                new SnmpTag() { Id = 3, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0" },
-                new SnmpTag() { Id = 4, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0" },
-                new SnmpTag() { Id = 5, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0" },
+                new SnmpTag() { Id = 1, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 2, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 3, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 4, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.Normal },
+                new SnmpTag() { Id = 5, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
 
                 // TagSet Id = 2
-                new SnmpTag() { Id = 6, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0" },
-                new SnmpTag() { Id = 7, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0" },
-                new SnmpTag() { Id = 8, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0" },
-                new SnmpTag() { Id = 9, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0" },
-                new SnmpTag() { Id = 10, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0" }
+                new SnmpTag() { Id = 6, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.5.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 7, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.1.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 8, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.2.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand },
+                new SnmpTag() { Id = 9, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.3.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.Normal },
+                new SnmpTag() { Id = 10, OperationId = (int)SnmpOperationEnum.Get, OID = "1.3.6.1.2.1.1.4.0", SnmpCommunicationTypeId = (int)SnmpCommunicationTypeEnum.OnDemand }
                 );
 
             modelBuilder.Entity<TagCommunicationRel>().HasData(
@@ -250,7 +260,7 @@ namespace AssetMonitorDataAccess.DataAccess
                 new HistoricalTagConfig() { Id = 7, TagId = 6, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
                 new HistoricalTagConfig() { Id = 8, TagId = 7, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
                 new HistoricalTagConfig() { Id = 9, TagId = 8, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
-                new HistoricalTagConfig() { Id = 10, TagId = 12, HistorizationTypeId = (int)HistoricalTypeEnum.Average },
+                new HistoricalTagConfig() { Id = 10, TagId = 12, HistorizationTypeId = (int)HistoricalTypeEnum.Last },
 
                 // TagSet Id = 2
                 new HistoricalTagConfig() { Id = 11, TagId = 14, HistorizationTypeId = (int)HistoricalTypeEnum.Last },

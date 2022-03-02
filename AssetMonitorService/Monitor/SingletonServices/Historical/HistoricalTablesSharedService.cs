@@ -95,7 +95,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                                 Type = sqlTypeName,
                                 IsNull = tagHistInfo.IsNull
                             });
-                            var tagHistoricalValue = asset.Data.Values.FirstOrDefault(v => v.Tagname == tagHistInfo.Tagname);
+                            var tagHistoricalValue = asset.Data.Keys.FirstOrDefault(v => v.Tagname == tagHistInfo.Tagname);
                             if(tagHistoricalValue!= null)
                             {
                                 assetDataColumnRelation.Data.Add(new HistoricalColumnInfo(columnName, historicalType) , tagHistoricalValue);
@@ -134,10 +134,8 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
 
             if(!DateTime.TryParse(timestamp, out _))
             {
-                throw new ArgumentException("Wrong timestamp format provided for method");
+                throw new ArgumentException($"{this.GetType().Name} - Wrong timestamp format provided for method {nameof(this.InsertTimedDataForAllAssetsAsync)}");
             }
-
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-GB");
 
             using var scope = _scopeFactory.CreateScope();
             var historyDynamicRepo = scope.ServiceProvider.GetRequiredService<IAssetMonitorHistoryDapperRepository>();

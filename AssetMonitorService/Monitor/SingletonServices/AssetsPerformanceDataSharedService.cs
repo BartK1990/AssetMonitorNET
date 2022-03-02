@@ -23,7 +23,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
             var assets = (await repository.GetAgentAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var tags = (await repository.GetAgentTagSetByAssetIdAsync(asset.Id)).ToList();
+                var tags = (await repository.GetAgentTagsByAssetIdAsync(asset.Id)).ToList();
 
                 var assetWithProperties = await repository.GetAssetPropertiesByIdAsync(asset.Id);
                 var assetProperties = assetWithProperties.AssetPropertyValues;

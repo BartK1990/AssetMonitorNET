@@ -9,12 +9,10 @@ namespace AssetMonitorDataAccess.Models
         [Required]
         public string Value { get; set; }
 
-        [Required]
-        public int AssetId { get; set; }
+        public int? AssetId { get; set; }
         public Asset Asset { get; set; }
 
-        [Required]
-        public int SnmpTagId { get; set; }
-        public SnmpTag SnmpTag { get; set; }
+        public int? SnmpTagId { get; set; }
+        public Tag SnmpTag { get; set; }
     }
 }
