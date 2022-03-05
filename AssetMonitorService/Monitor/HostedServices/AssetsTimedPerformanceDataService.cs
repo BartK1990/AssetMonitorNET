@@ -32,7 +32,8 @@ namespace AssetMonitorService.Monitor.HostedServices
         protected override async Task GetTask(IAssetPerformanceDataService iAssetService, AssetPerformanceData asset)
         {
             _logger.LogInformation($"Service {this.GetType().Name} request to: {asset.IpAddress}:{asset.TcpPort}");
-            await iAssetService.UpdateAsset(asset);
+            int scanTimeSecond = Convert.ToInt32(this.ScanTime.TotalSeconds);
+            await iAssetService.UpdateAsset(asset, scanTimeSecond);
         }
     }
 }

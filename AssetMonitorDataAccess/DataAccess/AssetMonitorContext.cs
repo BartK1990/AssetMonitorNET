@@ -92,6 +92,16 @@ namespace AssetMonitorDataAccess.DataAccess
                 });
             }
 
+            enums = Enum.GetValues(typeof(ApplicationPropertyDataTypeEnum));
+            foreach (var item in enums)
+            {
+                modelBuilder.Entity<ApplicationPropertyDataType>().HasData(new ApplicationPropertyDataType()
+                {
+                    Id = (int)item,
+                    DataType = Enum.GetName(typeof(ApplicationPropertyDataTypeEnum), item)
+                });
+            }
+
             enums = Enum.GetValues(typeof(AssetPropertyDataTypeEnum));
             foreach (var item in enums)
             {
@@ -156,6 +166,12 @@ namespace AssetMonitorDataAccess.DataAccess
             foreach (var item in enums)
             {
                 modelBuilder.Entity<AssetProperty>().HasData(AssetPropertyNameDictionary.Dict[(AssetPropertyNameEnum)item]);
+            }
+
+            enums = Enum.GetValues(typeof(ApplicationPropertyNameEnum));
+            foreach (var item in enums)
+            {
+                modelBuilder.Entity<ApplicationProperty>().HasData(ApplicationPropertyNameDictionary.Dict[(ApplicationPropertyNameEnum)item]);
             }
             #endregion
 
@@ -285,6 +301,16 @@ namespace AssetMonitorDataAccess.DataAccess
                     IpAddress = "127.0.0.1",
                     TagSetId = 1
                 });
+
+            modelBuilder.Entity<ApplicationPropertyValue>().HasData(
+                new ApplicationPropertyValue() { Id = 1, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsAlarmTimedScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 2, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsHistoryTimedScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 3, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsNotificationTimedScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 4, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsTimedIcmpDataScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 5, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsTimedPerformanceDataScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 6, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.AssetsTimedSnmpDataScanTime, Value = "10" },
+                new ApplicationPropertyValue() { Id = 7, ApplicationPropertyId = (int)ApplicationPropertyNameEnum.FrontEndScanTime, Value = "10" }
+                );
 
             modelBuilder.Entity<AssetPropertyValue>().HasData(
                 new AssetPropertyValue() { Id = -1, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpUdpPort, AssetId = 1, Value = "161" },

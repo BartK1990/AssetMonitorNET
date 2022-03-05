@@ -13,6 +13,12 @@ namespace AssetMonitorSharedGRPC.Agent
     [DataContract]
     public class AssetDataRequest
     {
+        public AssetDataRequest(int scanTime, IEnumerable<AssetDataItemRequest> tags)
+        {
+            this.ScanTime = scanTime;
+            this.Tags = tags;
+        }
+
         [DataMember(Order = 1)]
         public IEnumerable<AssetDataItemRequest> Tags { get; set; }
 

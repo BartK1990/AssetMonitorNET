@@ -24,6 +24,17 @@ namespace AssetMonitorService.Monitor.Services
 
         public async Task UpdateAsset(AssetPerformanceData assetPerformanceData)
         {
+           await UpdateAssetWithScanTime(assetPerformanceData);
+        }
+
+        public async Task UpdateAsset(AssetPerformanceData assetPerformanceData, int scanTime)
+        {
+            await UpdateAssetWithScanTime(assetPerformanceData, scanTime);
+        }
+
+        // Default value of scanTime is 10 second if not specified
+        private async Task UpdateAssetWithScanTime(AssetPerformanceData assetPerformanceData, int scanTime = 10)
+        {
             try
             {
                 // Get from local windows machine
@@ -50,7 +61,7 @@ namespace AssetMonitorService.Monitor.Services
                 }
 
                 // Get from gRPC server
-                var reply = await GetAssetDataAsync(assetPerformanceData);
+                var reply = await GetAssetDataAsync(assetPerformanceData, scanTime);
                 var replyDataList = reply.Data.ToList();
 
                 if (replyDataList.Count <= 0 || (replyDataList.Count != assetPerformanceData.Data.Count))
@@ -71,7 +82,7 @@ namespace AssetMonitorService.Monitor.Services
             }
         }
 
-        private async Task<AssetDataReply> GetAssetDataAsync(AssetPerformanceData assetPerformanceData)
+            private async Task<AssetDataReply> GetAssetDataAsync(AssetPerformanceData assetPerformanceData, int scanTime)
         {          
             if (assetPerformanceData.TcpPort == null)
             {
@@ -95,7 +106,7 @@ namespace AssetMonitorService.Monitor.Services
             try
             {
                 var client = GrpcHelper<IAssetDataService>.CreateUnsecureClient(assetPerformanceData.IpAddress, port);
-                reply = await client.GetAssetDataAsync( new AssetDataRequest { Tags = requestTags });
+                reply = await client.GetAssetDataAsync( new AssetDataRequest(scanTime: scanTime, tags: requestTags));
             }
             catch (Exception ex)
             {
