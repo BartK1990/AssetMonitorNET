@@ -8,6 +8,8 @@ namespace AssetMonitorAgent.SingletonServices
 {
     public class AssetDataSharedService : IAssetDataSharedService
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         private readonly object _dataLock = new object();
         private readonly ILogger<AssetDataSharedService> _logger;
         public int ScanTime { get; private set; }
@@ -18,7 +20,7 @@ namespace AssetMonitorAgent.SingletonServices
         public AssetDataSharedService(ILogger<AssetDataSharedService> logger)
         {
             this._logger = logger;
-            this.ScanTime = 10; // Default 10s
+            this.ScanTime = ScanTimeInSecondsDefault; // Default 10s
         }
 
         public void UpdateConfiguration(IEnumerable<AssetDataItemRequest> dataItems, int scanTime)

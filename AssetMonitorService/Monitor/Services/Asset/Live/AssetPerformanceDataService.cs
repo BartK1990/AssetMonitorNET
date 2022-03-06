@@ -106,7 +106,7 @@ namespace AssetMonitorService.Monitor.Services.Asset.Live
             try
             {
                 var client = GrpcHelper<IAssetDataService>.CreateUnsecureClient(assetPerformanceData.IpAddress, port);
-                reply = await client.GetAssetDataAsync(new AssetDataRequest(scanTime: scanTime, tags: requestTags));
+                reply = await client.GetAssetDataAsync(new AssetDataRequest() { ScanTime = scanTime, Tags = requestTags });
             }
             catch (Exception ex)
             {
