@@ -1,8 +1,11 @@
-﻿using AssetMonitorService.Monitor.Model.Live;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Model.Live;
+using AssetMonitorService.Monitor.Model.TagConfig;
 using Lextm.SharpSnmpLib;
 using Lextm.SharpSnmpLib.Messaging;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,35 +23,48 @@ namespace AssetMonitorService.Monitor.Services.Asset.Live
 
         public async Task UpdateAsset(AssetSnmpData assetData)
         {
+            var keys = assetData.Data.Keys.Where(k => k.CommunicationType == SnmpCommunicationTypeEnum.Normal);
+            UpdateAssetSelectedVariables(assetData, keys);
+        }
+
+        public async Task UpdateAssetOnDemandData(AssetSnmpData assetData)
+        {
+            var keys = assetData.Data.Keys.Where(k => k.CommunicationType == SnmpCommunicationTypeEnum.OnDemand);
+            UpdateAssetSelectedVariables(assetData, keys);
+        }
+
+        private void UpdateAssetSelectedVariables(AssetSnmpData assetData, IEnumerable<TagSnmp> tags)
+        {
+            var variables = tags.Select(ak => new Variable(new ObjectIdentifier(ak.OID))).ToList();
+
             var version = assetData.Version switch
             {
-                AssetMonitorDataAccess.Models.Enums.SnmpVersionEnum.V1 => VersionCode.V1,
-                AssetMonitorDataAccess.Models.Enums.SnmpVersionEnum.V2 => VersionCode.V2,
+                SnmpVersionEnum.V1 => VersionCode.V1,
+                SnmpVersionEnum.V2 => VersionCode.V2,
                 _ => throw new ArgumentException("Wrong SNMP version configured"),
             };
 
             var ipEndPoint = new IPEndPoint(IPAddress.Parse(assetData.IpAddress), assetData.UdpPort);
             var community = new OctetString(assetData.Community);
-            var variables = assetData.Data.Keys.Select(ak => new Variable(new ObjectIdentifier(ak.OID))).ToList();
 
             try
             {
                 var snmpResult = Messenger.Get(version, ipEndPoint, community, variables, assetData.Timeout);
 
-                foreach (var d in assetData.Data)
+                foreach (var tagSnmp in tags)
                 {
-                    var val = snmpResult.Where(sr => sr.Id.ToString() == d.Key.OID).FirstOrDefault();
+                    var val = snmpResult.Where(sr => sr.Id.ToString() == tagSnmp.OID).FirstOrDefault();
                     if (val != null)
                     {
-                        d.Value.Value = val.Data.ToString();
+                        assetData.Data[tagSnmp].Value = val.Data.ToString();
                     }
                 }
             }
             catch (Exception ex)
             {
-                foreach (var d in assetData.Data) // Assing null values if error
+                foreach (var tagSnmp in tags) // Assing null values if error
                 {
-                    d.Value.Value = null;
+                    assetData.Data[tagSnmp].Value = null;
                 }
                 _logger.LogWarning($"Cannot retrieve data with SNMP: {assetData.IpAddress}:{assetData.UdpPort}");
                 _logger.LogDebug($"Exception: { ex.Message}");
