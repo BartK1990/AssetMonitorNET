@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using AssetMonitorService.Monitor.Services;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,24 +10,21 @@ namespace AssetMonitorService.Monitor.HostedServices
 {
     public abstract class AssetsTimedServiceBase<TTimed> : IHostedService, IDisposable
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         protected readonly ILogger<TTimed> _logger;
+        protected readonly IApplicationPropertiesService _appProperties;
         public readonly TimeSpan ScanTime;
 
         protected readonly object taskLock = new object();
         protected Timer _timer;
         protected List<Task> _taskList = new List<Task>();
 
-        public AssetsTimedServiceBase(ILogger<TTimed> logger, TimeSpan? scanTime = null)
+        public AssetsTimedServiceBase(ILogger<TTimed> logger, IApplicationPropertiesService appProperties)
         {
-            if (scanTime != null)
-            {
-                this.ScanTime = (TimeSpan)scanTime;
-            }
-            else
-            { // Default value
-                this.ScanTime = TimeSpan.FromSeconds(10);
-            }
             this._logger = logger;
+            this._appProperties = appProperties;
+            this.ScanTime = TimeSpan.FromSeconds(GetScanTimeInSecondsWrapper());
         }
 
         public void Dispose()
@@ -71,5 +69,14 @@ namespace AssetMonitorService.Monitor.HostedServices
                 _logger.LogDebug(e.Message);
             }
         }
+
+        protected abstract int GetScanTimeInSeconds();
+
+        private int GetScanTimeInSecondsWrapper()
+        {
+            var scanTime = GetScanTimeInSeconds();
+            return scanTime > 0 ? scanTime : ScanTimeInSecondsDefault;
+        }
+
     }
 }

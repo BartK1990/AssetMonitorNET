@@ -16,6 +16,13 @@ namespace AssetMonitorService.Data.Repositories
             this._context = context;
         }
 
+        public async Task<IEnumerable<ApplicationProperty>> GetAppPropertiesAsync()
+        {
+            return await _context.ApplicationProperty
+                .Include(v => v.ApplicationPropertyValue)
+                .Include(dt => dt.ValueDataType).ToListAsync();
+        }
+
         public async Task<IEnumerable<Asset>> GetAllAssetsAsync()
         {
             var assetMonitorContext = _context.Asset;

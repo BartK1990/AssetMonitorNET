@@ -6,6 +6,7 @@ namespace AssetMonitorService.Data.Repositories
 {
     public interface IAssetMonitorRepository
     {
+        Task<IEnumerable<ApplicationProperty>> GetAppPropertiesAsync();
         Task<IEnumerable<Asset>> GetAllAssetsAsync();
         Task<IEnumerable<Asset>> GetIcmpAssetsAsync();
         Task<IEnumerable<Asset>> GetAgentAssetsAsync();

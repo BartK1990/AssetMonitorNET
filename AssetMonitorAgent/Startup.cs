@@ -1,14 +1,12 @@
-﻿using AssetMonitorAgent.BackgroundServices;
-using AssetMonitorAgent.CommunicationServices;
+﻿using AssetMonitorAgent.CommunicationServices;
+using AssetMonitorAgent.HostedServices;
 using AssetMonitorAgent.SingletonServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using ProtoBuf.Grpc.Server;
-using System;
 
 namespace AssetMonitorAgent
 {
@@ -20,11 +18,7 @@ namespace AssetMonitorAgent
         {
             services.AddCodeFirstGrpc();
 
-            services.AddHostedService(a => new AssetTimedService(
-                logger: a.GetService<ILogger<AssetTimedService>>(),
-                scopeFactory: a.GetService<IServiceScopeFactory>(),
-                assetDataSharedService: a.GetService<IAssetDataSharedService>(),
-                scanTime: TimeSpan.FromSeconds(10)));
+            services.AddHostedService<AssetTimedService>();
 
             services.AddSingleton<IAssetDataSharedService, AssetDataSharedService>();
         }

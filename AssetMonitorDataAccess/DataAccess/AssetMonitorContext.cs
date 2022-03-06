@@ -19,6 +19,9 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<AgentTag> AgentTag { get; set; }
         public DbSet<AlarmTagConfig> AlarmTagConfig { get; set; }
         public DbSet<AlarmType> AlarmType { get; set; }
+        public DbSet<ApplicationProperty> ApplicationProperty { get; set; }
+        public DbSet<ApplicationPropertyDataType> ApplicationPropertyDataType { get; set; }
+        public DbSet<ApplicationPropertyValue> ApplicationPropertyValue { get; set; }
         public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
         public DbSet<HistoricalType> HistoricalType { get; set; }
         public DbSet<IcmpTag> IcmpTag { get; set; }
@@ -56,6 +59,12 @@ namespace AssetMonitorDataAccess.DataAccess
 
             modelBuilder.Entity<AlarmTagConfig>()
                 .HasIndex(c => new { c.TagId, c.AlarmTypeId }).IsUnique();
+
+            modelBuilder.Entity<ApplicationPropertyValue>()
+                .HasIndex(c => new { c.ApplicationPropertyId }).IsUnique();
+
+            modelBuilder.Entity<AssetPropertyValue>()
+                .HasIndex(c => new { c.AssetId, c.AssetPropertyId }).IsUnique();
 
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo",

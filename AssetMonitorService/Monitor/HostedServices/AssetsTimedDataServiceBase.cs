@@ -1,7 +1,7 @@
 ﻿using AssetMonitorService.Data.Repositories;
+using AssetMonitorService.Monitor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +13,9 @@ namespace AssetMonitorService.Monitor.HostedServices
         protected readonly IServiceScopeFactory _scopeFactory;
 
         public AssetsTimedDataServiceBase(IServiceScopeFactory scopeFactory,
-            ILogger<TTimed> logger, TimeSpan? scanTime = null) : base(logger, scanTime)
+            ILogger<TTimed> logger, 
+            IApplicationPropertiesService appProperties
+            ) : base(logger: logger, appProperties: appProperties)
         {
             this._scopeFactory = scopeFactory;
         }

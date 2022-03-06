@@ -1,9 +1,10 @@
-﻿using AssetMonitorService.Monitor.Model.Live;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.Services.Asset.Live;
 using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,13 +14,15 @@ namespace AssetMonitorService.Monitor.HostedServices
         IAssetSnmpDataService,
         AssetSnmpData>
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataSharedService;
 
         public AssetsTimedSnmpDataService(IAssetsSnmpDataSharedService assetsSnmpDataSharedService,
             ILogger<AssetsTimedSnmpDataService> logger,
             IServiceScopeFactory scopeFactory,
-            TimeSpan? scanTime = null
-            ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
+            IApplicationPropertiesService appProperties
+            ) : base(scopeFactory: scopeFactory, logger: logger, appProperties: appProperties)
         {
             this._assetsSnmpDataSharedService = assetsSnmpDataSharedService;
         }
@@ -34,5 +37,11 @@ namespace AssetMonitorService.Monitor.HostedServices
             _logger.LogInformation($"Service {this.GetType().Name} request to: {asset.IpAddress}:{asset.UdpPort}");
             await iAssetService.UpdateAsset(asset);
         }
+
+        protected override int GetScanTimeInSeconds()
+        {
+            return _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsTimedSnmpDataScanTime, int.Parse, ScanTimeInSecondsDefault).Result;
+        }
+
     }
 }

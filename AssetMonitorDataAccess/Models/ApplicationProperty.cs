@@ -11,6 +11,8 @@ namespace AssetMonitorDataAccess.Models
 
         public string Description { get; set; }
 
+        public ApplicationPropertyValue ApplicationPropertyValue { get; set; }
+
         [Required]
         public int ValueDataTypeId { get; set; }
         public ApplicationPropertyDataType ValueDataType { get; set; }

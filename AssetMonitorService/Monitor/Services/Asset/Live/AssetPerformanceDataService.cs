@@ -11,7 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using WindowsDataLib;
 
-namespace AssetMonitorService.Monitor.Services
+namespace AssetMonitorService.Monitor.Services.Asset.Live
 {
     public class AssetPerformanceDataService : IAssetPerformanceDataService
     {
@@ -19,12 +19,12 @@ namespace AssetMonitorService.Monitor.Services
 
         public AssetPerformanceDataService(ILogger<AssetPerformanceDataService> logger)
         {
-            this._logger = logger;
+            _logger = logger;
         }
 
         public async Task UpdateAsset(AssetPerformanceData assetPerformanceData)
         {
-           await UpdateAssetWithScanTime(assetPerformanceData);
+            await UpdateAssetWithScanTime(assetPerformanceData);
         }
 
         public async Task UpdateAsset(AssetPerformanceData assetPerformanceData, int scanTime)
@@ -64,7 +64,7 @@ namespace AssetMonitorService.Monitor.Services
                 var reply = await GetAssetDataAsync(assetPerformanceData, scanTime);
                 var replyDataList = reply.Data.ToList();
 
-                if (replyDataList.Count <= 0 || (replyDataList.Count != assetPerformanceData.Data.Count))
+                if (replyDataList.Count <= 0 || replyDataList.Count != assetPerformanceData.Data.Count)
                     return;
 
                 for (int i = 0; i < replyDataList.Count; i++)
@@ -82,8 +82,8 @@ namespace AssetMonitorService.Monitor.Services
             }
         }
 
-            private async Task<AssetDataReply> GetAssetDataAsync(AssetPerformanceData assetPerformanceData, int scanTime)
-        {          
+        private async Task<AssetDataReply> GetAssetDataAsync(AssetPerformanceData assetPerformanceData, int scanTime)
+        {
             if (assetPerformanceData.TcpPort == null)
             {
                 throw new ArgumentNullException("No TCP port specified");
@@ -93,10 +93,10 @@ namespace AssetMonitorService.Monitor.Services
             var requestTags = new List<AssetDataItemRequest>();
             foreach (var d in assetPerformanceData.Data)
             {
-                requestTags.Add(new AssetDataItemRequest() 
+                requestTags.Add(new AssetDataItemRequest()
                 {
                     DataType = (int)d.Key.ValueDataType,
-                    AgentDataTypeId = (int)d.Key.AgentDataType, 
+                    AgentDataTypeId = (int)d.Key.AgentDataType,
                     PerformanceCounter = d.Key.PerformanceCounter,
                     WmiManagementObject = d.Key.WmiManagementObject,
                     ServiceName = d.Key.ServiceName
@@ -106,7 +106,7 @@ namespace AssetMonitorService.Monitor.Services
             try
             {
                 var client = GrpcHelper<IAssetDataService>.CreateUnsecureClient(assetPerformanceData.IpAddress, port);
-                reply = await client.GetAssetDataAsync( new AssetDataRequest(scanTime: scanTime, tags: requestTags));
+                reply = await client.GetAssetDataAsync(new AssetDataRequest(scanTime: scanTime, tags: requestTags));
             }
             catch (Exception ex)
             {

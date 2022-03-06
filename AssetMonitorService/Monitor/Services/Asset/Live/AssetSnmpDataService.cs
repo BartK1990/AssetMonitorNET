@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace AssetMonitorService.Monitor.Services
+namespace AssetMonitorService.Monitor.Services.Asset.Live
 {
     public class AssetSnmpDataService : IAssetSnmpDataService
     {
@@ -15,7 +15,7 @@ namespace AssetMonitorService.Monitor.Services
 
         public AssetSnmpDataService(ILogger<AssetSnmpDataService> logger)
         {
-            this._logger = logger;
+            _logger = logger;
         }
 
         public async Task UpdateAsset(AssetSnmpData assetData)
@@ -29,7 +29,7 @@ namespace AssetMonitorService.Monitor.Services
 
             var ipEndPoint = new IPEndPoint(IPAddress.Parse(assetData.IpAddress), assetData.UdpPort);
             var community = new OctetString(assetData.Community);
-            var variables = (assetData.Data.Keys.Select(ak => new Variable(new ObjectIdentifier(ak.OID)))).ToList();
+            var variables = assetData.Data.Keys.Select(ak => new Variable(new ObjectIdentifier(ak.OID))).ToList();
 
             try
             {

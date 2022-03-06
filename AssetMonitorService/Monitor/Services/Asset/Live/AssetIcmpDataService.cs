@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
-namespace AssetMonitorService.Monitor.Services
+namespace AssetMonitorService.Monitor.Services.Asset.Live
 {
     public class AssetIcmpDataService : IAssetIcmpDataService
     {
@@ -13,14 +13,14 @@ namespace AssetMonitorService.Monitor.Services
 
         public AssetIcmpDataService(ILogger<AssetIcmpDataService> logger)
         {
-            this._logger = logger;
+            _logger = logger;
         }
 
         public async Task UpdateAsset(AssetIcmpData assetPing)
         {
-            if(!assetPing.Data?.Any() ?? true)
+            if (!assetPing.Data?.Any() ?? true)
             {
-                _logger.LogWarning($"Service {this.GetType().Name} has no data tags to ping");
+                _logger.LogWarning($"Service {GetType().Name} has no data tags to ping");
                 return;
             }
 

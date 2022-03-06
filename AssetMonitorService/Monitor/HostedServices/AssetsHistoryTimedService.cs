@@ -1,4 +1,6 @@
-﻿using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Data.Repositories;
+using AssetMonitorService.Monitor.Services;
 using AssetMonitorService.Monitor.SingletonServices;
 using AssetMonitorService.Monitor.SingletonServices.Historical;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +12,8 @@ namespace AssetMonitorService.Monitor.HostedServices
 {
     public class AssetsHistoryTimedService : AssetsTimedServiceBase<AssetsHistoryTimedService>
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         protected readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetsIcmpSharedService _assetsPingShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
@@ -27,7 +31,9 @@ namespace AssetMonitorService.Monitor.HostedServices
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
             IAssetsHistoricalDataSharedService assetsHistoricalDataShared,
             IHistoricalTablesSharedService historicalTablesShared,
-            ILogger<AssetsHistoryTimedService> logger, TimeSpan? scanTime = null) : base(logger: logger, scanTime: scanTime)
+            ILogger<AssetsHistoryTimedService> logger,
+            IApplicationPropertiesService appProperties
+            ) : base(logger: logger, appProperties: appProperties)
         {
             this._scopeFactory = scopeFactory;
             this._assetsPingShared = assetsPingShared;
@@ -90,5 +96,11 @@ namespace AssetMonitorService.Monitor.HostedServices
                 _assetsHistoricalDataShared.UpdateAssetActualSnmpValuesByIdAsync(asset.Id);
             }
         }
+
+        protected override int GetScanTimeInSeconds()
+        {
+            return _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsHistoryTimedScanTime, int.Parse, ScanTimeInSecondsDefault).Result;
+        }
+
     }
 }

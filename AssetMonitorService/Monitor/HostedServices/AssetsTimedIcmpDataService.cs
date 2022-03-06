@@ -1,9 +1,10 @@
-﻿using AssetMonitorService.Monitor.Model.Live;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.Services.Asset.Live;
 using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,13 +14,15 @@ namespace AssetMonitorService.Monitor.HostedServices
         IAssetIcmpDataService, 
         AssetIcmpData>
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         private readonly IAssetsIcmpSharedService _assetsPingSharedService;
 
         public AssetsTimedIcmpDataService(IAssetsIcmpSharedService assetsPingSharedService,
             ILogger<AssetsTimedIcmpDataService> logger,
             IServiceScopeFactory scopeFactory,
-            TimeSpan? scanTime = null
-            ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
+            IApplicationPropertiesService appProperties
+            ) : base(scopeFactory: scopeFactory, logger: logger, appProperties: appProperties)
         {
             this._assetsPingSharedService = assetsPingSharedService;
         }
@@ -34,5 +37,11 @@ namespace AssetMonitorService.Monitor.HostedServices
             _logger.LogInformation($"Service {this.GetType().Name} ping to: {asset.IpAddress}");
             await iAssetService.UpdateAsset(asset);
         }
+
+        protected override int GetScanTimeInSeconds()
+        {
+            return _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsTimedIcmpDataScanTime, int.Parse, ScanTimeInSecondsDefault).Result;
+        }
+
     }
 }

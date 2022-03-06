@@ -6,28 +6,23 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AssetMonitorAgent.BackgroundServices
+namespace AssetMonitorAgent.HostedServices
 {
     public class AssetTimedService : IHostedService, IDisposable
     {
+        const int ScanTimeInSecondsDefault = 10; 
+
         private readonly ILogger<AssetTimedService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetDataSharedService _assetDataSharedService;
         private Timer _timer;
         public TimeSpan ScanTime { get; private set; }
 
-        public AssetTimedService(ILogger<AssetTimedService> logger, IServiceScopeFactory scopeFactory, IAssetDataSharedService assetDataSharedService,
-            TimeSpan? scanTime = null)
+        public AssetTimedService(ILogger<AssetTimedService> logger, IServiceScopeFactory scopeFactory, IAssetDataSharedService assetDataSharedService)
         {
-            if (scanTime != null)
-            {
-                this.ScanTime = (TimeSpan)scanTime;
-            }
-            else
-            { // Default value
-                this.ScanTime = TimeSpan.FromSeconds(10);
-            }
-
+            // Default value
+            this.ScanTime = TimeSpan.FromSeconds(ScanTimeInSecondsDefault);
+            
             this._logger = logger;
             this._scopeFactory = scopeFactory;
             this._assetDataSharedService = assetDataSharedService;

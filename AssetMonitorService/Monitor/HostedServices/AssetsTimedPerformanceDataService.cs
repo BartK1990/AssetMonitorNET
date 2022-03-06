@@ -1,5 +1,7 @@
-﻿using AssetMonitorService.Monitor.Model.Live;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.Services.Asset.Live;
 using AssetMonitorService.Monitor.SingletonServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,13 +15,15 @@ namespace AssetMonitorService.Monitor.HostedServices
         IAssetPerformanceDataService,
         AssetPerformanceData>
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataSharedService;
 
         public AssetsTimedPerformanceDataService(IAssetsPerformanceDataSharedService assetsPerformanceDataSharedService, 
             ILogger<AssetsTimedPerformanceDataService> logger,
             IServiceScopeFactory scopeFactory,
-            TimeSpan? scanTime = null
-            ) : base(scopeFactory: scopeFactory, logger: logger, scanTime: scanTime)
+            IApplicationPropertiesService appProperties
+            ) : base(scopeFactory: scopeFactory, logger: logger, appProperties: appProperties)
         {
             this._assetsPerformanceDataSharedService = assetsPerformanceDataSharedService;
         }
@@ -35,5 +39,11 @@ namespace AssetMonitorService.Monitor.HostedServices
             int scanTimeSecond = Convert.ToInt32(this.ScanTime.TotalSeconds);
             await iAssetService.UpdateAsset(asset, scanTimeSecond);
         }
+
+        protected override int GetScanTimeInSeconds()
+        {
+            return _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsTimedPerformanceDataScanTime, int.Parse, ScanTimeInSecondsDefault).Result;
+        }
+
     }
 }

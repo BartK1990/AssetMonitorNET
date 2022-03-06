@@ -1,12 +1,15 @@
-﻿using AssetMonitorService.Monitor.SingletonServices.Email;
+﻿using AssetMonitorDataAccess.Models.Enums;
+using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.SingletonServices.Email;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace AssetMonitorService.Monitor.HostedServices
 {
     public class AssetsNotificationTimedService : AssetsTimedServiceBase<AssetsNotificationTimedService>
     {
+        private const int ScanTimeInSecondsDefault = 10;
+
         private readonly IAssetsNotificationDataSharedService _assetsNotificationDataShared;
         protected readonly IServiceScopeFactory _scopeFactory;
 
@@ -14,7 +17,10 @@ namespace AssetMonitorService.Monitor.HostedServices
 
         public AssetsNotificationTimedService(
             IAssetsNotificationDataSharedService assetsNotificationDataShared,
-            IServiceScopeFactory scopeFactory, ILogger<AssetsNotificationTimedService> logger, TimeSpan? scanTime = null) : base(logger: logger, scanTime: scanTime)
+            IServiceScopeFactory scopeFactory, 
+            ILogger<AssetsNotificationTimedService> logger,
+            IApplicationPropertiesService appProperties
+            ) : base(logger: logger, appProperties: appProperties)
         {
             this._assetsNotificationDataShared = assetsNotificationDataShared;
             this._scopeFactory = scopeFactory;
@@ -26,6 +32,11 @@ namespace AssetMonitorService.Monitor.HostedServices
             {
                 _assetsNotificationDataShared.SendEmailNotifications();
             }
+        }
+
+        protected override int GetScanTimeInSeconds()
+        {
+            return _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsNotificationTimedScanTime, int.Parse, ScanTimeInSecondsDefault).Result;
         }
     }
 }

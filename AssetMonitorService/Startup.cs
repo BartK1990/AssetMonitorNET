@@ -4,6 +4,7 @@ using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.gRPC.CommunicationServices;
 using AssetMonitorService.Monitor.HostedServices;
 using AssetMonitorService.Monitor.Services;
+using AssetMonitorService.Monitor.Services.Asset.Live;
 using AssetMonitorService.Monitor.Services.Email;
 using AssetMonitorService.Monitor.SingletonServices;
 using AssetMonitorService.Monitor.SingletonServices.Alarm;
@@ -62,6 +63,8 @@ namespace AssetMonitorService
             services.AddHostedService<AssetsNotificationTimedService>();
 
             // Shared (Singleton) services
+            services.AddSingleton<IApplicationPropertiesService, ApplicationPropertiesService>();
+            // Shared (Singleton) services for Assets Live Data
             services.AddSingleton<IAssetsCollectionSharedService, AssetsCollectionSharedService>();
             services.AddSingleton<IAssetsIcmpSharedService, AssetsIcmpDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
