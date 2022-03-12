@@ -7,12 +7,30 @@ import { HttpClient } from '@angular/common/http';
 })
 export class FetchDataComponent {
   public forecasts: WeatherForecast[];
+  private intervalId: any;
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-    http.get<WeatherForecast[]>(baseUrl + 'weatherforecast').subscribe(result => {
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
+    this.updateData();
+  }
+
+  ngOnInit() {
+    this.intervalId = setInterval(() => {
+      this.updateData();
+    }, 2000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  updateData() {
+    return this.http.get<WeatherForecast[]>(this.baseUrl + 'weatherforecast').subscribe(result => {
       this.forecasts = result;
     }, error => console.error(error));
   }
+
 }
 
 interface WeatherForecast {
