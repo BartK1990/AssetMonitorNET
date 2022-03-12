@@ -1,5 +1,4 @@
-﻿using AssetMonitorDataAccess.Models.Enums;
-using AssetMonitorService.Data.Repositories;
+﻿using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Model.TagConfig;
 using Microsoft.Extensions.DependencyInjection;
