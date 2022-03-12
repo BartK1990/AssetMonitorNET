@@ -22,6 +22,7 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<ApplicationProperty> ApplicationProperty { get; set; }
         public DbSet<ApplicationPropertyDataType> ApplicationPropertyDataType { get; set; }
         public DbSet<ApplicationPropertyValue> ApplicationPropertyValue { get; set; }
+        public DbSet<AssetTagRange> AssetTagRange { get; set; }
         public DbSet<HistoricalTagConfig> HistoricalTagConfig { get; set; }
         public DbSet<HistoricalType> HistoricalType { get; set; }
         public DbSet<IcmpTag> IcmpTag { get; set; }
@@ -35,6 +36,8 @@ namespace AssetMonitorDataAccess.DataAccess
         public DbSet<TagCommunicationRel> TagCommunicationRel { get; set; }
         public DbSet<TagDataType> TagDataType { get; set; }
         public DbSet<TagSet> TagSet { get; set; }
+        public DbSet<TagShared> TagShared { get; set; }
+        public DbSet<TagSharedSet> TagSharedSet { get; set; }
         public DbSet<UserEmailAddress> UserEmailAddress { get; set; }
         public DbSet<UserEmailAddressSet> UserEmailAddressSet { get; set; }
         public DbSet<UserEmailAssetRel> UserEmailAssetRel { get; set; }
@@ -69,6 +72,8 @@ namespace AssetMonitorDataAccess.DataAccess
             modelBuilder.Entity<AgentTag>(entity =>
                 entity.HasCheckConstraint("CK_AgentTag_NotNullTagInfo",
                 $"[{nameof(Models.AgentTag.PerformanceCounter)}] IS NOT NULL OR [{nameof(Models.AgentTag.WmiManagementObject)}] IS NOT NULL OR [{nameof(Models.AgentTag.ServiceName)}] IS NOT NULL"));
+
+            modelBuilder.Entity<TagShared>().Property(p => p.Enable).HasDefaultValue(true);
 
             #region Enums
             Array enums = Enum.GetValues(typeof(SnmpOperationEnum));
@@ -274,6 +279,18 @@ namespace AssetMonitorDataAccess.DataAccess
                 new Tag() { Id = 20, TagCommunicationRelId = 20, TagSetId = 2, Tagname = "SNMP.sysContact", ValueDataTypeId = (int)TagDataTypeEnum.String }
                );
 
+            modelBuilder.Entity<TagSharedSet>().HasData(
+                new TagSharedSet() { Id = 1, Name = "Default" }
+                );
+
+            modelBuilder.Entity<TagShared>().HasData(
+                new TagShared() { Id = 1, TagSharedSetId = 1, Tagname = "ICMP.PingState", ColumnName = "Ping"},
+                new TagShared() { Id = 2, TagSharedSetId = 1, Tagname = "ICMP.PingResponseTime", ColumnName = "Ping Time [ms]" },
+                new TagShared() { Id = 3, TagSharedSetId = 1, Tagname = "SNMP.sysUpTime", ColumnName = "Up Time" },
+                new TagShared() { Id = 4, TagSharedSetId = 1, Tagname = "Agent.CpuUsage", ColumnName = "CPU [%]" },
+                new TagShared() { Id = 5, TagSharedSetId = 1, Tagname = "Agent.MemoryAvailable", ColumnName = "Memory left [MB]" }
+               );
+
             modelBuilder.Entity<HistoricalTagConfig>().HasData(
                 // TagSet Id = 1
                 new HistoricalTagConfig() { Id = 1, TagId = 1, HistorizationTypeId = (int)HistoricalTypeEnum.Last },
@@ -328,6 +345,11 @@ namespace AssetMonitorDataAccess.DataAccess
                 new AssetPropertyValue() { Id = -4, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpCommunity, AssetId = 1, Value = "public" },
                 new AssetPropertyValue() { Id = -5, AssetPropertyId = (int)AssetPropertyNameEnum.SnmpVersion, AssetId = 1, Value = "2" }
                 );
+
+            modelBuilder.Entity<AssetTagRange>().HasData(
+                new AssetTagRange() { Id = 1, AssetId = 1, TagId = 3, RangeMin = 0.0, RangeMax = 100.0 }
+                );
+
         }
     }
 }

@@ -4,14 +4,16 @@ using AssetMonitorDataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    partial class AssetMonitorContextModelSnapshot : ModelSnapshot
+    [Migration("20220312112529_TagRange")]
+    partial class TagRange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1534,101 +1536,6 @@ namespace AssetMonitorDataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.TagShared", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ColumnName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Enable")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<int>("TagSharedSetId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Tagname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TagSharedSetId");
-
-                    b.ToTable("TagShared");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ColumnName = "Ping",
-                            Enable = false,
-                            TagSharedSetId = 1,
-                            Tagname = "ICMP.PingState"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ColumnName = "Ping Time [ms]",
-                            Enable = false,
-                            TagSharedSetId = 1,
-                            Tagname = "ICMP.PingResponseTime"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ColumnName = "Up Time",
-                            Enable = false,
-                            TagSharedSetId = 1,
-                            Tagname = "SNMP.sysUpTime"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ColumnName = "CPU [%]",
-                            Enable = false,
-                            TagSharedSetId = 1,
-                            Tagname = "Agent.CpuUsage"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ColumnName = "Memory left [MB]",
-                            Enable = false,
-                            TagSharedSetId = 1,
-                            Tagname = "Agent.MemoryAvailable"
-                        });
-                });
-
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.TagSharedSet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TagSharedSet");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Default"
-                        });
-                });
-
             modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>
                 {
                     b.Property<int>("Id")
@@ -1862,15 +1769,6 @@ namespace AssetMonitorDataAccess.Migrations
                     b.HasOne("AssetMonitorDataAccess.Models.SnmpTag", "SnmpTag")
                         .WithOne("TagCommunicationRel")
                         .HasForeignKey("AssetMonitorDataAccess.Models.TagCommunicationRel", "SnmpTagId");
-                });
-
-            modelBuilder.Entity("AssetMonitorDataAccess.Models.TagShared", b =>
-                {
-                    b.HasOne("AssetMonitorDataAccess.Models.TagSharedSet", "TagSharedSet")
-                        .WithMany("TagsShared")
-                        .HasForeignKey("TagSharedSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AssetMonitorDataAccess.Models.UserEmailAddress", b =>

@@ -4,14 +4,16 @@ using AssetMonitorDataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AssetMonitorDataAccess.Migrations
 {
     [DbContext(typeof(AssetMonitorContext))]
-    partial class AssetMonitorContextModelSnapshot : ModelSnapshot
+    [Migration("20220312130458_TagShared")]
+    partial class TagShared
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1545,11 +1547,6 @@ namespace AssetMonitorDataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Enable")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("TagSharedSetId")
                         .HasColumnType("int");
 
@@ -1568,7 +1565,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 1,
                             ColumnName = "Ping",
-                            Enable = false,
                             TagSharedSetId = 1,
                             Tagname = "ICMP.PingState"
                         },
@@ -1576,7 +1572,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 2,
                             ColumnName = "Ping Time [ms]",
-                            Enable = false,
                             TagSharedSetId = 1,
                             Tagname = "ICMP.PingResponseTime"
                         },
@@ -1584,7 +1579,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 3,
                             ColumnName = "Up Time",
-                            Enable = false,
                             TagSharedSetId = 1,
                             Tagname = "SNMP.sysUpTime"
                         },
@@ -1592,7 +1586,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 4,
                             ColumnName = "CPU [%]",
-                            Enable = false,
                             TagSharedSetId = 1,
                             Tagname = "Agent.CpuUsage"
                         },
@@ -1600,7 +1593,6 @@ namespace AssetMonitorDataAccess.Migrations
                         {
                             Id = 5,
                             ColumnName = "Memory left [MB]",
-                            Enable = false,
                             TagSharedSetId = 1,
                             Tagname = "Agent.MemoryAvailable"
                         });
