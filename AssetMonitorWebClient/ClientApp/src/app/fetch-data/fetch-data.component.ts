@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-fetch-data',
@@ -8,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class FetchDataComponent {
   public forecasts: WeatherForecast[];
   private intervalId: any;
+  private subs: Subscription;
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string) {
     this.updateData();
@@ -26,9 +28,16 @@ export class FetchDataComponent {
   }
 
   updateData() {
-    return this.http.get<WeatherForecast[]>(this.baseUrl + 'weatherforecast').subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+    let lastSubsClosed = true;
+    if (this.subs != null) {
+      lastSubsClosed = this.subs.closed;
+    }
+    console.log(lastSubsClosed);
+    if (lastSubsClosed) {
+      this.subs = this.http.get<WeatherForecast[]>(this.baseUrl + 'weatherforecast').subscribe(
+        result => { this.forecasts = result; },
+        error => console.error(error));
+    }
   }
 
 }
