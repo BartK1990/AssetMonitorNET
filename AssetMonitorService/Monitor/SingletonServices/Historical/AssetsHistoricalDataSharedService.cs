@@ -1,8 +1,10 @@
 ﻿using AssetMonitorDataAccess.Models;
+using AssetMonitorDataAccess.Models.Enums;
 using AssetMonitorService.Data.Repositories;
 using AssetMonitorService.Monitor.Model.Historical;
 using AssetMonitorService.Monitor.Model.Live;
 using AssetMonitorService.Monitor.Model.TagConfig;
+using AssetMonitorService.Monitor.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -14,25 +16,34 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
     public class AssetsHistoricalDataSharedService : AssetsSharedServiceBase<AssetsHistoricalDataSharedService, AssetHistoricalData>,
         IAssetsHistoricalDataSharedService
     {
-        public const int NumberOfSamplesInHistoricalBuffer = 60; // ToDo add configuration how many samples there should be (based on live data frequency + how offen it is saved to DB)
+        private const int NumberOfSecondsInTenMin = 600;
+        private const int NumberOfSamplesInHistoricalBuffer = 60;
+        private const int DefaultScanTime = 10;
+
         private readonly IAssetsIcmpSharedService _assetsPingShared;
         private readonly IAssetsPerformanceDataSharedService _assetsPerformanceDataShared;
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
+        private readonly IApplicationPropertiesService _appProperties;
 
         public AssetsHistoricalDataSharedService(
             IAssetsIcmpSharedService assetsPingShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
             IAssetsSnmpDataSharedService assetsSnmpDataShared,
+            IApplicationPropertiesService appProperties,
             IServiceScopeFactory scopeFactory,
             ILogger<AssetsHistoricalDataSharedService> logger) : base(scopeFactory: scopeFactory, logger: logger)
         {
             this._assetsPingShared = assetsPingShared;
             this._assetsPerformanceDataShared = assetsPerformanceDataShared;
             this._assetsSnmpDataShared = assetsSnmpDataShared;
+            this._appProperties = appProperties;
         }
 
         protected override async Task UpdateAssetsList(IAssetMonitorRepository repository)
         {
+            // Get Scan time
+            var numberOfSamplesInHistoricalBuffer = await GetHistoricalBufferFromScanTime();
+
             var assets = (await repository.GetAllAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
@@ -74,8 +85,20 @@ namespace AssetMonitorService.Monitor.SingletonServices.Historical
                 }
 
                 // Add all tags to Historical data list
-                this.AssetsData.Add(new AssetHistoricalData(historicalTags, NumberOfSamplesInHistoricalBuffer, asset.Id));
+                this.AssetsData.Add(new AssetHistoricalData(historicalTags, numberOfSamplesInHistoricalBuffer, asset.Id));
             }
+        }
+
+        private async Task<int> GetHistoricalBufferFromScanTime()
+        {
+            var numberOfSamplesInHistoricalBuffer = NumberOfSamplesInHistoricalBuffer;
+            var historyScanTime = await _appProperties.GetProperty(ApplicationPropertyNameEnum.AssetsHistoryTimedScanTime, int.Parse, DefaultScanTime);
+            if(1 <= historyScanTime && historyScanTime <= 600)
+            {
+                numberOfSamplesInHistoricalBuffer = NumberOfSecondsInTenMin / historyScanTime;
+            }
+            _logger.LogInformation($"{this.GetType().Name} - Number of samples in historical buffer: [{numberOfSamplesInHistoricalBuffer}]");
+            return numberOfSamplesInHistoricalBuffer;
         }
 
         private static void AddHistoricalTag(List<TagValue> historicalTags, Dictionary<TagConfigBase, TagValue> sharedData, Tag tag)
