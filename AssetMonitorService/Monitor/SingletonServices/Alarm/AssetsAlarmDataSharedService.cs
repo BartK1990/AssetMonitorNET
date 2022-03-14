@@ -36,7 +36,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Alarm
             var assets = (await repository.GetAllAssetsAsync()).ToList();
             foreach (var asset in assets)
             {
-                var alarmTags = new Dictionary<TagValue, AlarmTagInfo>();
+                var alarmTags = new Dictionary<AlarmTagInfo, TagValue>();
 
                 var pingSharedData = _assetsPingShared.AssetsData?.Where(a => a.Id == asset.Id).FirstOrDefault()?.Data
                     .ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
@@ -78,7 +78,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Alarm
             }
         }
 
-        private static void AddAlarmTag(Dictionary<TagValue, AlarmTagInfo> alarmTags, Dictionary<TagConfigBase, TagValue> sharedData, Tag tag)
+        private static void AddAlarmTag(Dictionary<AlarmTagInfo, TagValue> alarmTags, Dictionary<TagConfigBase, TagValue> sharedData, Tag tag)
         {
             if(sharedData == null)
             {
@@ -90,8 +90,9 @@ namespace AssetMonitorService.Monitor.SingletonServices.Alarm
             {
                 foreach (var alarmConfigs in tag.AlarmTagConfigs)
                 {
-                    alarmTags.Add(sharedData[key],
-                        new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId));
+                    alarmTags.Add(
+                        new AlarmTagInfo(alarmConfigs.Value, alarmConfigs.ActivationTime, alarmConfigs.Description, (AlarmTypeEnum)alarmConfigs.AlarmTypeId),
+                        sharedData[key]);
                 }
             }
         }

@@ -5,10 +5,11 @@ namespace AssetMonitorService.Monitor.Model.Live
 {
     public class AssetLiveData
     {
-        public AssetLiveData(ICollection<TagLive> tags, int assetId)
+        public AssetLiveData(ICollection<TagLive> tags, int assetId, string name)
         {
             Data = tags;
             this.Id = assetId;
+            this.Name = name;
         }
 
         public int Id { get; set; }

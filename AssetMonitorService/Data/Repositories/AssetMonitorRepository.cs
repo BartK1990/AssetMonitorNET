@@ -78,6 +78,15 @@ namespace AssetMonitorService.Data.Repositories
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        public async Task<IEnumerable<Tag>> GetTagsIncludeAlarmByAssetIdAsync(int assetId)
+        {
+            var assetMonitorContext = _context.Tag
+                .Where(t => t.TagSetId == _context.Asset.Where(a => a.Id == assetId).FirstOrDefault().TagSetId)
+                .Include(a => a.AlarmTagConfigs);
+
+            return await assetMonitorContext.ToListAsync();
+        }
+
         public async Task<IEnumerable<Tag>> GetIcmpTagsByAssetIdAsync(int id)
         {
             var assetMonitorContext = _context.Tag
@@ -176,6 +185,14 @@ namespace AssetMonitorService.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
+        public async Task<AssetTagRange> GetAssetTagRangeByAssetIdTagIdAsync(int assetId, int tagId)
+        {
+            var assetMonitorContext = await _context.AssetTagRange
+                .FirstOrDefaultAsync(atr => (atr.AssetId == assetId) && (atr.TagId == tagId));
+
+            return assetMonitorContext;
+        }
+
         public void Add(object entity)
         {
             _context.Add(entity);
@@ -190,5 +207,6 @@ namespace AssetMonitorService.Data.Repositories
         {
             return await _context.SaveChangesAsync() > 0;
         }
+
     }
 }

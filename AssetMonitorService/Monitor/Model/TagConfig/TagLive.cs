@@ -2,6 +2,7 @@
 using AssetMonitorService.Monitor.Model.Alarm;
 using AssetMonitorService.Monitor.Model.Live;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AssetMonitorService.Monitor.Model.TagConfig
 {
@@ -22,12 +23,33 @@ namespace AssetMonitorService.Monitor.Model.TagConfig
             this.TagAlarmValues = TagAlarmValues;
         }
 
-        public TagValue Value { get; set; }
-#nullable enable
-        public ICollection<TagAlarmValue>? TagAlarmValues { get; set; }
+        public TagValue Value { get; private set; }
 
-        public double? RangeMax { get; set; }
-        public double? RangeMin { get; set; }
+        public bool InAlarm
+        {
+            get
+            {
+                var inAlarm = false;
+
+                if(TagAlarmValues?.Any() ?? false)
+                {
+                    foreach (var alarm in TagAlarmValues)
+                    {
+                        if(alarm.AlarmState == true)
+                        {
+                            inAlarm = true;
+                        }
+                    }
+                }
+                return inAlarm;
+            }
+        }
+
+#nullable enable
+        public ICollection<TagAlarmValue>? TagAlarmValues { get; private set; }
+
+        public double? RangeMax { get; private set; }
+        public double? RangeMin { get; private set; }
 #nullable disable
     }
 }

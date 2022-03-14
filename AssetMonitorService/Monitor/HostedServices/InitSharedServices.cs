@@ -20,6 +20,7 @@ namespace AssetMonitorService.Monitor.HostedServices
         private readonly IAssetsHistoricalDataSharedService _assetsHistoricalDataShared;
         private readonly IAssetsAlarmDataSharedService _assetsAlarmDataShared;
         private readonly IAssetsNotificationDataSharedService _assetsNotificationDataShared;
+        private readonly IAssetsLiveDataSharedService _assetsLiveDataShared;
 
         public InitSharedServices(ILogger<InitSharedServices> _logger,
             IAssetsCollectionSharedService assetsCollectionShared,
@@ -29,7 +30,8 @@ namespace AssetMonitorService.Monitor.HostedServices
             IHistoricalTablesSharedService historicalTablesShared,
             IAssetsHistoricalDataSharedService assetsHistoricalDataShared,
             IAssetsAlarmDataSharedService assetsAlarmDataShared,
-            IAssetsNotificationDataSharedService assetsNotificationDataShared
+            IAssetsNotificationDataSharedService assetsNotificationDataShared,
+            IAssetsLiveDataSharedService assetsLiveDataShared
             )
         {
             this._logger = _logger;
@@ -41,6 +43,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             this._assetsHistoricalDataShared = assetsHistoricalDataShared;
             this._assetsAlarmDataShared = assetsAlarmDataShared;
             this._assetsNotificationDataShared = assetsNotificationDataShared;
+            this._assetsLiveDataShared = assetsLiveDataShared;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -54,6 +57,7 @@ namespace AssetMonitorService.Monitor.HostedServices
             await this._assetsAlarmDataShared.UpdateAssetsListBase();
             await this._historicalTablesShared.DatabaseStructureUpdateAsync();
             await this._assetsNotificationDataShared.UpdateAssetsListBase();
+            await this._assetsLiveDataShared.UpdateAssetsListBase();
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

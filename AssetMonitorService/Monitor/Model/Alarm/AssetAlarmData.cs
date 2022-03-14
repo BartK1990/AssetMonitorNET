@@ -8,27 +8,29 @@ namespace AssetMonitorService.Monitor.Model.Alarm
     {
         public int Id { get; private set; }
 
-        public AssetAlarmData(IDictionary<TagValue, AlarmTagInfo> tags, int assetId)
+        public AssetAlarmData(IDictionary<AlarmTagInfo, TagValue> tags, int assetId)
         {
-            Data = new Dictionary<TagValue, TagAlarmValue>();
+            Data = new Dictionary<TagAlarmValue, TagValue>();
             foreach (var keyValue in tags)
             {
-                Data.Add(keyValue.Key, new TagAlarmValue(tagname: keyValue.Key.Tagname, dataType: keyValue.Key.DataType, 
-                    alarmType: keyValue.Value.AlarmType, alarmValue: keyValue.Value.AlarmValue, activationTime: keyValue.Value.ActivationTime,
-                    description: keyValue.Value.Description));
+                Data.Add(
+                    new TagAlarmValue(tagname: keyValue.Value.Tagname, dataType: keyValue.Value.DataType,
+                    alarmType: keyValue.Key.AlarmType, alarmValue: keyValue.Key.AlarmValue, activationTime: keyValue.Key.ActivationTime,
+                    description: keyValue.Key.Description),
+                    keyValue.Value);
             }
             this.Id = assetId;
         }
 
-        public IDictionary<TagValue, TagAlarmValue> Data { get; set; }
+        public IDictionary<TagAlarmValue, TagValue> Data { get; set; }
 
         public void UpdateData()
         {
-            var keys = new List<TagValue>();
+            var keys = new List<TagAlarmValue>();
             keys.AddRange(Data.Keys);
             foreach (var key in keys)
             {
-                Data[key].Value = key.Value;
+                key.Value = Data[key].Value;
             }
         }
     }

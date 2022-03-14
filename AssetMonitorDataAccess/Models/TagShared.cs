@@ -17,6 +17,6 @@ namespace AssetMonitorDataAccess.Models
         public TagSharedSet TagSharedSet { get; set; }
 
         [Required]
-        public bool Enable { get; set; }
+        public bool Enable { get; set; } = true;
     }
 }

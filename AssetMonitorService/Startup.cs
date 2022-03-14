@@ -69,6 +69,7 @@ namespace AssetMonitorService
             services.AddSingleton<IAssetsIcmpSharedService, AssetsIcmpDataSharedService>();
             services.AddSingleton<IAssetsPerformanceDataSharedService, AssetsPerformanceDataSharedService>();
             services.AddSingleton<IAssetsSnmpDataSharedService, AssetsSnmpDataSharedService>();
+            services.AddSingleton<IAssetsLiveDataSharedService, AssetsLiveDataSharedService>();
             // Shared (Singleton) services for Historical Data
             services.AddSingleton<IHistoricalTablesSharedService, HistoricalTablesSharedService>();
             services.AddSingleton<IAssetsHistoricalDataSharedService, AssetsHistoricalDataSharedService>();

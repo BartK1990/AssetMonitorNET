@@ -41,7 +41,7 @@ namespace AssetMonitorService.Monitor.SingletonServices.Email
 
                 // Get Alarm tags
                 var alarmShared = _assetsAlarmDataShared.AssetsData.Where(a => a.Id == asset.Id).FirstOrDefault();
-                var tags = alarmShared.Data.Values;
+                var tags = alarmShared.Data.Keys;
 
                 // Get recipients
                 var userEmailAddresses = (await repository.GetUserEmailAddressByAssetIdAsync(asset.Id));

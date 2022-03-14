@@ -14,7 +14,7 @@ namespace AssetMonitorService.Monitor.HostedServices
 
         protected readonly ILogger<TTimed> _logger;
         protected readonly IApplicationPropertiesService _appProperties;
-        public readonly TimeSpan ScanTime;
+        public TimeSpan ScanTime { get; private set; }
 
         protected readonly object taskLock = new object();
         protected Timer _timer;
