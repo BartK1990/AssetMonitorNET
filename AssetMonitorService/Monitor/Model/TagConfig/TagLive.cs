@@ -11,7 +11,7 @@ namespace AssetMonitorService.Monitor.Model.TagConfig
         public TagLive()
         {
         }
-
+#nullable enable
         public TagLive(Tag tag, TagValue val, ICollection<TagAlarmValue>? tagAlarmValues, double? rangeMin, double? rangeMax) : base(tag)
         {
             if (rangeMin != null && rangeMax != null)
@@ -45,7 +45,6 @@ namespace AssetMonitorService.Monitor.Model.TagConfig
             }
         }
 
-#nullable enable
         public ICollection<TagAlarmValue>? TagAlarmValues { get; private set; }
 
         public double? RangeMax { get; private set; }

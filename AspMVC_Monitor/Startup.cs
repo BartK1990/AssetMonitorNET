@@ -1,17 +1,13 @@
 using AspMVC_Monitor.Data.Repositories;
 using AspMVC_Monitor.Models;
-using AspMVC_Monitor.Services;
+using AspMVC_Monitor.Services.HostedServices;
 using AssetMonitorDataAccess.DataAccess;
-using AssetMonitorHistoryDataAccess.DataAccess;
-using Hangfire;
-using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace AspMVC_Monitor
 {
@@ -33,31 +29,21 @@ namespace AspMVC_Monitor
                 options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorContextDb"]);
             });
             services.AddScoped<IAssetMonitorRepository, AssetMonitorRepository>();
-            //services.AddDbContext<AssetMonitorHistoryContext>(options =>
-            //{
-            //    options.UseSqlServer(Configuration["ConnectionStrings:AssetMonitorHistoryContextDb"]);
-            //});
 
             services.AddControllersWithViews();
             services.AddSession();
 
+            // Hosted services
+            services.AddHostedService<AssetsDataTimedService>();
+
             services.AddSingleton<IAssetsMonitor, AssetsMonitor>();
 
-            // Hangfire
-            services.AddHangfire((serviceProvider, config) =>
-            {
-                config.UseActivator(new ServiceProviderActivator(serviceProvider));
-                config.UseMemoryStorage();
-            });
-            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app, 
-            IWebHostEnvironment env,
-            IBackgroundJobClient backgroundJobClient,
-            IRecurringJobManager recurringJobManager)
+            IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -88,25 +74,7 @@ namespace AspMVC_Monitor
                     name: "assets",
                     pattern: "{controller=Assets}/{action=Index}/{id?}",
                     defaults: new { controller = "Assets", action = "Index" });
-                endpoints.MapHangfireDashboard();
             });
-
-            app.UseHangfireDashboard();
-            HangfireJobs(backgroundJobClient, recurringJobManager);
-        }
-
-        private void HangfireJobs(IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
-        {
-            backgroundJobClient.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
-
-            // Ping assets every 5 seconds (CRON notation)
-            recurringJobManager.AddOrUpdate<IAssetsMonitor>("Ping Assets",
-                ah => ah.UpdateAssetPingAsync(),
-                "*/10 * * * * *");
-
-            recurringJobManager.AddOrUpdate<IAssetsMonitor>("Get performance data",
-                ah => ah.UpdateAssetPerformanceAsync(),
-                "*/10 * * * * *");
 
         }
     }

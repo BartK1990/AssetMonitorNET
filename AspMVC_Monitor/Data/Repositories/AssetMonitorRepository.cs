@@ -22,6 +22,13 @@ namespace AspMVC_Monitor.Data.Repositories
             return await assetMonitorContext.ToListAsync();
         }
 
+        public async Task<IEnumerable<ApplicationProperty>> GetAppPropertiesAsync()
+        {
+            return await _context.ApplicationProperty
+                .Include(v => v.ApplicationPropertyValue)
+                .Include(dt => dt.ValueDataType).ToListAsync();
+        }
+
         public async Task<Asset> GetAssetByIdAsync(int? id)
         {
             return await _context.Asset

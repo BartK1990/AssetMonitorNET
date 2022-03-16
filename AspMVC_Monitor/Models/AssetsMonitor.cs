@@ -60,8 +60,6 @@ namespace AspMVC_Monitor.Models
             //try
             //{
             //    var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
-            //    // ToDo just for test, delete
-            //    var repTest = client.UpdateAssetSnmpValuesById(new AssetSnmpUpdateCommandRequest() { AssetId = 1 });
 
             //    var reply = client.GetAssetsPingData(
             //        new AssetsPingDataRequest { Init = 1 }).Result;
