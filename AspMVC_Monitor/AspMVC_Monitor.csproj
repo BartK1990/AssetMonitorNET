@@ -24,4 +24,8 @@
     <ProjectReference Include="..\AssetMonitorSharedGRPC\AssetMonitorSharedGRPC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Configuration\" />
+  </ItemGroup>
+
 </Project>

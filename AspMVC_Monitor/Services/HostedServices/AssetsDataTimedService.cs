@@ -1,4 +1,5 @@
 ﻿using AspMVC_Monitor.Services.ScopedServices;
+using AspMVC_Monitor.Services.SingletonServices;
 using AssetMonitorDataAccess.Models.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,13 +15,16 @@ namespace AspMVC_Monitor.Services.HostedServices
         private const int ScanTimeInSecondsDefault = 10;
 
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IAssetsLiveDataShared _assetsLiveDataShared;
 
         public AssetsDataTimedService(IServiceScopeFactory scopeFactory,
             ILogger<AssetsDataTimedService> logger,
-            IApplicationPropertiesService appProperties
+            IApplicationPropertiesService appProperties,
+            IAssetsLiveDataShared assetsLiveDataShared
             ) : base(logger: logger, appProperties: appProperties)
         {
             this._scopeFactory = scopeFactory;
+            this._assetsLiveDataShared = assetsLiveDataShared;
         }
 
         protected override int GetScanTimeInSeconds()
@@ -30,7 +34,7 @@ namespace AspMVC_Monitor.Services.HostedServices
 
         protected override void TimedJob()
         {
-            throw new NotImplementedException();
+            _assetsLiveDataShared.UpdateAssetsLiveData().Wait();
         }
     }
 }

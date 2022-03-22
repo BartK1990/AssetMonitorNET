@@ -42,21 +42,21 @@ namespace AspMVC_Monitor.Controllers
             return Json(new { data = HttpContext.Session.GetString("Time") });
         }
 
-        [HttpPost]
-        public IActionResult GetAssetList()
-        {
-            var itemList = _assetsMonitor.AssetsList.Select((a => new { 
-                name = a.NameUI, 
-                ipAddress = a.IpAddressUI,
-                pingState = a.PingStateUI,
-                pingResponseTime = a.PingResponseTimeUI,
-                cpuUsage = a.CpuUsageUI,
-                memoryAvailable = a.MemoryAvailableUI,
-                memoryTotal = a.MemoryTotalUI,
-                memoryUsage = a.MemoryUsageUI
-            })).ToList(); 
-            return Json(itemList);
-        }
+        //[HttpPost]
+        //public IActionResult GetAssetList()
+        //{
+        //    var itemList = _assetsMonitor.AssetsList.Select((a => new { 
+        //        name = a.NameUI, 
+        //        ipAddress = a.IpAddressUI,
+        //        pingState = a.PingStateUI,
+        //        pingResponseTime = a.PingResponseTimeUI,
+        //        cpuUsage = a.CpuUsageUI,
+        //        memoryAvailable = a.MemoryAvailableUI,
+        //        memoryTotal = a.MemoryTotalUI,
+        //        memoryUsage = a.MemoryUsageUI
+        //    })).ToList(); 
+        //    return Json(itemList);
+        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -20,6 +20,8 @@ namespace AssetMonitorService.Monitor.SingletonServices
         private readonly IAssetsSnmpDataSharedService _assetsSnmpDataShared;
         private readonly IAssetsAlarmDataSharedService _assetsAlarmDataShared;
 
+        public bool AssetsDataNewConfiguration { get; private set; } = true;
+
         public AssetsLiveDataSharedService(
             IAssetsIcmpSharedService assetsIcmpShared,
             IAssetsPerformanceDataSharedService assetsPerformanceDataShared,
@@ -90,7 +92,11 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     }
 
                 }
-                this.AssetsData.Add(new AssetLiveData(tags, asset.Id, asset.Name));
+                this.AssetsData.Add(new AssetLiveData(
+                    tags: tags,
+                    assetId: asset.Id, 
+                    name: asset.Name, 
+                    ipAddress: asset.IpAddress));
             }
         }
 
@@ -121,5 +127,10 @@ namespace AssetMonitorService.Monitor.SingletonServices
             return added;
         }
 #nullable disable
+
+        public void AssetsDataNewConfigurationClear()
+        {
+            this.AssetsDataNewConfiguration = false;
+        }
     }
 }

@@ -7,6 +7,9 @@ namespace AssetMonitorSharedGRPC.Server
     public class AssetsDataReply
     {
         [DataMember(Order = 1)]
+        public bool ConfigurationUpdate { get; set; }
+
+        [DataMember(Order = 2)]
         public IEnumerable<AssetDataMessage> AssetsData { get; set; }
 
     }
@@ -25,31 +28,20 @@ namespace AssetMonitorSharedGRPC.Server
         public int AssetId { get; set; }
 
         [DataMember(Order = 2)]
-        public string Name { get; set; }
-
-        [DataMember(Order = 3)]
         public IEnumerable<AssetTagMessage> Tags { get; set; }
 
     }
 
+    [DataContract]
     public struct AssetTagMessage
     {
         [DataMember(Order = 1)]
         public int TagId { get; set; }
 
         [DataMember(Order = 2)]
-        public string Tagname { get; set; }
-
-        [DataMember(Order = 3)]
         public byte[] Value { get; set; }
 
-        [DataMember(Order = 4)]
+        [DataMember(Order = 3)]
         public bool InAlarm { get; set; }
-
-        [DataMember(Order = 5)]
-        public double? RangeMax { get; set; }
-
-        [DataMember(Order = 6)]
-        public double? RangeMin { get; set; }
     }
 }

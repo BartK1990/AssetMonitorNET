@@ -38,24 +38,67 @@ namespace AssetMonitorService.gRPC.CommunicationServices
 
         public async Task<AssetsDataReply> GetAssetsData(AssetsDataRequest request, CallContext context = default)
         {
-            _logger.LogInformation($"Assets data rquest from {context.ServerCallContext.Peer}");
-            var reply = new AssetsDataReply();
+            _logger.LogInformation($"Assets data request from {context.ServerCallContext.Peer}");
+            if (_assetsLiveDataShared.AssetsDataNewConfiguration)
+            {
+                _logger.LogInformation($"Configuration update flag reply to {context.ServerCallContext.Peer}");
+                return await Task.FromResult(new AssetsDataReply() { ConfigurationUpdate = true });
+            }
+
+            var reply = new AssetsDataReply() { ConfigurationUpdate = false };
             var assetsDataMessages = new List<AssetDataMessage>();
             foreach (var asset in _assetsLiveDataShared.AssetsData)
             {
-                var dataMessage = new AssetDataMessage() { AssetId = asset.Id, Name = asset.Name };
+                var dataMessage = new AssetDataMessage() { AssetId = asset.Id };
                 var tags = new List<AssetTagMessage>();
                 foreach (var tag in asset.Data)
                 {
                     tags.Add(new AssetTagMessage()
                     {
                         TagId = tag.Id,
-                        Tagname = tag.Tagname,
                         Value = ByteConverterHelper.ObjectToByteArray(tag.Value.Value),
-                        InAlarm = tag.InAlarm,
+                        InAlarm = tag.InAlarm
+                    }) ;
+                }
+                dataMessage.Tags = tags;
+                assetsDataMessages.Add(dataMessage);
+            }
+
+            reply.AssetsData = assetsDataMessages;
+            return await Task.FromResult(reply);
+        }
+
+        public async Task<AssetsDataConfigurationReply> GetAssetsDataConfiguration(AssetsDataConfigurationRequest request, CallContext context = default)
+        {
+            _logger.LogInformation($"Assets data configuration request from {context.ServerCallContext.Peer}");
+
+            if (request.NewConfigurationLoaded)
+            {
+                _logger.LogInformation($"Configuration loaded on client side {context.ServerCallContext.Peer}");
+                _assetsLiveDataShared.AssetsDataNewConfigurationClear();
+                return await Task.FromResult(new AssetsDataConfigurationReply());
+            }
+            
+            var reply = new AssetsDataConfigurationReply();
+            var assetsDataMessages = new List<AssetDataConfigurationMessage>();
+            foreach (var asset in _assetsLiveDataShared.AssetsData)
+            {
+                var dataMessage = new AssetDataConfigurationMessage()
+                {
+                    AssetId = asset.Id,
+                    Name = asset.Name,
+                    IPAddress = asset.IPAddress
+                };
+                var tags = new List<AssetTagConfigurationMessage>();
+                foreach (var tag in asset.Data)
+                {
+                    tags.Add(new AssetTagConfigurationMessage()
+                    {
+                        TagId = tag.Id,
+                        Tagname = tag.Tagname,
                         RangeMax = tag.RangeMax,
                         RangeMin = tag.RangeMin
-                    }) ;
+                    });
                 }
                 dataMessage.Tags = tags;
                 assetsDataMessages.Add(dataMessage);
