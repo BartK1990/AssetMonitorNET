@@ -22,7 +22,7 @@ namespace AssetMonitorSharedGRPC.Server
     }
 
     [DataContract]
-    public struct AssetDataMessage
+    public class AssetDataMessage
     {
         [DataMember(Order = 1)]
         public int AssetId { get; set; }
@@ -33,7 +33,7 @@ namespace AssetMonitorSharedGRPC.Server
     }
 
     [DataContract]
-    public struct AssetTagMessage
+    public class AssetTagMessage
     {
         [DataMember(Order = 1)]
         public int TagId { get; set; }

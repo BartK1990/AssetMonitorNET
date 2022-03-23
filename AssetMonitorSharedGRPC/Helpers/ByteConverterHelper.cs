@@ -20,6 +20,9 @@ namespace AssetMonitorSharedGRPC.Helpers
 
         public static object ByteArrayToObject(byte[] arrBytes)
         {
+            if (arrBytes == null)
+                return null;
+
             BinaryFormatter binForm = new BinaryFormatter();
             using(MemoryStream memStream = new MemoryStream())
             {

@@ -49,9 +49,15 @@ namespace AspMVC_Monitor.Services.SingletonServices
                     return;
                 }
 
+                _logger.LogInformation($"Reading tag values for Assets from server side");
                 foreach (var asset in reply.AssetsData)
                 {
                     var assetData = AssetsData.FirstOrDefault(ad=>ad.Id == asset.AssetId);
+                    if(assetData == null)
+                    {
+                        _logger.LogError($"Wrong configuration for Asset Id: [{asset.AssetId}]. Cannot read values from server side");
+                        continue;
+                    }
                     foreach (var tag in asset.Tags)
                     {
                         var liveTag = assetData.Tags[tag.TagId];
@@ -70,7 +76,6 @@ namespace AspMVC_Monitor.Services.SingletonServices
 
         private async Task UpdateAssetsLiveDataConfiguration(bool newConfigurationLoaded)
         {
-            AssetsData = new List<AssetLiveData>();
             try
             {
                 var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
@@ -84,6 +89,7 @@ namespace AspMVC_Monitor.Services.SingletonServices
                     return;
                 }
 
+                AssetsData = new List<AssetLiveData>();
                 _logger.LogInformation($"Loading new Assets Data configuration");
 
                 var reply = await client.GetAssetsDataConfiguration(
