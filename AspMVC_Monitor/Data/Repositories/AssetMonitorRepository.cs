@@ -35,6 +35,11 @@ namespace AspMVC_Monitor.Data.Repositories
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        public async Task<IEnumerable<TagSharedSet>> GetAllTagSharedSetsAsync()
+        {
+            return await _context.TagSharedSet.ToListAsync();
+        }
+
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;

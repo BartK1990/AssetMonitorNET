@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AspMVC_Monitor.Models.AssetLiveData>
+﻿@model AspMVC_Monitor.Models.MonitorViewModel
 @{
     ViewData["Title"] = "Monitor";
 }
@@ -19,62 +19,61 @@
     <div class="main-content bg-site-dark rounded">
         <label>Server time now: </label>
         <span id="sessionValue" class="font-italic"></span>
-        <p>Let's monitor some assets!</p>
-        <br />
-        <h4>Assets:</h4>
-        <br />
+        <div>
+            @foreach (var a in Model.TagSets)
+            {
+                @Html.ActionLink(@a.Name, "Monitor", "Home", new { tagSetId = @a.Id }, null);
+            }
+        </div>
         <table id="tableAssets" class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
             <thead>
                 <tr class="bg-nav-dark no-hover">
-                    <th>Name </th>
-                    <th>IP Address </th>
-                    <th>Ping </th>
-                    <th>Time </th>
-                    <th>CPU Usage </th>
-                    <th>Avalible Memory[MB] </th>
+                    <th>Name</th>
+                    <th>IP Address</th>
+                    <th>In Alarm</th>
                 </tr>
             </thead>
             <tbody>
                 @*@foreach (var a in Model)
-                {
-                    <tr>
-                        <td class="align-middle">@a.NameUI</td>
-                        <td class="align-middle">@a.IpAddressUI</td>
-                        <td class="align-middle">
-                            <div id="@(a.NameUI)_PingState" class="d-flex justify-content-center align-items-center">
-                                @if (a.PingState)
-                                {
-                                    <span class="dot dotBackgroundGreen"></span>
-                                }
-                                else
-                                {
-                                    <span class="dot dotBackgroundRed"></span>
-                                }
-                            </div>
-                        </td>
-                        <td id="@(a.NameUI)_PingResponseTime" class="align-middle">@(a.PingResponseTimeUI)ms</td>
-                        <td class="align-middle">
-                            <div id="@(a.NameUI)_CpuUsage" class="valuebar">
-                                <div class="valuebar-value-wrapper">
-                                    <div class="valuebar-value">@(a.CpuUsageUI)%</div>
+                    {
+                        <tr>
+                            <td class="align-middle">@a.NameUI</td>
+                            <td class="align-middle">@a.IpAddressUI</td>
+                            <td class="align-middle">
+                                <div id="@(a.NameUI)_PingState" class="d-flex justify-content-center align-items-center">
+                                    @if (a.PingState)
+                                    {
+                                        <span class="dot dotBackgroundGreen"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="dot dotBackgroundRed"></span>
+                                    }
                                 </div>
-                                <div class="valuebar-progress progress">
-                                    <div class="progress-bar bg-site-green" style="width: @(a.CpuUsageUI)%;"></div>
+                            </td>
+                            <td id="@(a.NameUI)_PingResponseTime" class="align-middle">@(a.PingResponseTimeUI)ms</td>
+                            <td class="align-middle">
+                                <div id="@(a.NameUI)_CpuUsage" class="valuebar">
+                                    <div class="valuebar-value-wrapper">
+                                        <div class="valuebar-value">@(a.CpuUsageUI)%</div>
+                                    </div>
+                                    <div class="valuebar-progress progress">
+                                        <div class="progress-bar bg-site-green" style="width: @(a.CpuUsageUI)%;"></div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">
-                            <div id="@(a.NameUI)_MemoryAvailable" class="valuebar">
-                                <div class="valuebar-value-wrapper">
-                                    <div class="valuebar-value">@(a.MemoryAvailableUI)/@(a.MemoryTotalUI)</div>
+                            </td>
+                            <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">
+                                <div id="@(a.NameUI)_MemoryAvailable" class="valuebar">
+                                    <div class="valuebar-value-wrapper">
+                                        <div class="valuebar-value">@(a.MemoryAvailableUI)/@(a.MemoryTotalUI)</div>
+                                    </div>
+                                    <div class="valuebar-progress progress">
+                                        <div class="progress-bar bg-site-green" style="width: @(a.MemoryUsageUI)%;"></div>
+                                    </div>
                                 </div>
-                                <div class="valuebar-progress progress">
-                                    <div class="progress-bar bg-site-green" style="width: @(a.MemoryUsageUI)%;"></div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }*@
+                            </td>
+                        </tr>
+                    }*@
             </tbody>
         </table>
     </div>

@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Configuration\" />
     <Folder Include="Views\Configuration\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>

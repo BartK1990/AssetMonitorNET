@@ -1,23 +1,29 @@
-﻿using AspMVC_Monitor.Models;
+﻿using AspMVC_Monitor.Data.Repositories;
+using AspMVC_Monitor.Models;
 using AspMVC_Monitor.Services.SingletonServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetsLiveDataShared _assetsLiveDataShared;
 
-        public HomeController(ILogger<HomeController> logger, 
+        public HomeController(ILogger<HomeController> logger,
+            IServiceScopeFactory scopeFactory,
             IAssetsLiveDataShared assetsLiveDataShared)
         {
             this._logger = logger;
+            this._scopeFactory = scopeFactory;
             this._assetsLiveDataShared = assetsLiveDataShared;
         }
 
@@ -31,10 +37,24 @@ namespace AspMVC_Monitor.Controllers
             return View();
         }
 
-        public IActionResult Monitor()
+        public async Task<IActionResult> Monitor(int? tagSetId)
         {
             HttpContext.Session.SetString("Time", DateTime.Now.ToString());
-            return View(_assetsLiveDataShared.AssetsData);
+
+            using var scope = _scopeFactory.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<IAssetMonitorRepository>();
+
+            var tagSharedSets = (await repository.GetAllTagSharedSetsAsync()).ToList();
+
+            var monitorTagShared = new MonitorViewModel() { TagSets = tagSharedSets
+                .Select(s => new MonitorTagSharedSet() { Id = s.Id, Name = s.Name }).ToList() };
+
+            if (tagSetId != null)
+            {
+                _logger.LogError(tagSetId.ToString());
+            }
+
+            return View(monitorTagShared);
         }
 
         [HttpPost]

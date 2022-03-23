@@ -9,6 +9,7 @@ namespace AspMVC_Monitor.Data.Repositories
         Task<IEnumerable<ApplicationProperty>> GetAppPropertiesAsync();
         Task<IEnumerable<Asset>> GetAllAssetsAsync();
         Task<Asset> GetAssetByIdAsync(int? id);
+        Task<IEnumerable<TagSharedSet>> GetAllTagSharedSetsAsync();
         Task<bool> SaveAllAsync();
     }
 }
