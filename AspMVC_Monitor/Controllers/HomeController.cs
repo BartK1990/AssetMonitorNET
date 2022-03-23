@@ -1,4 +1,5 @@
 ﻿using AspMVC_Monitor.Models;
+using AspMVC_Monitor.Services.SingletonServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,12 +12,13 @@ namespace AspMVC_Monitor.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAssetsMonitor _assetsMonitor;
+        private readonly IAssetsLiveDataShared _assetsLiveDataShared;
 
-        public HomeController(ILogger<HomeController> logger, IAssetsMonitor assetsMonitor)
+        public HomeController(ILogger<HomeController> logger, 
+            IAssetsLiveDataShared assetsLiveDataShared)
         {
             this._logger = logger;
-            this._assetsMonitor = assetsMonitor;
+            this._assetsLiveDataShared = assetsLiveDataShared;
         }
 
         public IActionResult Index()
@@ -32,7 +34,7 @@ namespace AspMVC_Monitor.Controllers
         public IActionResult Monitor()
         {
             HttpContext.Session.SetString("Time", DateTime.Now.ToString());
-            return View(_assetsMonitor.AssetsList);
+            return View(_assetsLiveDataShared.AssetsData);
         }
 
         [HttpPost]

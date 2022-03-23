@@ -7,10 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Remove="Scripts\monitor.ts" />
+    <TypeScriptCompile Remove="Scripts\site.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Scripts\monitor.ts" />
+    <Content Include="Scripts\site.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Grpc.Net.Client" Version="2.41.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.21">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.6.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -26,6 +40,12 @@
 
   <ItemGroup>
     <Folder Include="Views\Configuration\" />
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Scripts\monitor.ts" />
+    <None Include="Scripts\site.ts" />
   </ItemGroup>
 
 </Project>

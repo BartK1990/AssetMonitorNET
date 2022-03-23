@@ -15,7 +15,7 @@ namespace AspMVC_Monitor.Services.SingletonServices
     {
         public const int TcpPort = 9561; // ToDo make configurable in DB
 
-        public List<AssetLiveData> AssetsData;
+        public List<AssetLiveData> AssetsData { get; private set; }
 
         private readonly ILogger<AssetsLiveDataShared> _logger;
 

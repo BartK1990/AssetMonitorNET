@@ -3,10 +3,6 @@ using AspMVC_Monitor.Services.SingletonServices;
 using AssetMonitorDataAccess.Models.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Services.HostedServices
 {
@@ -16,6 +12,8 @@ namespace AspMVC_Monitor.Services.HostedServices
 
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAssetsLiveDataShared _assetsLiveDataShared;
+
+        protected readonly object taskTimedJobLock = new object();
 
         public AssetsDataTimedService(IServiceScopeFactory scopeFactory,
             ILogger<AssetsDataTimedService> logger,
@@ -34,7 +32,10 @@ namespace AspMVC_Monitor.Services.HostedServices
 
         protected override void TimedJob()
         {
-            _assetsLiveDataShared.UpdateAssetsLiveData().Wait();
+            lock (taskTimedJobLock)
+            {
+                _assetsLiveDataShared.UpdateAssetsLiveData().Wait();
+            }
         }
     }
 }

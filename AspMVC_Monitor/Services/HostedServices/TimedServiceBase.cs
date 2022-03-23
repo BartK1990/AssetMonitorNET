@@ -61,7 +61,6 @@ namespace AspMVC_Monitor.Services.HostedServices
         {
             try
             {
-                // ToDo do not execute if last execution is not finished (lock)
                 TimedJob();
             }
             catch (Exception e)

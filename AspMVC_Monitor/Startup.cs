@@ -1,6 +1,7 @@
 using AspMVC_Monitor.Data.Repositories;
 using AspMVC_Monitor.Models;
 using AspMVC_Monitor.Services.HostedServices;
+using AspMVC_Monitor.Services.ScopedServices;
 using AspMVC_Monitor.Services.SingletonServices;
 using AssetMonitorDataAccess.DataAccess;
 using Microsoft.AspNetCore.Builder;
@@ -38,8 +39,9 @@ namespace AspMVC_Monitor
             services.AddHostedService<AssetsDataTimedService>();
 
             // Singletion services
+            services.AddSingleton<IApplicationPropertiesService, ApplicationPropertiesService>();
             services.AddSingleton<IAssetsLiveDataShared, AssetsLiveDataShared>();
-            services.AddSingleton<IAssetsMonitor, AssetsMonitor>();
+
 
         }
 
