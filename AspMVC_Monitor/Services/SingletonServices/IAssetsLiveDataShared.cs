@@ -6,7 +6,8 @@ namespace AspMVC_Monitor.Services.SingletonServices
 {
     public interface IAssetsLiveDataShared
     {
-        public List<AssetLiveData> AssetsData { get; }
-        public Task UpdateAssetsLiveData();
+        List<AssetLiveData> AssetsData { get; }
+        Task UpdateAssetsLiveData();
+        Task UpdateAssetsSharedTagSets();
     }
 }

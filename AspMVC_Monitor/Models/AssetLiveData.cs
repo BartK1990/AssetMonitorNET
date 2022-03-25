@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AspMVC_Monitor.Models
 {
@@ -16,6 +17,26 @@ namespace AspMVC_Monitor.Models
         public string Name { get; set; }
         public string IpAddress { get; set; }
 
+        public bool InAlarm { get 
+            {
+                if(!Tags?.Any() ?? true)
+                {
+                    return false;
+                }
+
+                foreach (var tag in Tags.Values)
+                {
+                    if (tag.InAlarm)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            } 
+        }
+
         public IDictionary<int, TagLiveValue> Tags { get; set; }
+        public IDictionary<int, IDictionary<int, int>> TagsIdForSharedTagSets { get; set; }
     }
 }

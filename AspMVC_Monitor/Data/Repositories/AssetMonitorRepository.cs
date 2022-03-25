@@ -40,6 +40,13 @@ namespace AspMVC_Monitor.Data.Repositories
             return await _context.TagSharedSet.ToListAsync();
         }
 
+        public async Task<IEnumerable<TagShared>> GetTagSharedBySetIdAsync(int SetId)
+        {
+            return await _context.TagShared
+                .Where(t=>t.TagSharedSetId == SetId && t.Enable)
+                .ToListAsync();
+        }
+
         public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;

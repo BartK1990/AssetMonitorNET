@@ -96,6 +96,7 @@ namespace AssetMonitorService.gRPC.CommunicationServices
                     {
                         TagId = tag.Id,
                         Tagname = tag.Tagname,
+                        DataType = (int)tag.ValueDataType,
                         RangeMax = tag.RangeMax,
                         RangeMin = tag.RangeMin
                     });

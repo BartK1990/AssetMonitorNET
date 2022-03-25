@@ -11,7 +11,7 @@
 <body>
     <header>
         <nav class="navbar navbar-dark bg-nav-dark navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3">
-            <div class="container">
+            <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Asset Monitor NET</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -36,14 +36,14 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container-fluid">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer">
-        <div class="container">
+        <div class="container-fluid">
             &copy; 2022 - Asset Monitor NET - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

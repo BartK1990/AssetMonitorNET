@@ -6,6 +6,6 @@ namespace AspMVC_Monitor.Models
     {
         public ICollection<MonitorTagSharedSet> TagSets { get; set; }
         public ICollection<MonitorTagShared> Tags { get; set; }
-
+        public int? TagSetId { get; set; } = null;
     }
 }

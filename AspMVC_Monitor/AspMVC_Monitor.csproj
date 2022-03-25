@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Remove="Scripts\monitor.ts" />
+    <TypeScriptCompile Remove="Scripts\Monitor\SharedTagSet.ts" />
     <TypeScriptCompile Remove="Scripts\site.ts" />
   </ItemGroup>
 
@@ -46,6 +47,7 @@
 
   <ItemGroup>
     <None Include="Scripts\monitor.ts" />
+    <None Include="Scripts\Monitor\SharedTagSet.ts" />
     <None Include="Scripts\site.ts" />
   </ItemGroup>
 

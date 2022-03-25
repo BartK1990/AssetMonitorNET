@@ -45,9 +45,12 @@ namespace AssetMonitorSharedGRPC.Server
         public string Tagname { get; set; }
 
         [DataMember(Order = 3)]
-        public double? RangeMax { get; set; }
+        public int DataType { get; set; }
 
         [DataMember(Order = 4)]
+        public double? RangeMax { get; set; }
+
+        [DataMember(Order = 5)]
         public double? RangeMin { get; set; }
     }
 }

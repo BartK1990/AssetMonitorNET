@@ -19,10 +19,14 @@
     <div class="main-content bg-site-dark rounded">
         <label>Server time now: </label>
         <span id="sessionValue" class="font-italic"></span>
-        <div>
+        <div style="margin: 1rem 0 1rem 0">
+            Columns set:
             @foreach (var a in Model.TagSets)
             {
-                @Html.ActionLink(@a.Name, "Monitor", "Home", new { tagSetId = @a.Id }, null);
+                <button type="button" class="btn btn-info" style="margin-left: 0.5rem;"
+                        onclick="GetSharedTagColumns('@a.Id')">
+                    @a.Name
+                    </button>
             }
         </div>
         <table id="tableAssets" class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
@@ -31,6 +35,7 @@
                     <th>Name</th>
                     <th>IP Address</th>
                     <th>In Alarm</th>
+
                 </tr>
             </thead>
             <tbody>

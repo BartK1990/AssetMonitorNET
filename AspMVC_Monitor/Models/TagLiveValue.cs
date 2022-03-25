@@ -1,9 +1,12 @@
-﻿namespace AspMVC_Monitor.Models
+﻿using AssetMonitorDataAccess.Models.Enums;
+
+namespace AspMVC_Monitor.Models
 {
     public class TagLiveValue
     {
         public int Id { get; set; }
         public string Tagname { get; set; }
+        public TagDataTypeEnum DataType { get; set; }
         public object Value { get; set; }
         public bool InAlarm { get; set; }
         public double? RangeMax { get; set; }
