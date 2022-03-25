@@ -1,9 +1,10 @@
 ﻿//import { SharedTagSet } from "./Monitor/SharedTagSet";
 
 const SharedTagTableId: string = 'tableAssets';
-var SharedTagNumberOfColumns: number = 0;
+var SharedTagInitNumberOfColumns: number = 0;
 var TagSetId: number = null;
 var SharedTagSets: SharedTagSet[] = null;
+var SharedTagTableRows: Map<number, HTMLTableRowElement> = null;
 var GetAssetsLiveDataInterval: number = null;
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -16,7 +17,7 @@ function init() {
     timeNowTimer();
 
     var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
-    SharedTagNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
+    SharedTagInitNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
 }
 function timeNowTimer() {
     setInterval(function () {
@@ -51,8 +52,8 @@ function GetSharedTagColumns(tagSetId: number) {
                 for (var j = 0; j < rows.length; j++) {
                     var columnsLength = rows[j].cells.length;
                     for (var i = 0; i < columnsLength; i++) {
-                        if (i >= SharedTagNumberOfColumns) {
-                            rows[j].deleteCell(SharedTagNumberOfColumns);
+                        if (i >= SharedTagInitNumberOfColumns) {
+                            rows[j].deleteCell(SharedTagInitNumberOfColumns);
                         }
                     }
                 }
@@ -96,12 +97,17 @@ function GetAssetsLiveData() {
             var tableAssetsBody = tableAssets.tBodies[0];
 
             tableAssetsBody.innerHTML = '';
+            SharedTagTableRows = null;
             $.each(assetsData, function (i, assetData) {
                 var newRow = tableAssetsBody.insertRow();
+                SharedTagTableRows.set(assetData.id, newRow);
+
                 var cellName = newRow.insertCell();
                 cellName.appendChild(document.createTextNode(assetData.name));
+
                 var cellIp = newRow.insertCell();
                 cellIp.appendChild(document.createTextNode(assetData.ipAddress));
+
                 var cellInAlarm = newRow.insertCell();
                 cellInAlarm.appendChild(document.createTextNode(String(assetData.inAlarm)));
 
@@ -135,8 +141,11 @@ function GetAssetsLiveData() {
             success: function (data) {
                 var assetsData: AssetData[] = data;
                 $.each(assetsData, function (i, assetData) {
-
-
+                    var row: HTMLTableRowElement = SharedTagTableRows[assetData.id];
+                    // ToDo First 3 columns
+                    for (var i = SharedTagInitNumberOfColumns; i < row.cells.length; i++) {
+                        // ToDo Tags
+                    }
                 });
                 //$.each(data, function (i, item) {
                 //    const ps = document.getElementById(item.name + "_PingState");
@@ -183,6 +192,7 @@ interface Tag {
 }
 
 interface AssetData {
+    id: number;
     name: string;
     ipAddress: string;
     inAlarm: boolean;

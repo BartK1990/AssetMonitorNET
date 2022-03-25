@@ -96,6 +96,7 @@ namespace AspMVC_Monitor.Controllers
                 var assetJson = new assetJson();
                 assetListJson.Add(assetJson);
 
+                assetJson.id = asset.Id;
                 assetJson.name = asset.Name;
                 assetJson.ipAddress = asset.IpAddress;
                 assetJson.inAlarm = asset.InAlarm;
@@ -115,6 +116,7 @@ namespace AspMVC_Monitor.Controllers
 
         private class assetJson
         {
+            public int id { get; set; }
             public string name { get; set; }
             public string ipAddress { get; set; }
             public bool inAlarm { get; set; }

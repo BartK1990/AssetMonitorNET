@@ -1,8 +1,9 @@
 //import { SharedTagSet } from "./Monitor/SharedTagSet";
 const SharedTagTableId = 'tableAssets';
-var SharedTagNumberOfColumns = 0;
+var SharedTagInitNumberOfColumns = 0;
 var TagSetId = null;
 var SharedTagSets = null;
+var SharedTagTableRows = null;
 var GetAssetsLiveDataInterval = null;
 document.addEventListener("DOMContentLoaded", function (event) {
     init();
@@ -12,7 +13,7 @@ function init() {
     timeNowCall();
     timeNowTimer();
     var tableAssets = document.getElementById(SharedTagTableId);
-    SharedTagNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
+    SharedTagInitNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
 }
 function timeNowTimer() {
     setInterval(function () {
@@ -45,8 +46,8 @@ function GetSharedTagColumns(tagSetId) {
             for (var j = 0; j < rows.length; j++) {
                 var columnsLength = rows[j].cells.length;
                 for (var i = 0; i < columnsLength; i++) {
-                    if (i >= SharedTagNumberOfColumns) {
-                        rows[j].deleteCell(SharedTagNumberOfColumns);
+                    if (i >= SharedTagInitNumberOfColumns) {
+                        rows[j].deleteCell(SharedTagInitNumberOfColumns);
                     }
                 }
             }
@@ -82,8 +83,10 @@ function GetAssetsLiveData() {
             var tableAssets = document.getElementById(SharedTagTableId);
             var tableAssetsBody = tableAssets.tBodies[0];
             tableAssetsBody.innerHTML = '';
+            SharedTagTableRows = null;
             $.each(assetsData, function (i, assetData) {
                 var newRow = tableAssetsBody.insertRow();
+                SharedTagTableRows.set(assetData.id, newRow);
                 var cellName = newRow.insertCell();
                 cellName.appendChild(document.createTextNode(assetData.name));
                 var cellIp = newRow.insertCell();
@@ -118,6 +121,11 @@ function GetAssetsLiveData() {
             success: function (data) {
                 var assetsData = data;
                 $.each(assetsData, function (i, assetData) {
+                    var row = SharedTagTableRows[assetData.id];
+                    // ToDo First 3 columns
+                    for (var i = SharedTagInitNumberOfColumns; i < row.cells.length; i++) {
+                        // ToDo Tags
+                    }
                 });
                 //$.each(data, function (i, item) {
                 //    const ps = document.getElementById(item.name + "_PingState");
