@@ -103,16 +103,20 @@ function GetAssetsLiveData() {
                 SharedTagTableRows.set(assetData.id, newRow);
 
                 var cellName = newRow.insertCell();
+                cellName.classList.add('align-middle');
                 cellName.appendChild(document.createTextNode(assetData.name));
 
                 var cellIp = newRow.insertCell();
+                cellIp.classList.add('align-middle');
                 cellIp.appendChild(document.createTextNode(assetData.ipAddress));
 
                 var cellInAlarm = newRow.insertCell();
+                cellInAlarm.classList.add('align-middle');
                 DotForBoolean(cellInAlarm, assetData.inAlarm);
 
                 for (var i = 0; i < SharedTagSets.length; i++) {
                     var cellTag = newRow.insertCell();
+                    cellTag.classList.add('align-middle');
                     for (var j = 0; j < assetData.tags.length; j++) {
                         if (assetData.tags[j].sharedTagId == SharedTagSets[i].id)
                         {
@@ -122,8 +126,19 @@ function GetAssetsLiveData() {
                     }
                     var tagVal = tagValue.value;
                     if (tagVal != null) {
-                        if (tagValue.dataType == 'Float') {
+                        // Put value to cell
+                        if (tagValue.dataType == 'Float' ||
+                            tagValue.dataType == 'Double') {
                             tagVal = parseFloat(tagVal.toFixed(2));
+                        }
+                        if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+                            ValueBarForNumber(cellTag, tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                            continue;
+                        }
+                        if (tagValue.dataType == 'Boolean') {
+                            var bool = <boolean>tagVal;
+                            DotForBoolean(cellTag, bool);
+                            continue;
                         }
                         cellTag.appendChild(document.createTextNode(String(tagVal)));
                     }
@@ -141,33 +156,47 @@ function GetAssetsLiveData() {
             success: function (data) {
                 var assetsData: AssetData[] = data;
                 $.each(assetsData, function (i, assetData) {
-                    var row: HTMLTableRowElement = SharedTagTableRows[assetData.id];
-                    // ToDo First 3 columns
-                    for (var i = SharedTagInitNumberOfColumns; i < row.cells.length; i++) {
-                        // ToDo Tags
+                    var row: HTMLTableRowElement = SharedTagTableRows.get(assetData.id);
+                    DotForBoolean(row.cells[2], assetData.inAlarm);
+                    for (var i = 0; i < SharedTagSets.length; i++) {
+                        var cellTag = row.cells[i + SharedTagInitNumberOfColumns];
+
+                        for (var j = 0; j < assetData.tags.length; j++) {
+                            if (assetData.tags[j].sharedTagId == SharedTagSets[i].id) {
+                                var tagValue = assetData.tags[j];
+                                break;
+                            }
+                        }
+                        var tagVal = tagValue.value;
+                        if (tagVal != null) {
+                            // Put value to cell
+                            if (tagValue.dataType == 'Float' ||
+                                tagValue.dataType == 'Double') {
+                                tagVal = parseFloat(tagVal.toFixed(2));
+                            }
+                            if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+                                ValueBarForNumberUpdate(cellTag, tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                                continue;
+                            }
+                            if (tagValue.dataType == 'Boolean') {
+                                var bool = <boolean>tagVal;
+                                DotForBoolean(cellTag, bool);
+                                continue;
+                            }
+                            cellTag.innerHTML = '';
+                            cellTag.appendChild(document.createTextNode(String(tagVal)));
+                        }
                     }
                 });
-                //$.each(data, function (i, item) {
-                //    document.getElementById(item.name + "_PingResponseTime").innerHTML = item.pingResponseTime + "ms";
-
-                //    const cpu = document.getElementById(item.name + "_CpuUsage");
-                //    cpu.getElementsByClassName('valuebar-value-wrapper')[0].getElementsByClassName('valuebar-value')[0].innerHTML = item.cpuUsage + "%";
-                //    cpu.getElementsByClassName('progress')[0].getElementsByClassName('progress-bar')[0].style.width = item.cpuUsage + "%";
-
-                //    const memory = document.getElementById(item.name + "_MemoryAvailable");
-                //    memory.getElementsByClassName('valuebar-value-wrapper')[0].getElementsByClassName('valuebar-value')[0].innerHTML = item.memoryAvailable + "/" + item.memoryTotal;
-                //    memory.getElementsByClassName('progress')[0].getElementsByClassName('progress-bar')[0].style.width = item.memoryUsage + "%";
-                //});
             },
         });
     }, 10000); 
 }
 
-function DotForBoolean(cell: HTMLTableCellElement, state: Boolean) {
+function DotForBoolean(cell: HTMLTableCellElement, state: boolean) {
     if (cell == null) {
         return;
     }
-
     cell.innerHTML = '';
 
     var div = document.createElement('div');
@@ -177,18 +206,79 @@ function DotForBoolean(cell: HTMLTableCellElement, state: Boolean) {
     var span = document.createElement('span');
     span.classList.add('dot');
 
+    var spanInner = document.createElement('span');
+    spanInner.classList.add('dotTextCenterDiv');
+    spanInner.innerHTML = 'F';
+
     cell.appendChild(div);
     div.appendChild(span);
+    span.appendChild(spanInner);
     if (state == null) {
         return;
     }
 
     if (state) {
-        span.classList.add('dotBackgroundGreen');
+        span.classList.add('dotBackgroundTrue');
+        spanInner.innerHTML = 'T';
     }
-    else {
-        span.classList.add('dotBackgroundRed');
+}
+
+function ValueBarForNumber(cell: HTMLTableCellElement, value: number, rangeMax: number, rangeMin: number) {
+    if (cell == null) {
+        return;
     }
+    cell.innerHTML = '';
+
+    if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
+        cell.appendChild(document.createTextNode(String(value)));
+        return;
+    }
+
+    var divOuter = document.createElement('div');
+    divOuter.classList.add('valuebar');
+
+    var divInner1 = document.createElement('div');
+    divInner1.classList.add('valuebar-value-wrapper');
+
+    var divInner1Inner = document.createElement('div');
+    divInner1Inner.classList.add('valuebar-value');
+
+    var divInner2 = document.createElement('div');
+    divInner2.classList.add('valuebar-progress');
+    divInner2.classList.add('progress');
+
+    var divInner2Inner = document.createElement('div');
+    divInner2Inner.classList.add('progress-bar');
+    divInner2Inner.classList.add('bg-site-orange');
+    var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
+    divInner2Inner.style.width = fillProcent + '%';
+
+    cell.appendChild(divOuter);
+    divOuter.appendChild(divInner1);
+    divOuter.appendChild(divInner2);
+    divInner1.appendChild(divInner1Inner);
+    divInner2.appendChild(divInner2Inner);
+    divInner1Inner.appendChild(document.createTextNode(String(value)));
+}
+
+function ValueBarForNumberUpdate(cell: HTMLTableCellElement, value: number, rangeMax: number, rangeMin: number) {
+    if (cell == null) {
+        return;
+    }
+    
+    if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
+        cell.innerHTML = '';
+        cell.appendChild(document.createTextNode(String(value)));
+        return;
+    }
+
+    var valueBarValue: HTMLDivElement = <HTMLDivElement>cell.getElementsByClassName('valuebar-value')[0];
+    var valueBarProgress: HTMLDivElement = <HTMLDivElement>cell.getElementsByClassName('progress-bar')[0];
+
+    var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
+    valueBarProgress.style.width = fillProcent + '%';
+
+    valueBarValue.innerHTML = String(value);
 }
 
 interface SharedTagSet {

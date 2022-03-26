@@ -287,7 +287,7 @@ namespace AssetMonitorDataAccess.DataAccess
                 new TagShared() { Id = 1, TagSharedSetId = 1, Tagname = "ICMP.PingState", ColumnName = "Ping"},
                 new TagShared() { Id = 2, TagSharedSetId = 1, Tagname = "ICMP.PingResponseTime", ColumnName = "Ping Time [ms]" },
                 new TagShared() { Id = 3, TagSharedSetId = 1, Tagname = "SNMP.sysUpTime", ColumnName = "Up Time" },
-                new TagShared() { Id = 4, TagSharedSetId = 1, Tagname = "Agent.CpuUsage", ColumnName = "CPU [%]" },
+                new TagShared() { Id = 4, TagSharedSetId = 1, Tagname = "Agent.CpuUsage", ColumnName = "CPU Usage [%]" },
                 new TagShared() { Id = 5, TagSharedSetId = 1, Tagname = "Agent.MemoryAvailable", ColumnName = "Memory left [MB]" }
                );
 

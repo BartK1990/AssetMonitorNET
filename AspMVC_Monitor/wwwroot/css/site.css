@@ -181,6 +181,10 @@ body {
     background-color: var(--green);
 }
 
+.bg-site-orange {
+    background-color: var(--orange);
+}
+
 .logo-icons {
     font-size : 10rem;
     margin: 0 auto;
@@ -200,19 +204,28 @@ body {
 }
 
 .dot {
-    height: 20px;
-    width: 20px;
+    position: relative;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
     border: 1px solid var(--gray-light2);
     border-radius: 50%;
-    display: inline-block;
+    text-align: center;
+    position: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--gray-light2);
 }
 
-.dotBackgroundRed {
-    background-color: var(--red);
+.dotBackgroundTrue {
+    background-color: var(--orange);
 }
 
-.dotBackgroundGreen {
-    background-color: var(--green);
+.dotTextCenterDiv {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
 .center-div {
