@@ -83,7 +83,7 @@ function GetAssetsLiveData() {
             var tableAssets = document.getElementById(SharedTagTableId);
             var tableAssetsBody = tableAssets.tBodies[0];
             tableAssetsBody.innerHTML = '';
-            SharedTagTableRows = null;
+            SharedTagTableRows = new Map();
             $.each(assetsData, function (i, assetData) {
                 var newRow = tableAssetsBody.insertRow();
                 SharedTagTableRows.set(assetData.id, newRow);
@@ -92,11 +92,11 @@ function GetAssetsLiveData() {
                 var cellIp = newRow.insertCell();
                 cellIp.appendChild(document.createTextNode(assetData.ipAddress));
                 var cellInAlarm = newRow.insertCell();
-                cellInAlarm.appendChild(document.createTextNode(String(assetData.inAlarm)));
+                DotForBoolean(cellInAlarm, assetData.inAlarm);
                 for (var i = 0; i < SharedTagSets.length; i++) {
                     var cellTag = newRow.insertCell();
                     for (var j = 0; j < assetData.tags.length; j++) {
-                        if (assetData.tags[j].sharedTagId === SharedTagSets[i].id) {
+                        if (assetData.tags[j].sharedTagId == SharedTagSets[i].id) {
                             var tagValue = assetData.tags[j];
                             break;
                         }
@@ -128,19 +128,6 @@ function GetAssetsLiveData() {
                     }
                 });
                 //$.each(data, function (i, item) {
-                //    const ps = document.getElementById(item.name + "_PingState");
-                //    ps.innerHTML = '';
-                //    const span = document.createElement('span');
-                //    span.classList.add('dot');
-                //    var pingState = String(item.pingState).toLowerCase() === "true" ? true : false;
-                //    if (pingState) {
-                //        span.classList.add('dotBackgroundGreen');
-                //        ps.appendChild(span);
-                //    }
-                //    else {
-                //        span.classList.add('dotBackgroundRed');
-                //        ps.appendChild(span);
-                //    }
                 //    document.getElementById(item.name + "_PingResponseTime").innerHTML = item.pingResponseTime + "ms";
                 //    const cpu = document.getElementById(item.name + "_CpuUsage");
                 //    cpu.getElementsByClassName('valuebar-value-wrapper')[0].getElementsByClassName('valuebar-value')[0].innerHTML = item.cpuUsage + "%";
@@ -152,5 +139,28 @@ function GetAssetsLiveData() {
             },
         });
     }, 10000);
+}
+function DotForBoolean(cell, state) {
+    if (cell == null) {
+        return;
+    }
+    cell.innerHTML = '';
+    var div = document.createElement('div');
+    div.classList.add('d-flex');
+    div.classList.add('justify-content-center');
+    div.classList.add('align-items-center');
+    var span = document.createElement('span');
+    span.classList.add('dot');
+    cell.appendChild(div);
+    div.appendChild(span);
+    if (state == null) {
+        return;
+    }
+    if (state) {
+        span.classList.add('dotBackgroundGreen');
+    }
+    else {
+        span.classList.add('dotBackgroundRed');
+    }
 }
 //# sourceMappingURL=monitor.js.map
