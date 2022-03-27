@@ -30,6 +30,7 @@ for details on configuring this project to bundle and minify static web assets. 
     --input-bg: #4d4d4d;
     --green-bar: #309F39;
     --no-comm: #2C444C;
+    --alarm: #902934;
 }
 
 @font-face {
@@ -192,7 +193,8 @@ body {
 
 .table-alarm-indicator {
     border-style: solid;
-    border-color: var(--danger);
+    border-width: 0.25rem;
+    border-color: var(--alarm);
 }
 
 .logo-icons {
@@ -277,6 +279,18 @@ body {
 
 .valuebar-value {
 
+}
+
+.asset-table-cell {
+    padding: 0px;
+}
+
+.asset-table-cell-div-alarm {
+    margin: 0px;
+}
+
+.asset-table-cell-div-inner {
+    margin: 8px;
 }
 
 .no-hover{

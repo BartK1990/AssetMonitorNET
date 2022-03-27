@@ -112,16 +112,16 @@ function GetAssetsLiveData() {
 
                 var cellName = newRow.insertCell();
                 AssetsTablePrepareCell(cellName);
-                AssetsTableGetValueElement(cellName).appendChild(document.createTextNode(assetData.name));
+                AssetsTableText(AssetsTableGetValueElement(cellName),assetData.name);
 
                 var cellIp = newRow.insertCell();
                 AssetsTablePrepareCell(cellIp);
-                AssetsTableGetValueElement(cellIp).appendChild(document.createTextNode(assetData.ipAddress));
+                AssetsTableText(AssetsTableGetValueElement(cellIp),assetData.ipAddress);
 
                 var cellInAlarm = newRow.insertCell();
                 AssetsTablePrepareCell(cellInAlarm);
-                AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm, assetData.inAlarm);
-                DotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
+                AssetTagBackgroundStatusUpdate(cellInAlarm, assetData.inAlarm, assetData.inAlarm);
+                AssetsTableDotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
 
                 if (SharedTagSets == null) {
                     return;
@@ -129,15 +129,22 @@ function GetAssetsLiveData() {
                 for (var i = 0; i < SharedTagSets.length; i++) {
                     var cellTag = newRow.insertCell();
                     AssetsTablePrepareCell(cellTag);
+
+                    var tagValue: Tag = null;
                     for (var j = 0; j < assetData.tags.length; j++) {
                         if (assetData.tags[j].sharedTagId == SharedTagSets[i].id)
                         {
-                            var tagValue = assetData.tags[j];
+                            tagValue = assetData.tags[j];
                             break;
                         }
                     }
+
+                    if (tagValue == null) {
+                        continue;
+                    }
+
                     var tagVal = tagValue.value;
-                    AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.inAlarm);
+                    AssetTagBackgroundStatusUpdate(cellTag, tagVal, tagValue.inAlarm);
 
                     if (tagVal == null) {
                         tagVal = 0;
@@ -153,10 +160,10 @@ function GetAssetsLiveData() {
                     }
                     if (tagValue.dataType == 'Boolean') {
                         var bool = <boolean>tagVal;
-                        DotForBoolean(AssetsTableGetValueElement(cellTag), bool);
+                        AssetsTableDotForBoolean(AssetsTableGetValueElement(cellTag), bool);
                         continue;
                     }
-                    AssetsTableGetValueElement(cellTag).appendChild(document.createTextNode(String(tagVal)));
+                    AssetsTableText(AssetsTableGetValueElement(cellTag), tagVal);
                 }
             });
         },
@@ -174,8 +181,8 @@ function GetAssetsLiveData() {
                 $.each(assets.assets, function (i, assetData) {
                     var row: HTMLTableRowElement = SharedTagTableRows.get(assetData.id);
                     var cellInAlarm = row.cells[2];
-                    AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm, assetData.inAlarm);
-                    DotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
+                    AssetTagBackgroundStatusUpdate(cellInAlarm, assetData.inAlarm, assetData.inAlarm);
+                    AssetsTableDotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
 
                     if (SharedTagSets == null) {
                         return;
@@ -183,14 +190,20 @@ function GetAssetsLiveData() {
                     for (var i = 0; i < SharedTagSets.length; i++) {
                         var cellTag = row.cells[i + SharedTagInitNumberOfColumns];
 
+                        var tagValue: Tag = null;
                         for (var j = 0; j < assetData.tags.length; j++) {
                             if (assetData.tags[j].sharedTagId == SharedTagSets[i].id) {
-                                var tagValue = assetData.tags[j];
+                                tagValue = assetData.tags[j];
                                 break;
                             }
                         }
+
+                        if (tagValue == null) {
+                            continue;
+                        }
+
                         var tagVal = tagValue.value;
-                        AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.inAlarm);
+                        AssetTagBackgroundStatusUpdate(cellTag, tagVal, tagValue.inAlarm);
 
                         if (tagVal == null) {
                             continue;
@@ -206,11 +219,10 @@ function GetAssetsLiveData() {
                         }
                         if (tagValue.dataType == 'Boolean') {
                             var bool = <boolean>tagVal;
-                            DotForBoolean(AssetsTableGetValueElement(cellTag), bool);
+                            AssetsTableDotForBoolean(AssetsTableGetValueElement(cellTag), bool);
                             continue;
                         }
-                        AssetsTableGetValueElement(cellTag).innerHTML = '';
-                        AssetsTableGetValueElement(cellTag).appendChild(document.createTextNode(String(tagVal)));
+                        AssetsTableTextUpdate(AssetsTableGetValueElement(cellTag),tagVal);
                     }
                 });
             },
@@ -223,33 +235,38 @@ function AssetsTablePrepareCell(cell: HTMLTableCellElement) {
         return;
     }
     var div = document.createElement('div');
-    div.classList.add('align-middle');
-    //cell.classList.add('d-flex');
-    cell.appendChild(div);
+    var divInner = document.createElement('div');
 
-    //div.style.height = cell.offsetHeight + 'px';
+    cell.classList.add('asset-table-cell');
+    div.classList.add('asset-table-cell-div-alarm');
+    divInner.classList.add('asset-table-cell-div-inner');
+
+    cell.appendChild(div);
+    div.appendChild(divInner);
 }
 
 function AssetsTableGetValueElement(cell: HTMLTableCellElement) {
     if (cell == null) {
         return;
     }
-    var valueElem = cell.getElementsByTagName('div')[0];
+    var valueElem = cell.getElementsByTagName('div')[0].getElementsByTagName('div')[0];
     return valueElem;
 }
 
-function AssetTagBackgroundStatusUpdate(elem: HTMLElement, value, inAlarm: boolean) {
+function AssetTagBackgroundStatusUpdate(cell: HTMLTableCellElement, value, inAlarm: boolean) {
+    var alarmElem = cell.getElementsByClassName('asset-table-cell-div-alarm')[0];
+
     var noCommClassName = 'bg-site-no-comm'
     var alarmClassName = 'table-alarm-indicator'
 
-    elem.classList.remove(noCommClassName);
-    elem.classList.remove(alarmClassName);
+    alarmElem.classList.remove(noCommClassName);
+    alarmElem.classList.remove(alarmClassName);
     if (value == null) {
-        elem.classList.add(noCommClassName);
+        alarmElem.classList.add(noCommClassName);
         return;
     }
     if (inAlarm) {
-        elem.classList.add(alarmClassName);
+        alarmElem.classList.add(alarmClassName);
     }
 }
 
@@ -261,7 +278,24 @@ function AssetsStatusBarUpdate(okCnt: number, alarmCnt: number) {
     alarm.innerHTML = String(alarmCnt);
 }
 
-function DotForBoolean(elem: HTMLElement, state: boolean) {
+function AssetsTableText(elem: HTMLElement, value) {
+    if (elem == null) {
+        return;
+    }
+    var div = document.createElement('div');
+    elem.appendChild(div);
+    div.innerHTML = String(value);
+}
+
+function AssetsTableTextUpdate(elem: HTMLElement, value) {
+    if (elem == null) {
+        return;
+    }
+    var childDiv = elem.getElementsByTagName('div')[0];
+    childDiv.innerHTML = String(value);
+}
+
+function AssetsTableDotForBoolean(elem: HTMLElement, state: boolean) {
     if (elem == null) {
         return;
     }
