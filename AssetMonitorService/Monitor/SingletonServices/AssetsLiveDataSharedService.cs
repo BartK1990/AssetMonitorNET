@@ -54,7 +54,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                 {
                     // Alarms
                     List<TagAlarmValue> TagAlarmValues = null;
-                    var alarmsForTags = _assetsAlarmDataShared.AssetsData.FirstOrDefault(a => a.Id == asset.Id)?.Data;
+                    var alarmsForTags = _assetsAlarmDataShared.AssetsData?.FirstOrDefault(a => a.Id == asset.Id)?.Data;
                     if(alarmsForTags?.Any() ?? false)
                     {
                         var alarms = alarmsForTags.Keys.Where(t => t.Tagname == tagConfig.Tagname);
@@ -70,7 +70,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     // ICMP
                     var icmpTags = _assetsIcmpShared.AssetsData?.FirstOrDefault(a => a.Id == asset.Id)?.Data
                         ?.ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
-                    if(AddAssetLiveData(tags, tagConfig, TagAlarmValues, icmpTags, tagRange))
+                    if(AddAssetTagLiveData(tags, tagConfig, TagAlarmValues, icmpTags, tagRange))
                     {
                         continue;
                     }
@@ -78,7 +78,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     // Performance
                     var performanceTags = _assetsPerformanceDataShared.AssetsData?.FirstOrDefault(a => a.Id == asset.Id)?.Data
                         ?.ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
-                    if (AddAssetLiveData(tags, tagConfig, TagAlarmValues, performanceTags, tagRange))
+                    if (AddAssetTagLiveData(tags, tagConfig, TagAlarmValues, performanceTags, tagRange))
                     {
                         continue;
                     }
@@ -86,7 +86,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     // SNMP
                     var snmpTags = _assetsSnmpDataShared.AssetsData?.FirstOrDefault(a => a.Id == asset.Id)?.Data
                         ?.ToDictionary(k => (TagConfigBase)k.Key, v => v.Value) ?? null;
-                    if (AddAssetLiveData(tags, tagConfig, TagAlarmValues, snmpTags, tagRange))
+                    if (AddAssetTagLiveData(tags, tagConfig, TagAlarmValues, snmpTags, tagRange))
                     {
                         continue;
                     }
@@ -101,7 +101,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
         }
 
 #nullable enable
-        private bool AddAssetLiveData(List<TagLive> tags, Tag tagConfig, List<TagAlarmValue>? TagAlarmValues, Dictionary<TagConfigBase, TagValue> sharedTags, AssetTagRange? tagRange)
+        private bool AddAssetTagLiveData(List<TagLive> tags, Tag tagConfig, List<TagAlarmValue>? tagAlarmValues, Dictionary<TagConfigBase, TagValue> sharedTags, AssetTagRange? tagRange)
         {
             bool added = false;
             if (!sharedTags?.Any() ?? true)
@@ -120,7 +120,7 @@ namespace AssetMonitorService.Monitor.SingletonServices
                     rangeMax = tagRange.RangeMax;
                     rangeMin = tagRange.RangeMin;
                 }
-                var tagLive = new TagLive(tagConfig, sharedTags[tagKey], TagAlarmValues, rangeMin, rangeMax);
+                var tagLive = new TagLive(tagConfig, sharedTags[tagKey], tagAlarmValues, rangeMin, rangeMax);
                 tags.Add(tagLive);
                 added = true;
             }

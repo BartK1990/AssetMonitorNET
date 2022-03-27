@@ -20,7 +20,7 @@ namespace AssetMonitorService.Monitor.Model.TagConfig
                 this.RangeMax = rangeMax;
             }
             this.Value = val;
-            this.TagAlarmValues = TagAlarmValues;
+            this.TagAlarmValues = tagAlarmValues;
         }
 
         public TagValue Value { get; private set; }
