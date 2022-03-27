@@ -29,6 +29,7 @@ for details on configuring this project to bundle and minify static web assets. 
     --input-border: #666;
     --input-bg: #4d4d4d;
     --green-bar: #309F39;
+    --no-comm: #2C444C;
 }
 
 @font-face {
@@ -185,8 +186,17 @@ body {
     background-color: var(--orange);
 }
 
+.bg-site-no-comm {
+    background-color: var(--no-comm);
+}
+
+.table-alarm-indicator {
+    border-style: solid;
+    border-color: var(--danger);
+}
+
 .logo-icons {
-    font-size : 10rem;
+    font-size: 10rem;
     margin: 0 auto;
 }
 
@@ -201,6 +211,15 @@ body {
 
 .github-icon i {
     color: var(--gray-dark);
+}
+
+.status-bar-icon {
+    font-size: 2.5rem;
+    display: inline;
+}
+
+.status-bar-icon i {
+    color: var(--white);
 }
 
 .dot {
@@ -240,7 +259,7 @@ body {
 }
 
 .valuebar-progress {
-    height: 2rem;
+    height: 1.5rem;
     font-size: 1rem;
     background-color: var(--gray-dark);
 }

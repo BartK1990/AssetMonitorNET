@@ -86,32 +86,42 @@ namespace AspMVC_Monitor.Controllers
         [HttpPost]
         public IActionResult GetAssetsLiveData(int? tagSetId)
         {
-            if (tagSetId == null)
-            {
-                return Json(null);
-            }
-            var assetListJson = new List<assetJson>();
+            var assetsJ = new assetsJson();
+            assetsJ.assets = new List<assetJson>();
             foreach (var asset in _assetsLiveDataShared.AssetsData)
             {
-                var assetJson = new assetJson();
-                assetListJson.Add(assetJson);
+                var assetJ = new assetJson();
+                assetsJ.assets.Add(assetJ);
 
-                assetJson.id = asset.Id;
-                assetJson.name = asset.Name;
-                assetJson.ipAddress = asset.IpAddress;
-                assetJson.inAlarm = asset.InAlarm;
-                assetJson.tags = new List<assetTagJson>();
+                assetJ.id = asset.Id;
+                assetJ.name = asset.Name;
+                assetJ.ipAddress = asset.IpAddress;
+                assetJ.inAlarm = asset.InAlarm;
+                _ = assetJ.inAlarm ? assetsJ.inAlarmCnt++ : assetsJ.okCnt++;
+                assetJ.tags = new List<assetTagJson>();
 
+                if (tagSetId == null)
+                {
+                    continue;
+                }
                 int tagSetIdNotNull = (int)tagSetId;
                 if (asset.TagsIdForSharedTagSets.ContainsKey(tagSetIdNotNull))
                 {
                     foreach (var tagId in asset.TagsIdForSharedTagSets[tagSetIdNotNull])
                     {
-                        assetJson.tags.Add(new assetTagJson(asset.Tags[tagId.Value], tagId.Key));
+                        assetJ.tags.Add(new assetTagJson(asset.Tags[tagId.Value], tagId.Key));
                     }
                 }
             }
-            return Json(assetListJson);
+            return Json(assetsJ);
+        }
+
+        private class assetsJson
+        {
+            public int okCnt { get; set; }
+            public int inAlarmCnt { get; set; }
+
+            public List<assetJson> assets { get; set; }
         }
 
         private class assetJson

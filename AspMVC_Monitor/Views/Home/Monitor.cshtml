@@ -26,8 +26,18 @@
                 <button type="button" class="btn btn-info" style="margin-left: 0.5rem;"
                         onclick="GetSharedTagColumns('@a.Id')">
                     @a.Name
-                    </button>
+                </button>
             }
+        </div>
+        <div>
+            <div class="status-bar-icon">
+                <i class="far fa-check-circle"></i>
+                <span id="statusBarAssetsOkCnt"></span>
+            </div>
+            <div class="status-bar-icon">
+                <i class="far fa-bell"></i>
+                <span id="statusBarAssetsAlarmCnt"></span>
+            </div>
         </div>
         <table id="tableAssets" class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
             <thead>
@@ -38,46 +48,7 @@
                 </tr>
             </thead>
             <tbody>
-                @*@foreach (var a in Model)
-                    {
-                        <tr>
-                            <td class="align-middle">@a.NameUI</td>
-                            <td class="align-middle">@a.IpAddressUI</td>
-                            <td class="align-middle">
-                                <div id="@(a.NameUI)_PingState" class="d-flex justify-content-center align-items-center">
-                                    @if (a.PingState)
-                                    {
-                                        <span class="dot dotBackgroundGreen"></span>
-                                    }
-                                    else
-                                    {
-                                        <span class="dot dotBackgroundRed"></span>
-                                    }
-                                </div>
-                            </td>
-                            <td id="@(a.NameUI)_PingResponseTime" class="align-middle">@(a.PingResponseTimeUI)ms</td>
-                            <td class="align-middle">
-                                <div id="@(a.NameUI)_CpuUsage" class="valuebar">
-                                    <div class="valuebar-value-wrapper">
-                                        <div class="valuebar-value">@(a.CpuUsageUI)%</div>
-                                    </div>
-                                    <div class="valuebar-progress progress">
-                                        <div class="progress-bar bg-site-green" style="width: @(a.CpuUsageUI)%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td id="@(a.NameUI)_MemoryAvailable" class="align-middle">
-                                <div id="@(a.NameUI)_MemoryAvailable" class="valuebar">
-                                    <div class="valuebar-value-wrapper">
-                                        <div class="valuebar-value">@(a.MemoryAvailableUI)/@(a.MemoryTotalUI)</div>
-                                    </div>
-                                    <div class="valuebar-progress progress">
-                                        <div class="progress-bar bg-site-green" style="width: @(a.MemoryUsageUI)%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    }*@
+                @* Javascript generated *@
             </tbody>
         </table>
     </div>

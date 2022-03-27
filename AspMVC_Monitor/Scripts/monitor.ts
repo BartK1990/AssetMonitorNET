@@ -18,6 +18,8 @@ function init() {
 
     var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
     SharedTagInitNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
+
+    GetAssetsLiveData();
 }
 function timeNowTimer() {
     setInterval(function () {
@@ -82,41 +84,51 @@ function GetAssetsLiveData() {
     if (GetAssetsLiveDataInterval != null) {
         clearInterval(GetAssetsLiveDataInterval);
     }
-    if ((TagSetId === null) || (SharedTagSets === null)) {
-        return;
-    }
 
+    var url: string;
+    if (TagSetId != null) {
+        url = 'GetAssetsLiveData?tagSetId=' + TagSetId;
+
+    } else {
+        url = 'GetAssetsLiveData';
+    }
     // Build table
     $.ajax({
         type: 'post',
-        url: 'GetAssetsLiveData?tagSetId=' + TagSetId,
+        url: url,
         dataType: 'json',
         success: function (data) {
-            var assetsData: AssetData[] = data;
+            var assets: Assets = data;
+            AssetsStatusBarUpdate(assets.okCnt, assets.inAlarmCnt);
+
             var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
             var tableAssetsBody = tableAssets.tBodies[0];
 
             tableAssetsBody.innerHTML = '';
             SharedTagTableRows = new Map<number, HTMLTableRowElement>();
-            $.each(assetsData, function (i, assetData) {
+            $.each(assets.assets, function (i, assetData) {
                 var newRow = tableAssetsBody.insertRow();
                 SharedTagTableRows.set(assetData.id, newRow);
 
                 var cellName = newRow.insertCell();
-                cellName.classList.add('align-middle');
-                cellName.appendChild(document.createTextNode(assetData.name));
+                AssetsTablePrepareCell(cellName);
+                AssetsTableGetValueElement(cellName).appendChild(document.createTextNode(assetData.name));
 
                 var cellIp = newRow.insertCell();
-                cellIp.classList.add('align-middle');
-                cellIp.appendChild(document.createTextNode(assetData.ipAddress));
+                AssetsTablePrepareCell(cellIp);
+                AssetsTableGetValueElement(cellIp).appendChild(document.createTextNode(assetData.ipAddress));
 
                 var cellInAlarm = newRow.insertCell();
-                cellInAlarm.classList.add('align-middle');
-                DotForBoolean(cellInAlarm, assetData.inAlarm);
+                AssetsTablePrepareCell(cellInAlarm);
+                AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm, assetData.inAlarm);
+                DotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
 
+                if (SharedTagSets == null) {
+                    return;
+                }
                 for (var i = 0; i < SharedTagSets.length; i++) {
                     var cellTag = newRow.insertCell();
-                    cellTag.classList.add('align-middle');
+                    AssetsTablePrepareCell(cellTag);
                     for (var j = 0; j < assetData.tags.length; j++) {
                         if (assetData.tags[j].sharedTagId == SharedTagSets[i].id)
                         {
@@ -125,23 +137,26 @@ function GetAssetsLiveData() {
                         }
                     }
                     var tagVal = tagValue.value;
-                    if (tagVal != null) {
-                        // Put value to cell
-                        if (tagValue.dataType == 'Float' ||
-                            tagValue.dataType == 'Double') {
-                            tagVal = parseFloat(tagVal.toFixed(2));
-                        }
-                        if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
-                            ValueBarForNumber(cellTag, tagVal, tagValue.rangeMax, tagValue.rangeMin);
-                            continue;
-                        }
-                        if (tagValue.dataType == 'Boolean') {
-                            var bool = <boolean>tagVal;
-                            DotForBoolean(cellTag, bool);
-                            continue;
-                        }
-                        cellTag.appendChild(document.createTextNode(String(tagVal)));
+                    AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.inAlarm);
+
+                    if (tagVal == null) {
+                        tagVal = 0;
                     }
+                    // Put value to cell
+                    if (tagValue.dataType == 'Float' ||
+                        tagValue.dataType == 'Double') {
+                        tagVal = parseFloat(tagVal.toFixed(2));
+                    }
+                    if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+                        ValueBarForNumber(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                        continue;
+                    }
+                    if (tagValue.dataType == 'Boolean') {
+                        var bool = <boolean>tagVal;
+                        DotForBoolean(AssetsTableGetValueElement(cellTag), bool);
+                        continue;
+                    }
+                    AssetsTableGetValueElement(cellTag).appendChild(document.createTextNode(String(tagVal)));
                 }
             });
         },
@@ -151,13 +166,20 @@ function GetAssetsLiveData() {
     GetAssetsLiveDataInterval = setInterval(function () {
         $.ajax({
             type: 'post',
-            url: 'GetAssetsLiveData?tagSetId=' + TagSetId,
+            url: url,
             dataType: 'json',
             success: function (data) {
-                var assetsData: AssetData[] = data;
-                $.each(assetsData, function (i, assetData) {
+                var assets: Assets = data;
+                AssetsStatusBarUpdate(assets.okCnt, assets.inAlarmCnt);
+                $.each(assets.assets, function (i, assetData) {
                     var row: HTMLTableRowElement = SharedTagTableRows.get(assetData.id);
-                    DotForBoolean(row.cells[2], assetData.inAlarm);
+                    var cellInAlarm = row.cells[2];
+                    AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm, assetData.inAlarm);
+                    DotForBoolean(AssetsTableGetValueElement(cellInAlarm), assetData.inAlarm);
+
+                    if (SharedTagSets == null) {
+                        return;
+                    }
                     for (var i = 0; i < SharedTagSets.length; i++) {
                         var cellTag = row.cells[i + SharedTagInitNumberOfColumns];
 
@@ -168,24 +190,27 @@ function GetAssetsLiveData() {
                             }
                         }
                         var tagVal = tagValue.value;
-                        if (tagVal != null) {
-                            // Put value to cell
-                            if (tagValue.dataType == 'Float' ||
-                                tagValue.dataType == 'Double') {
-                                tagVal = parseFloat(tagVal.toFixed(2));
-                            }
-                            if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
-                                ValueBarForNumberUpdate(cellTag, tagVal, tagValue.rangeMax, tagValue.rangeMin);
-                                continue;
-                            }
-                            if (tagValue.dataType == 'Boolean') {
-                                var bool = <boolean>tagVal;
-                                DotForBoolean(cellTag, bool);
-                                continue;
-                            }
-                            cellTag.innerHTML = '';
-                            cellTag.appendChild(document.createTextNode(String(tagVal)));
+                        AssetTagBackgroundStatusUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.inAlarm);
+
+                        if (tagVal == null) {
+                            continue;
                         }
+                        // Put value to cell
+                        if (tagValue.dataType == 'Float' ||
+                            tagValue.dataType == 'Double') {
+                            tagVal = parseFloat(tagVal.toFixed(2));
+                        }
+                        if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+                            ValueBarForNumberUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                            continue;
+                        }
+                        if (tagValue.dataType == 'Boolean') {
+                            var bool = <boolean>tagVal;
+                            DotForBoolean(AssetsTableGetValueElement(cellTag), bool);
+                            continue;
+                        }
+                        AssetsTableGetValueElement(cellTag).innerHTML = '';
+                        AssetsTableGetValueElement(cellTag).appendChild(document.createTextNode(String(tagVal)));
                     }
                 });
             },
@@ -193,11 +218,54 @@ function GetAssetsLiveData() {
     }, 10000); 
 }
 
-function DotForBoolean(cell: HTMLTableCellElement, state: boolean) {
+function AssetsTablePrepareCell(cell: HTMLTableCellElement) {
     if (cell == null) {
         return;
     }
-    cell.innerHTML = '';
+    var div = document.createElement('div');
+    div.classList.add('align-middle');
+    //cell.classList.add('d-flex');
+    cell.appendChild(div);
+
+    //div.style.height = cell.offsetHeight + 'px';
+}
+
+function AssetsTableGetValueElement(cell: HTMLTableCellElement) {
+    if (cell == null) {
+        return;
+    }
+    var valueElem = cell.getElementsByTagName('div')[0];
+    return valueElem;
+}
+
+function AssetTagBackgroundStatusUpdate(elem: HTMLElement, value, inAlarm: boolean) {
+    var noCommClassName = 'bg-site-no-comm'
+    var alarmClassName = 'table-alarm-indicator'
+
+    elem.classList.remove(noCommClassName);
+    elem.classList.remove(alarmClassName);
+    if (value == null) {
+        elem.classList.add(noCommClassName);
+        return;
+    }
+    if (inAlarm) {
+        elem.classList.add(alarmClassName);
+    }
+}
+
+function AssetsStatusBarUpdate(okCnt: number, alarmCnt: number) {
+    var ok = document.getElementById('statusBarAssetsOkCnt');
+    var alarm = document.getElementById('statusBarAssetsAlarmCnt');
+
+    ok.innerHTML = String(okCnt);
+    alarm.innerHTML = String(alarmCnt);
+}
+
+function DotForBoolean(elem: HTMLElement, state: boolean) {
+    if (elem == null) {
+        return;
+    }
+    elem.innerHTML = '';
 
     var div = document.createElement('div');
     div.classList.add('d-flex');
@@ -210,7 +278,7 @@ function DotForBoolean(cell: HTMLTableCellElement, state: boolean) {
     spanInner.classList.add('dotTextCenterDiv');
     spanInner.innerHTML = 'F';
 
-    cell.appendChild(div);
+    elem.appendChild(div);
     div.appendChild(span);
     span.appendChild(spanInner);
     if (state == null) {
@@ -223,14 +291,14 @@ function DotForBoolean(cell: HTMLTableCellElement, state: boolean) {
     }
 }
 
-function ValueBarForNumber(cell: HTMLTableCellElement, value: number, rangeMax: number, rangeMin: number) {
-    if (cell == null) {
+function ValueBarForNumber(elem: HTMLElement, value: number, rangeMax: number, rangeMin: number) {
+    if (elem == null) {
         return;
     }
-    cell.innerHTML = '';
+    elem.innerHTML = '';
 
     if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
-        cell.appendChild(document.createTextNode(String(value)));
+        elem.appendChild(document.createTextNode(String(value)));
         return;
     }
 
@@ -253,7 +321,7 @@ function ValueBarForNumber(cell: HTMLTableCellElement, value: number, rangeMax: 
     var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
     divInner2Inner.style.width = fillProcent + '%';
 
-    cell.appendChild(divOuter);
+    elem.appendChild(divOuter);
     divOuter.appendChild(divInner1);
     divOuter.appendChild(divInner2);
     divInner1.appendChild(divInner1Inner);
@@ -261,19 +329,19 @@ function ValueBarForNumber(cell: HTMLTableCellElement, value: number, rangeMax: 
     divInner1Inner.appendChild(document.createTextNode(String(value)));
 }
 
-function ValueBarForNumberUpdate(cell: HTMLTableCellElement, value: number, rangeMax: number, rangeMin: number) {
-    if (cell == null) {
+function ValueBarForNumberUpdate(elem: HTMLElement, value: number, rangeMax: number, rangeMin: number) {
+    if (elem == null) {
         return;
     }
     
     if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
-        cell.innerHTML = '';
-        cell.appendChild(document.createTextNode(String(value)));
+        elem.innerHTML = '';
+        elem.appendChild(document.createTextNode(String(value)));
         return;
     }
 
-    var valueBarValue: HTMLDivElement = <HTMLDivElement>cell.getElementsByClassName('valuebar-value')[0];
-    var valueBarProgress: HTMLDivElement = <HTMLDivElement>cell.getElementsByClassName('progress-bar')[0];
+    var valueBarValue: HTMLDivElement = <HTMLDivElement>elem.getElementsByClassName('valuebar-value')[0];
+    var valueBarProgress: HTMLDivElement = <HTMLDivElement>elem.getElementsByClassName('progress-bar')[0];
 
     var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
     valueBarProgress.style.width = fillProcent + '%';
@@ -302,4 +370,10 @@ interface AssetData {
     ipAddress: string;
     inAlarm: boolean;
     tags: Tag[];
+}
+
+interface Assets {
+    okCnt: number;
+    inAlarmCnt: number;
+    assets: AssetData[];
 }
