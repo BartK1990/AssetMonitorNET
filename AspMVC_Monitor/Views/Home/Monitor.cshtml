@@ -17,8 +17,6 @@
         </div>
     </div>
     <div class="main-content bg-site-dark rounded">
-        <label>Server time now: </label>
-        <span id="sessionValue" class="font-italic"></span>
         <div style="margin: 1rem 0 1rem 0">
             Columns set:
             @foreach (var a in Model.TagSets)
@@ -32,14 +30,20 @@
         <div>
             <div class="status-bar-icon">
                 <i class="far fa-check-circle"></i>
-                <span id="statusBarAssetsOkCnt"></span>
+                <button type="button" class="btn btn-success">
+                    Ok 
+                    <span class="badge badge-light" id="statusBarAssetsOkCnt"></span>
+                </button>
             </div>
             <div class="status-bar-icon">
                 <i class="far fa-bell"></i>
-                <span id="statusBarAssetsAlarmCnt"></span>
+                <button type="button" class="btn btn-danger">
+                    Alarm
+                    <span class="badge badge-light" id="statusBarAssetsAlarmCnt"></span>
+                </button>
             </div>
         </div>
-        <table id="tableAssets" class="table bg-site-dark table-dark table-bordered table-responsive table-hover">
+        <table id="tableAssets" class="asset-table table bg-site-dark table-dark table-bordered table-responsive table-hover">
             <thead>
                 <tr class="bg-nav-dark no-hover">
                     <th>Name</th>

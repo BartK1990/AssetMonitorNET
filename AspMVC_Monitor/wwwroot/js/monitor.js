@@ -6,35 +6,12 @@ var SharedTagSets = null;
 var SharedTagTableRows = null;
 var GetAssetsLiveDataInterval = null;
 document.addEventListener("DOMContentLoaded", function (event) {
-    init();
+    initMonitor();
 });
-function init() {
-    $("#sessionValue").text("00.00.0000 00:00:00");
-    timeNowCall();
-    timeNowTimer();
+function initMonitor() {
     var tableAssets = document.getElementById(SharedTagTableId);
     SharedTagInitNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
     GetAssetsLiveData();
-}
-function timeNowTimer() {
-    setInterval(function () {
-        $.ajax({
-            type: 'post',
-            url: 'GetServerTime',
-            success: function (result) {
-                $("#sessionValue").text(result.data);
-            }
-        });
-    }, 1000);
-}
-function timeNowCall() {
-    $.ajax({
-        type: 'post',
-        url: 'GetServerTime',
-        success: function (result) {
-            $("#sessionValue").text(result.data);
-        }
-    });
 }
 function GetSharedTagColumns(tagSetId) {
     $.ajax({
@@ -204,7 +181,6 @@ function AssetsTablePrepareCell(cell) {
     }
     var div = document.createElement('div');
     var divInner = document.createElement('div');
-    cell.classList.add('asset-table-cell');
     div.classList.add('asset-table-cell-div-alarm');
     divInner.classList.add('asset-table-cell-div-inner');
     cell.appendChild(div);

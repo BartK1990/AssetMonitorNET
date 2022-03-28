@@ -1,4 +1,29 @@
-// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-// Write your JavaScript code.
+document.addEventListener("DOMContentLoaded", function (event) {
+    initTimeNow();
+});
+function initTimeNow() {
+    $("#sessionValue").text("00.00.0000 00:00:00");
+    timeNowCall();
+    timeNowTimer();
+}
+function timeNowTimer() {
+    setInterval(function () {
+        $.ajax({
+            type: 'post',
+            url: '/Home/GetServerTime',
+            success: function (result) {
+                $("#sessionValue").text(result.data);
+            }
+        });
+    }, 1000);
+}
+function timeNowCall() {
+    $.ajax({
+        type: 'post',
+        url: '/Home/GetServerTime',
+        success: function (result) {
+            $("#sessionValue").text(result.data);
+        }
+    });
+}
 //# sourceMappingURL=site.js.map

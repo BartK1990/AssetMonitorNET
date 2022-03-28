@@ -1,4 +1,5 @@
-﻿using AspMVC_Monitor.Data.Repositories;
+﻿using AspMVC_Monitor.Controllers.Json;
+using AspMVC_Monitor.Data.Repositories;
 using AspMVC_Monitor.Models;
 using AspMVC_Monitor.Services.SingletonServices;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace AspMVC_Monitor.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
@@ -114,46 +115,6 @@ namespace AspMVC_Monitor.Controllers
                 }
             }
             return Json(assetsJ);
-        }
-
-        private class assetsJson
-        {
-            public int okCnt { get; set; }
-            public int inAlarmCnt { get; set; }
-
-            public List<assetJson> assets { get; set; }
-        }
-
-        private class assetJson
-        {
-            public int id { get; set; }
-            public string name { get; set; }
-            public string ipAddress { get; set; }
-            public bool inAlarm { get; set; }
-
-            public List<assetTagJson> tags { get; set; }
-        }
-
-        private class assetTagJson
-        {
-            public assetTagJson(TagLiveValue tag, int sharedId)
-            {
-                this.sharedTagId = sharedId;
-                this.tagname = tag.Tagname;
-                this.dataType = tag.DataType.ToString();
-                this.value = tag.Value;
-                this.inAlarm = tag.InAlarm;
-                this.rangeMax = tag.RangeMax;
-                this.rangeMin = tag.RangeMin;
-            }
-
-            public int sharedTagId { get; set; }
-            public string tagname { get; set; }
-            public string dataType { get; set; }
-            public object value { get; set; }
-            public bool inAlarm { get; set; }
-            public double? rangeMax { get; set; }
-            public double? rangeMin { get; set; }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

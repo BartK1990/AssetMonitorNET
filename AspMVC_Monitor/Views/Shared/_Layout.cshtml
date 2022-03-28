@@ -24,7 +24,10 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Monitor">Monitor</a>
-                        </li>                        
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Details" asp-action="Index">Asset</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Configuration" asp-action="Index">Configuration</a>
                         </li>
@@ -33,6 +36,8 @@
                         </li>
                     </ul>
                 </div>
+                <span>Server time: </span>
+                <span id="sessionValue" class="font-italic" style="margin-left: 1rem;"></span>
             </div>
         </nav>
     </header>
