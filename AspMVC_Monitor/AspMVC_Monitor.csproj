@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <TypeScriptCompile Remove="Scripts\monitor.ts" />
+    <TypeScriptCompile Remove="Scripts\Monitor\assetData.ts" />
+    <TypeScriptCompile Remove="Scripts\Monitor\assets.ts" />
     <TypeScriptCompile Remove="Scripts\Monitor\SharedTagSet.ts" />
+    <TypeScriptCompile Remove="Scripts\Monitor\tag.ts" />
     <TypeScriptCompile Remove="Scripts\site.ts" />
   </ItemGroup>
 
@@ -42,12 +45,14 @@
   <ItemGroup>
     <Folder Include="Controllers\Configuration\" />
     <Folder Include="Views\Configuration\" />
-    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Scripts\monitor.ts" />
-    <None Include="Scripts\Monitor\SharedTagSet.ts" />
+    <None Include="Scripts\Monitor\assets.ts" />
+    <None Include="Scripts\Monitor\assetData.ts" />
+    <None Include="Scripts\Monitor\tag.ts" />
+    <None Include="Scripts\Monitor\sharedTagSet.ts" />
     <None Include="Scripts\site.ts" />
   </ItemGroup>
 
