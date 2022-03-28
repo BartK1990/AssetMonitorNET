@@ -1,3 +1,4 @@
+import * as TableAsset from "./Monitor/tableAsset.js";
 var Monitor;
 (function (Monitor) {
     const SharedTagTableId = 'tableAssets';
@@ -168,7 +169,7 @@ var Monitor;
                                 tagVal = parseFloat(tagVal.toFixed(2));
                             }
                             if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
-                                ValueBarForNumberUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                                TableAsset.ValueBarForNumberUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
                                 continue;
                             }
                             if (tagValue.dataType == 'Boolean') {
@@ -299,22 +300,5 @@ var Monitor;
         divInner1Inner.appendChild(document.createTextNode(String(value)));
     }
     Monitor.ValueBarForNumber = ValueBarForNumber;
-    function ValueBarForNumberUpdate(elem, value, rangeMax, rangeMin) {
-        if (elem == null) {
-            return;
-        }
-        if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
-            elem.innerHTML = '';
-            elem.appendChild(document.createTextNode(String(value)));
-            return;
-        }
-        var valueBarValue = elem.getElementsByClassName('valuebar-value')[0];
-        var valueBarProgress = elem.getElementsByClassName('progress-bar')[0];
-        var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
-        valueBarProgress.style.width = fillProcent + '%';
-        valueBarValue.innerHTML = String(value);
-    }
-    Monitor.ValueBarForNumberUpdate = ValueBarForNumberUpdate;
 })(Monitor || (Monitor = {}));
-export {};
 //# sourceMappingURL=monitor.js.map

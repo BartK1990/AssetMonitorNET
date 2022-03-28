@@ -1,6 +1,7 @@
 ﻿import { SharedTagSet } from "./Monitor/sharedTagSet";
 import { Tag } from "./Monitor/tag";
 import { Assets } from "./Monitor/assets";
+import * as TableAsset from "./Monitor/tableAsset.js";
 
 module Monitor {
 
@@ -201,7 +202,7 @@ module Monitor {
                                 tagVal = parseFloat(tagVal.toFixed(2));
                             }
                             if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
-                                ValueBarForNumberUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+                                TableAsset.ValueBarForNumberUpdate(AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
                                 continue;
                             }
                             if (tagValue.dataType == 'Boolean') {
@@ -347,26 +348,6 @@ module Monitor {
         divInner1.appendChild(divInner1Inner);
         divInner2.appendChild(divInner2Inner);
         divInner1Inner.appendChild(document.createTextNode(String(value)));
-    }
-
-    export function ValueBarForNumberUpdate(elem: HTMLElement, value: number, rangeMax: number, rangeMin: number) {
-        if (elem == null) {
-            return;
-        }
-
-        if ((rangeMax <= rangeMin) || (value < rangeMin) || (value > rangeMax)) {
-            elem.innerHTML = '';
-            elem.appendChild(document.createTextNode(String(value)));
-            return;
-        }
-
-        var valueBarValue: HTMLDivElement = <HTMLDivElement>elem.getElementsByClassName('valuebar-value')[0];
-        var valueBarProgress: HTMLDivElement = <HTMLDivElement>elem.getElementsByClassName('progress-bar')[0];
-
-        var fillProcent = ((value - rangeMin) / (rangeMax - rangeMin)) * 100;
-        valueBarProgress.style.width = fillProcent + '%';
-
-        valueBarValue.innerHTML = String(value);
     }
 
 }
