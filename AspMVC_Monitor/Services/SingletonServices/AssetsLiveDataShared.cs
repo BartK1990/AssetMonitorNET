@@ -175,5 +175,30 @@ namespace AspMVC_Monitor.Services.SingletonServices
                 _logger.LogDebug($"Exception: {ex.Message}");
             }
         }
+
+        public async Task UpdateAssetSnmpData(int assetId)
+        {
+            try
+            {
+                var client = GrpcHelper<IAssetMonitorDataService>.CreateSecureClient(IPAddress.Loopback.ToString(), TcpPort);
+
+                var reply = await client.UpdateAssetSnmpValuesById(
+                    new AssetSnmpUpdateCommandRequest { AssetId = assetId });
+                if (reply.Success)
+                {
+                    _logger.LogInformation($"Updating asset (Id: [{assetId}]) SNMP values success");
+                }
+                else
+                {
+                    _logger.LogInformation($"Updating asset (Id: [{assetId}]) SNMP values failure");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Cannot update SNMP data in Asset Monitor service");
+                _logger.LogDebug($"Exception: {ex.Message}");
+            }
+        }
     }
 }

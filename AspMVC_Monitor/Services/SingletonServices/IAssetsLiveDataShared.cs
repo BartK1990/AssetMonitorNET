@@ -9,5 +9,6 @@ namespace AspMVC_Monitor.Services.SingletonServices
         List<AssetLiveData> AssetsData { get; }
         Task UpdateAssetsLiveData();
         Task UpdateAssetsSharedTagSets();
+        Task UpdateAssetSnmpData(int assetId);
     }
 }

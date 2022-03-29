@@ -1,4 +1,6 @@
-﻿export module TableAsset {
+﻿import { Tag } from "./tag";
+
+export module TableAsset {
 
     export function ValueBarForNumberUpdate(elem: HTMLElement, value: number, rangeMax: number, rangeMin: number) {
         if (elem == null) {
@@ -154,6 +156,46 @@
         divInner1.appendChild(divInner1Inner);
         divInner2.appendChild(divInner2Inner);
         divInner1Inner.appendChild(document.createTextNode(String(value)));
+    }
+
+    export function UpdateTagValue(cellTag: HTMLTableCellElement, tagValue: Tag, updateFlag: boolean) {
+        if (tagValue == null) {
+            return;
+        }
+        var tagVal = tagValue.value;
+
+        TableAsset.AssetTagBackgroundStatusUpdate(cellTag, tagVal, tagValue.inAlarm);
+
+        if (tagVal == null) {
+            if (updateFlag) {
+                return;
+            } else {
+                tagVal = 0;
+            }
+        }
+
+        if (tagValue.dataType == 'Float' ||
+            tagValue.dataType == 'Double') {
+            tagVal = parseFloat(tagVal.toFixed(2));
+        }
+        if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+            if (updateFlag) {
+                TableAsset.ValueBarForNumberUpdate(TableAsset.AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+            } else {
+                TableAsset.ValueBarForNumber(TableAsset.AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+            }
+            return;
+        }
+        if (tagValue.dataType == 'Boolean') {
+            var bool = <boolean>tagVal;
+            TableAsset.AssetsTableDotForBoolean(TableAsset.AssetsTableGetValueElement(cellTag), bool);
+            return;
+        }
+        if (updateFlag) {
+            TableAsset.AssetsTableTextUpdate(TableAsset.AssetsTableGetValueElement(cellTag), tagVal);
+        } else {
+            TableAsset.AssetsTableText(TableAsset.AssetsTableGetValueElement(cellTag), tagVal);
+        }
     }
 
 }

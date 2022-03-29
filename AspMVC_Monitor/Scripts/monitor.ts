@@ -86,6 +86,11 @@ module Monitor {
             dataType: 'json',
             success: function (data) {
                 var assets: Assets = data;
+
+                if (assets.assets.length <= 0) {
+                    return;
+                }
+
                 TableAsset.AssetsStatusBarUpdate(assets.okCnt, assets.inAlarmCnt);
 
                 var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
@@ -98,7 +103,18 @@ module Monitor {
                     SharedTagTableRows.set(assetData.id, newRow);
 
                     var cellName = TableAsset.AssetsTablePrepareCell(newRow);
-                    TableAsset.AssetsTableText(TableAsset.AssetsTableGetValueElement(cellName), assetData.name);
+                    // Button to redirect
+                    var elemName = TableAsset.AssetsTableGetValueElement(cellName);
+                    var buttonAssetName = document.createElement('button');
+                    buttonAssetName.classList.add('btn');
+                    buttonAssetName.classList.add('btn-secondary');
+                    buttonAssetName.value = String(assetData.id);
+                    buttonAssetName.innerHTML = assetData.name;
+                    elemName.appendChild(buttonAssetName);
+
+                    buttonAssetName.addEventListener('click', function () {
+                        window.location.href = '/Details/Index?assetId=' + assetData.id;
+                    });
 
                     var cellIp = TableAsset.AssetsTablePrepareCell(newRow);
                     TableAsset.AssetsTableText(TableAsset.AssetsTableGetValueElement(cellIp), assetData.ipAddress);

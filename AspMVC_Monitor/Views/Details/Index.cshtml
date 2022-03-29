@@ -17,15 +17,42 @@
     </div>
 
     <div class="main-content bg-site-dark rounded">
-        <select class="form-select">
-            @foreach (var asset in Model.Assets)
-            {
-                <option value="@asset.Id">@asset.Name</option>
-            }
-        </select>
-        <input type="submit" class="btn btn-info" value="Select" />
+        <div style="margin: 1rem 0 1rem 0;">
+            <select id="selectAsset" class="form-select">
+                @foreach (var asset in Model.Assets)
+                {
+                    @if (Model.AssetId == asset.Id)
+                    {
+                        <option value="@asset.Id" selected>@asset.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@asset.Id">@asset.Name</option>
+                    }
+                }
+            </select>
+            <input id="submitSelectAsset" type="submit" class="btn btn-info" value="Select"
+                   style="margin-left: 1rem;" />
+            <button id="buttonGetSnmpData" type="button" class="btn btn-secondary"
+                    style="margin-left: 1rem;">
+                Get SNMP
+            </button>
+        </div>
 
-        <p id="paragraphAsset"></p>
+        <div>
+            <table id="tableAssetInfo" class="asset-table table bg-site-dark table-dark table-bordered table-responsive table-hover">
+                <thead>
+                    <tr class="bg-nav-dark no-hover">
+                        <th>Name</th>
+                        <th>IP Address</th>
+                        <th>Alarm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Javascript generated *@
+                </tbody>
+            </table>
+        </div>
 
         <table id="tableAsset" class="asset-table table bg-site-dark table-dark table-bordered table-responsive table-hover">
             <thead>

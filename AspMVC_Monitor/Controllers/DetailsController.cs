@@ -27,13 +27,13 @@ namespace AspMVC_Monitor.Controllers
             this._assetsLiveDataShared = assetsLiveDataShared;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? assetId)
         {
-            var viewModel = new DetailsViewModel();
+            var viewModel = new DetailsViewModel() { AssetId = assetId };
             var assets = new List<DetailsAsset>();
             assets.AddRange(_assetsLiveDataShared.AssetsData
                 .Select(a => new DetailsAsset() { Id = a.Id, Name = a.Name }));
-
+            
             viewModel.Assets = assets;
             return View(viewModel);
         }
@@ -62,6 +62,7 @@ namespace AspMVC_Monitor.Controllers
             assetJ.tags.AddRange(asset.Tags.Values
                 .Select(tag => new assetTagJson()
                 {
+                    id = tag.Id,
                     tagname = tag.Tagname,
                     dataType = tag.DataType.ToString(),
                     value = tag.Value,
@@ -71,6 +72,16 @@ namespace AspMVC_Monitor.Controllers
                 }));
 
             return Json(assetJ);
+        }
+
+        [HttpPost]
+        public void UpdateAssetSnmpData(int? assetId)
+        {
+            if(assetId == null)
+            {
+                return;
+            }
+            _assetsLiveDataShared.UpdateAssetSnmpData((int)assetId);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

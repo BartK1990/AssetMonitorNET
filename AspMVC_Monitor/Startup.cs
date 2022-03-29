@@ -80,7 +80,7 @@ namespace AspMVC_Monitor
                     pattern: "{controller=Configuration}/{action=Index}/{id?}",
                     defaults: new { controller = "Configuration", action = "Index" });
                 endpoints.MapControllerRoute(
-                    name: "Details",
+                    name: "details",
                     pattern: "{controller=Details}/{action=Index}/{id?}",
                     defaults: new { controller = "Details", action = "Index" });
             });

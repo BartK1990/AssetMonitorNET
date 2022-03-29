@@ -7,6 +7,7 @@ namespace AspMVC_Monitor.Models
 {
     public class DetailsViewModel
     {
+        public int? AssetId { get; set; }
         public ICollection<DetailsAsset> Assets { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace AspMVC_Monitor.Controllers.Json
         public assetTagJson(TagLiveValue tag, int sharedId)
         {
             sharedTagId = sharedId;
+            id = tag.Id;
             tagname = tag.Tagname;
             dataType = tag.DataType.ToString();
             value = tag.Value;
@@ -19,6 +20,7 @@ namespace AspMVC_Monitor.Controllers.Json
             rangeMin = tag.RangeMin;
         }
 
+        public int id { get; set; }
         public int sharedTagId { get; set; }
         public string tagname { get; set; }
         public string dataType { get; set; }

@@ -134,5 +134,45 @@ export var TableAsset;
         divInner1Inner.appendChild(document.createTextNode(String(value)));
     }
     TableAsset.ValueBarForNumber = ValueBarForNumber;
+    function UpdateTagValue(cellTag, tagValue, updateFlag) {
+        if (tagValue == null) {
+            return;
+        }
+        var tagVal = tagValue.value;
+        TableAsset.AssetTagBackgroundStatusUpdate(cellTag, tagVal, tagValue.inAlarm);
+        if (tagVal == null) {
+            if (updateFlag) {
+                return;
+            }
+            else {
+                tagVal = 0;
+            }
+        }
+        if (tagValue.dataType == 'Float' ||
+            tagValue.dataType == 'Double') {
+            tagVal = parseFloat(tagVal.toFixed(2));
+        }
+        if (tagValue.rangeMax != null && tagValue.rangeMin != null) {
+            if (updateFlag) {
+                TableAsset.ValueBarForNumberUpdate(TableAsset.AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+            }
+            else {
+                TableAsset.ValueBarForNumber(TableAsset.AssetsTableGetValueElement(cellTag), tagVal, tagValue.rangeMax, tagValue.rangeMin);
+            }
+            return;
+        }
+        if (tagValue.dataType == 'Boolean') {
+            var bool = tagVal;
+            TableAsset.AssetsTableDotForBoolean(TableAsset.AssetsTableGetValueElement(cellTag), bool);
+            return;
+        }
+        if (updateFlag) {
+            TableAsset.AssetsTableTextUpdate(TableAsset.AssetsTableGetValueElement(cellTag), tagVal);
+        }
+        else {
+            TableAsset.AssetsTableText(TableAsset.AssetsTableGetValueElement(cellTag), tagVal);
+        }
+    }
+    TableAsset.UpdateTagValue = UpdateTagValue;
 })(TableAsset || (TableAsset = {}));
 //# sourceMappingURL=tableAsset.js.map
