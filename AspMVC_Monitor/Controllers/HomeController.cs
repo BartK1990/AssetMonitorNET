@@ -34,6 +34,11 @@ namespace AspMVC_Monitor.Controllers
             return View();
         }
 
+        public IActionResult Configuration()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

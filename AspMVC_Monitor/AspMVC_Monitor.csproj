@@ -43,10 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Configuration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Scripts\monitor.ts" />
     <None Include="Scripts\Monitor\assets.ts" />
     <None Include="Scripts\Monitor\assetData.ts" />
