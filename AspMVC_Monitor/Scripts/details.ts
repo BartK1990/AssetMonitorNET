@@ -1,7 +1,11 @@
 ﻿import { AssetData } from "./Monitor/assetData";
 import { TableAsset } from "./Monitor/tableAsset.js";
+import { Site } from "./site.js"
 
 module Details {
+
+    var RazorUrlDetailsGetAssetLiveData_assetId: string;
+    var RazorUrlDetailsUpdateAssetSnmpData_assetId: string;
 
     const ScanTimeNewAssetValues: number = 10000;
     const TagTableHtmlId = 'tableAsset';
@@ -19,6 +23,11 @@ module Details {
     });
 
     function initDetails() {
+        // Razor Urls
+        RazorUrlDetailsGetAssetLiveData_assetId = document.getElementById('RazorUrlDetailsGetAssetLiveData_assetId').getAttribute('data');
+        RazorUrlDetailsUpdateAssetSnmpData_assetId = document.getElementById('RazorUrlDetailsUpdateAssetSnmpData_assetId').getAttribute('data');
+
+        // Init part
         SetAssetId();
 
         var assetSelectSubmit = document.getElementById(AssetSelectSubmitHtmlId);
@@ -49,7 +58,7 @@ module Details {
             return;
         }
 
-        var url: string = '/Details/UpdateAssetSnmpData?assetId=' + AssetId;
+        var url: string = Site.UrlActionWithParameter(RazorUrlDetailsUpdateAssetSnmpData_assetId, AssetId);
         $.post(url);
     }
 
@@ -58,7 +67,7 @@ module Details {
             return;
         }
 
-        var url: string = '/Details/GetAssetLiveData?assetId=' + AssetId;
+        var url: string = Site.UrlActionWithParameter(RazorUrlDetailsGetAssetLiveData_assetId, AssetId);
 
         // Build table
         $.ajax({
@@ -105,7 +114,7 @@ module Details {
             return;
         }
 
-        var url: string = '/Details/GetAssetLiveData?assetId=' + AssetId;
+        var url: string = Site.UrlActionWithParameter(RazorUrlDetailsGetAssetLiveData_assetId, AssetId);
 
         GetAssetLiveDataInterval = setInterval(function () {
             $.ajax({

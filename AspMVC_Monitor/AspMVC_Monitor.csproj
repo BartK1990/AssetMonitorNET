@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Configuration\" />
     <Folder Include="Views\Configuration\" />
   </ItemGroup>
 

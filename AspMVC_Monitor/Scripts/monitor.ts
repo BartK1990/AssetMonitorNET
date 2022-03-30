@@ -3,8 +3,14 @@ import { Tag } from "./Monitor/tag";
 import { Assets } from "./Monitor/assets";
 import { TableAsset } from "./Monitor/tableAsset.js";
 import { AssetData } from "./Monitor/assetData";
+import { Site } from "./site.js"
 
 module Monitor {
+    
+    var RazorUrlGetAssetsLiveData: string;
+    var RazorUrlGetAssetsLiveData_tagSetId: string;
+    var RazorUrlHomeGetSharedTagColumns_tagSetId: string;
+    var RazorUrlDetailsIndex_assetId: string;
 
     const ScanTimeNewAssetsValues: number = 10000;
     const SharedTagTableId: string = 'tableAssets';
@@ -19,6 +25,13 @@ module Monitor {
     });
 
     function initMonitor() {
+        // Razor Urls
+        RazorUrlGetAssetsLiveData = document.getElementById('RazorUrlGetAssetsLiveData').getAttribute('data');
+        RazorUrlGetAssetsLiveData_tagSetId = document.getElementById('RazorUrlGetAssetsLiveData_tagSetId').getAttribute('data');
+        RazorUrlHomeGetSharedTagColumns_tagSetId = document.getElementById('RazorUrlHomeGetSharedTagColumns_tagSetId').getAttribute('data');
+        RazorUrlDetailsIndex_assetId = document.getElementById('RazorUrlDetailsIndex_assetId').getAttribute('data');
+
+        // Init part
         var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
         SharedTagInitNumberOfColumns = tableAssets.tHead.children[0].childElementCount;
 
@@ -36,7 +49,7 @@ module Monitor {
     function GetSharedTagColumns(tagSetId: number) {
         $.ajax({
             type: 'post',
-            url: 'GetSharedTagColumns?tagSetId=' + tagSetId,
+            url: Site.UrlActionWithParameter(RazorUrlHomeGetSharedTagColumns_tagSetId, tagSetId),
             dataType: 'json',
             success: function (data) {
                 var tableAssets: HTMLTableElement = <HTMLTableElement>document.getElementById(SharedTagTableId);
@@ -74,10 +87,9 @@ module Monitor {
     function GetAssetsLiveData() {
         var url: string;
         if (TagSetId != null) {
-            url = 'GetAssetsLiveData?tagSetId=' + TagSetId;
-
+            url = Site.UrlActionWithParameter(RazorUrlGetAssetsLiveData_tagSetId, TagSetId);
         } else {
-            url = 'GetAssetsLiveData';
+            url = RazorUrlGetAssetsLiveData;
         }
         // Build table
         $.ajax({
@@ -113,7 +125,7 @@ module Monitor {
                     elemName.appendChild(buttonAssetName);
 
                     buttonAssetName.addEventListener('click', function () {
-                        window.location.href = '/Details/Index?assetId=' + assetData.id;
+                        window.location.href = Site.UrlActionWithParameter(RazorUrlDetailsIndex_assetId, assetData.id);
                     });
 
                     var cellIp = TableAsset.AssetsTablePrepareCell(newRow);
@@ -138,10 +150,9 @@ module Monitor {
 
         var url: string;
         if (TagSetId != null) {
-            url = 'GetAssetsLiveData?tagSetId=' + TagSetId;
-
+            url = Site.UrlActionWithParameter(RazorUrlGetAssetsLiveData_tagSetId, TagSetId);
         } else {
-            url = 'GetAssetsLiveData';
+            url = RazorUrlGetAssetsLiveData;
         }
 
         GetAssetsLiveDataInterval = setInterval(function () {

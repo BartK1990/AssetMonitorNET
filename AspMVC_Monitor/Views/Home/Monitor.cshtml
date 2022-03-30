@@ -31,7 +31,7 @@
             <div class="status-bar-icon">
                 <i class="far fa-check-circle"></i>
                 <button type="button" class="btn btn-success">
-                    Ok 
+                    Ok
                     <span class="badge badge-light" id="statusBarAssetsOkCnt"></span>
                 </button>
             </div>
@@ -58,6 +58,10 @@
     </div>
 </div>
 
+<asp:HiddenField runat="server" id="RazorUrlGetAssetsLiveData" data="@Url.Action("GetAssetsLiveData", "Home")" />
+<asp:HiddenField runat="server" id="RazorUrlGetAssetsLiveData_tagSetId" data="@Url.Action("GetAssetsLiveData", "Home", new {tagSetId = 1})" />
+<asp:HiddenField runat="server" id="RazorUrlHomeGetSharedTagColumns_tagSetId" data="@Url.Action("GetSharedTagColumns", "Home", new {tagSetId = 1})" />
+<asp:HiddenField runat="server" id="RazorUrlDetailsIndex_assetId" data="@Url.Action("Index", "Details", new {assetId = 1})" />
 @section scripts{
     <script type="module" src="~/js/monitor.js"></script>
 }

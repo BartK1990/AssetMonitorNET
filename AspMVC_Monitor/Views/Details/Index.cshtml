@@ -69,6 +69,8 @@
 
 </div>
 
+<asp:HiddenField runat="server" id="RazorUrlDetailsGetAssetLiveData_assetId" data="@Url.Action("GetAssetLiveData", "Details", new {assetId = 1})" />
+<asp:HiddenField runat="server" id="RazorUrlDetailsUpdateAssetSnmpData_assetId" data="@Url.Action("UpdateAssetSnmpData", "Details", new {assetId = 1})" />
 @section scripts{
     <script type="module" src="~/js/details.js"></script>
 }
