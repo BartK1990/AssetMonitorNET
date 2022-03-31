@@ -1,0 +1,43 @@
+﻿@model AssetMonitorDataAccess.Models.TagShared
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_ConfigurationLayout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>TagShared</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tagname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Tagname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ColumnName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ColumnName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TagSharedSet)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TagSharedSet.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Enable)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Enable)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
