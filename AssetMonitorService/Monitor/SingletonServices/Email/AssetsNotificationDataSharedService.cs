@@ -65,6 +65,8 @@ namespace AssetMonitorService.Monitor.SingletonServices.Email
                 var alarms = asset.GetAlarmMessage();
                 if(alarms != null)
                 {
+                    _logger.LogInformation($"{this.GetType().Name} - Sending email notification for asset Id: [{asset.Id}]");
+
                     var alarmMessage = string.Join(" <br /> ", alarms);
                     var recipients = asset.Recipients.ToList();
 
