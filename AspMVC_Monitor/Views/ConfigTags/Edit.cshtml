@@ -1,0 +1,60 @@
+﻿@model AssetMonitorDataAccess.Models.Tag
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_ConfigurationLayout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Tag</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Tagname" class="control-label"></label>
+                <input asp-for="Tagname" class="form-control" />
+                <span asp-validation-for="Tagname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScaleFactor" class="control-label"></label>
+                <input asp-for="ScaleFactor" class="form-control" />
+                <span asp-validation-for="ScaleFactor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScaleOffset" class="control-label"></label>
+                <input asp-for="ScaleOffset" class="form-control" />
+                <span asp-validation-for="ScaleOffset" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ValueDataTypeId" class="control-label"></label>
+                <select asp-for="ValueDataTypeId" class="form-control" asp-items="ViewBag.ValueDataTypeId"></select>
+                <span asp-validation-for="ValueDataTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagSetId" class="control-label"></label>
+                <select asp-for="TagSetId" class="form-control" asp-items="ViewBag.TagSetId"></select>
+                <span asp-validation-for="TagSetId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagCommunicationRelId" class="control-label"></label>
+                <select asp-for="TagCommunicationRelId" class="form-control" asp-items="ViewBag.TagCommunicationRelId"></select>
+                <span asp-validation-for="TagCommunicationRelId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

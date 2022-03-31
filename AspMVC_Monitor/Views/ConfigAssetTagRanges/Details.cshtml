@@ -1,0 +1,43 @@
+﻿@model AssetMonitorDataAccess.Models.AssetTagRange
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_ConfigurationLayout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>AssetTagRange</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RangeMax)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RangeMax)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RangeMin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RangeMin)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Asset)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Asset.IpAddress)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Tag)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Tag.Tagname)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
