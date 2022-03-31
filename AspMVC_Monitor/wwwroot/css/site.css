@@ -15,6 +15,7 @@ for details on configuring this project to bundle and minify static web assets. 
     --teal: #20c997;
     --cyan: #17A2B8;
     --white: #fff;
+    --gray-light3: #8F8F8F;
     --gray-light2: #6F6F6F;
     --gray-light: #4d4d4d;
     --gray: #3d3d3d;
@@ -173,6 +174,10 @@ body {
 
 .bg-site-dark {
     background-color: var(--gray);
+}
+
+.bg-site-light {
+    background-color: var(--gray-light3);
 }
 
 .bg-nav-dark {

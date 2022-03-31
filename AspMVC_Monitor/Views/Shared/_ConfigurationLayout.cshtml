@@ -7,7 +7,13 @@
         <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
             <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="ConfigApplicationPropertyValues" asp-action="Index">App Properties</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="ConfigAssets" asp-action="Index">Assets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="ConfigAssetPropertyValues" asp-action="Index">Assets Properties</a>
                 </li>
             </ul>
         </div>
@@ -15,7 +21,9 @@
 </nav>
 
 <div class="container">
-    @RenderBody()
+    <div class="main-content bg-site-light rounded">
+        @RenderBody()
+    </div>
 </div>
 
 @RenderSection("Scripts", required: false)
