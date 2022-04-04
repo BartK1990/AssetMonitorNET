@@ -1,0 +1,59 @@
+$blue-light2: #C9E3FF;
+$blue-light: #A6CCF4;
+$blue: #007bff;
+$indigo: #6610f2;
+$purple: #6f42c1;
+$pink: #e83e8c;
+$red: #dc3545;
+$orange: #fd7e14;
+$yellow: #ffc107;
+$green: #28a745;
+$teal: #20c997;
+$cyan: #17A2B8;
+$white: #fff;
+$gray-light3: #8F8F8F;
+$gray-light2: #6F6F6F;
+$gray-light: #4d4d4d;
+$gray: #3d3d3d;
+$gray-dark: #333;
+$primary: #007bff;
+$secondary: #6c757d;
+$success: #28a745;
+$info: #17a2b8;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$input-border: #666;
+$input-bg: #4d4d4d;
+$green-bar: #309F39;
+$no-comm: #2C444C;
+$alarm: #C13343;
+
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #e01a76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.center-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-icons {
+  font-size: 10rem;
+  margin: 0 auto;
+}
+
+.logo-icons fa-icon {
+  color: $gray-dark;
+}
