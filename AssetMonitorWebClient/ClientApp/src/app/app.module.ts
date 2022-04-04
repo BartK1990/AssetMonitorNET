@@ -12,11 +12,11 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 
-//import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
-//import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
-//import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
-//import { faDesktop as fasDesktop } from '@fortawesome/free-solid-svg-icons'
-//import { faNetworkWired as fasNetworkWired } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faServer as fasServer } from '@fortawesome/free-solid-svg-icons'
+import { faDesktop as fasDesktop } from '@fortawesome/free-solid-svg-icons'
+import { faNetworkWired as fasNetworkWired } from '@fortawesome/free-solid-svg-icons'
 
 @NgModule({
   declarations: [
@@ -30,7 +30,7 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
     HttpClientModule,
     FormsModule,
     ApiAuthorizationModule,
-    //FontAwesomeModule,
+    FontAwesomeModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
@@ -42,7 +42,7 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  //constructor(library: FaIconLibrary) {
-  //  library.addIcons(fasServer, fasDesktop, fasNetworkWired);
-  //}
+  constructor(library: FaIconLibrary) {
+    library.addIcons(fasServer, fasDesktop, fasNetworkWired);
+  }
 }
