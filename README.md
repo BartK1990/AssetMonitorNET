@@ -4,15 +4,15 @@ Application for monitoring windows and network assets using ICMP, SNMP or Agent 
 
 Technologies: .NET Core 3.1, ASP.NET Core, EF Core, Dapper, Bootstrap, TypeScript
 
-Reposisotry conatains following projects
+Repository contains following projects
 
 ## AspMVC_Monitor
 
-Web client showing live data and allowing to configure application. Communicating with windows service (AssetMonitorService) thorugh gRPC.
+Web client showing live data and allowing to configure application. Communicating with windows service (AssetMonitorService) through gRPC.
 
 ## AssetMonitorService
 
-Windows service which is main service of the application. Communicating with web client (AspMVC_Monitor) and remote agents (AssetMonitorAgent) thorugh gRPC.
+Windows service which is main service of the application. Communicating with web client (AspMVC_Monitor) and remote agents (AssetMonitorAgent) through gRPC.
 
 ## AssetMonitorDataAccess
 
@@ -24,7 +24,7 @@ Project for accessing database with historical data in dynamic manner (Dapper + 
 
 ## AssetMonitorAgent
 
-Windows service providing data from remote windows assets. Communicating with main server (AssetMonitorService) thorugh gRPC.
+Windows service providing data from remote windows assets. Communicating with main server (AssetMonitorService) through gRPC.
 
 ## AssetMonitorSharedGRPC
 
